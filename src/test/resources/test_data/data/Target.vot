@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <GROUP utype="spec:Spectrum.Target">
+        <PARAM arraysize="*" datatype="char" name="Name" ucd="meta.id;src" utype="spec:Spectrum.Target.Name" value="Arp 220"/>
+        <PARAM arraysize="*" datatype="char" name="Description" ucd="meta.note;src" utype="spec:Spectrum.Target.Description" value="Ultraluminous Infrared Galaxy"/>
+        <PARAM arraysize="*" datatype="char" name="Class" ucd="src.class" utype="spec:Spectrum.Target.Class" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="SpectralClass" ucd="src.spType" utype="spec:Spectrum.Target.SpectralClass" value="TBD"/>
+        <PARAM datatype="double" name="Redshift" ucd="src.redshift" utype="spec:Spectrum.Target.Redshift" value="0.0018"/>
+        <PARAM arraysize="2" datatype="double" name="TargetPos" ucd="pos.eq;src" unit="deg" utype="spec:Spectrum.Target.Pos" value="233.737917 23.50333"/>
+        <PARAM datatype="double" name="VarAmpl" ucd="src.var.amplitude" utype="spec:Spectrum.Target.VarAmpl" value="0.0"/>
+      </GROUP>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

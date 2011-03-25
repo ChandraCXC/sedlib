@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <GROUP utype="spec:Spectrum.Derived">
+        <PARAM datatype="double" name="SNR" ucd="stat.snr" utype="spec:Spectrum.Derived.SNR" value="3.0"/>
+        <PARAM datatype="double" name="VarAmpl" ucd="src.var.amplitude;arith.ratio" utype="spec:Spectrum.Derived.VarAmpl" value="0.0"/>
+        <GROUP utype="spec:Spectrum.Derived.Redshift">
+          <PARAM datatype="double" name="Value" utype="spec:Spectrum.Derived.Redshift.Value" value="0.0"/>
+          <PARAM datatype="double" name="Resolution" utype="spec:Spectrum.Derived.Redshift.Resolution" value="0.0"/>
+          <PARAM datatype="int" name="Quality" utype="spec:Spectrum.Derived.Redshift.Quality" value="0"/>
+          <GROUP utype="spec:Spectrum.Derived.Redshift.Accuracy">
+            <PARAM datatype="double" name="BinLow" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinLow" value="0.0"/>
+            <PARAM datatype="double" name="BinHigh" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinHigh" value="0.0"/>
+            <PARAM datatype="double" name="BinSize" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinSize" value="0.0"/>
+            <PARAM datatype="double" name="StatError" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatError" value="0.0"/>
+            <PARAM datatype="double" name="StatErrLow" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatErrLow" value="0.0"/>
+            <PARAM datatype="double" name="StatErrHigh" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatErrHigh" value="0.0"/>
+            <PARAM datatype="double" name="SysError" utype="spec:Spectrum.Derived.Redshift.Accuracy.SysError" value="0.0"/>
+            <PARAM datatype="double" name="Confidence" utype="spec:Spectrum.Derived.Redshift.Accuracy.Confidence" value="0.0"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

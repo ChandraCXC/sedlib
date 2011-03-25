@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE SEDLib_version="1.2"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:sed="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="SedType">
+    <TABLE utype="SedType">
+      <GROUP utype="Target"/>
+    </TABLE>
+    <TABLE utype="Segment">
+      <GROUP utype="FieldHierarchy">
+        <GROUP utype="Data">
+          <GROUP utype="Data.FluxAxis">
+            <FIELDref ref="F1:"/>
+            <FIELDref ref="F2:"/>
+            <FIELDref ref="F6:"/>
+            <GROUP utype="Data.FluxAxis.Accuracy">
+              <FIELDref ref="F3:"/>
+              <FIELDref ref="F4:"/>
+              <FIELDref ref="F5:"/>
+              <FIELDref ref="F7:"/>
+              <FIELDref ref="F8:"/>
+              <FIELDref ref="F9:"/>
+              <FIELDref ref="F10:"/>
+              <FIELDref ref="F11:"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="Data.SpectralAxis">
+            <FIELDref ref="SP1:"/>
+            <FIELDref ref="SP2:"/>
+            <GROUP utype="Data.SpectralAxis.Accuracy">
+              <FIELDref ref="SP3:"/>
+              <FIELDref ref="SP4:"/>
+              <FIELDref ref="SP5:"/>
+              <FIELDref ref="SP6:"/>
+              <FIELDref ref="SP7:"/>
+              <FIELDref ref="SP8:"/>
+              <FIELDref ref="SP9:"/>
+              <FIELDref ref="SP10:"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="Data.TimeAxis">
+            <FIELDref ref="T1:"/>
+            <FIELDref ref="T2:"/>
+            <GROUP utype="Data.TimeAxis.Accuracy">
+              <FIELDref ref="T3:"/>
+              <FIELDref ref="T4:"/>
+              <FIELDref ref="T5:"/>
+              <FIELDref ref="T6:"/>
+              <FIELDref ref="T7:"/>
+              <FIELDref ref="T8:"/>
+              <FIELDref ref="T9:"/>
+              <FIELDref ref="T10:"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="Data.BackgroundModel">
+            <FIELDref ref="BG1:"/>
+            <FIELDref ref="BG2:"/>
+            <FIELDref ref="BG6:"/>
+            <GROUP utype="Data.BackgroundModel.Accuracy">
+              <FIELDref ref="BG3:"/>
+              <FIELDref ref="BG4:"/>
+              <FIELDref ref="BG5:"/>
+              <FIELDref ref="BG7:"/>
+              <FIELDref ref="BG8:"/>
+              <FIELDref ref="BG9:"/>
+              <FIELDref ref="BG10:"/>
+              <FIELDref ref="BG11:"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <FIELD ID="F1:" datatype="double" name="F" ucd="ucdF" unit="unitF" utype="Data.FluxAxis.Value"/>
+      <FIELD ID="F2:" datatype="int" name="FQual" ucd="ucdFQual" unit="unitFQual" utype="Data.FluxAxis.Quality"/>
+      <FIELD ID="F3:" datatype="double" name="FErrL" ucd="ucdFErrL" unit="unitFErrL" utype="Data.FluxAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="F4:" datatype="double" name="FErrH" ucd="ucdFErrH" unit="unitFErrH" utype="Data.FluxAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="F5:" datatype="double" name="FSys" ucd="ucdFSys" unit="unitFSys" utype="Data.FluxAxis.Accuracy.SysError"/>
+      <FIELD ID="F6:" datatype="double" name="FRes" ucd="ucdFRes" unit="unitFRes" utype="Data.FluxAxis.Resolution"/>
+      <FIELD ID="F7:" datatype="double" name="FBinL" ucd="ucdFBinL" unit="unitFBinL" utype="Data.FluxAxis.Accuracy.BinLow"/>
+      <FIELD ID="F8:" datatype="double" name="FBinH" ucd="ucdFBinH" unit="unitFBinH" utype="Data.FluxAxis.Accuracy.BinHigh"/>
+      <FIELD ID="F9:" datatype="double" name="FSize" ucd="ucdFSize" unit="unitFSize" utype="Data.FluxAxis.Accuracy.BinSize"/>
+      <FIELD ID="F10:" datatype="double" name="FStat" ucd="ucdFStat" unit="unitFStat" utype="Data.FluxAxis.Accuracy.StatError"/>
+      <FIELD ID="F11:" datatype="double" name="FConf" ucd="ucdFConf" unit="unitFConf" utype="Data.FluxAxis.Accuracy.Confidence"/>
+      <FIELD ID="SP1:" datatype="double" name="SP" ucd="ucdSP" unit="unitSP" utype="Data.SpectralAxis.Value"/>
+      <FIELD ID="SP2:" datatype="double" name="SPRes" ucd="ucdSPRes" unit="unitSPRes" utype="Data.SpectralAxis.Resolution"/>
+      <FIELD ID="SP3:" datatype="double" name="SPBinL" ucd="ucdSPBinL" unit="unitSPBinL" utype="Data.SpectralAxis.Accuracy.BinLow"/>
+      <FIELD ID="SP4:" datatype="double" name="SPBinH" ucd="ucdSPBinH" unit="unitSPBinH" utype="Data.SpectralAxis.Accuracy.BinHigh"/>
+      <FIELD ID="SP5:" datatype="double" name="SPSize" ucd="ucdSPSize" unit="unitSPSize" utype="Data.SpectralAxis.Accuracy.BinSize"/>
+      <FIELD ID="SP6:" datatype="double" name="SPErrL" ucd="ucdSPErrL" unit="unitSPErrL" utype="Data.SpectralAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="SP7:" datatype="double" name="SPErrH" ucd="ucdSPErrH" unit="unitSPErrH" utype="Data.SpectralAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="SP8:" datatype="double" name="SPSys" ucd="ucdSPSys" unit="unitSPSys" utype="Data.SpectralAxis.Accuracy.SysError"/>
+      <FIELD ID="SP9:" datatype="double" name="SPStat" ucd="ucdSPStat" unit="unitSPStat" utype="Data.SpectralAxis.Accuracy.StatError"/>
+      <FIELD ID="SP10:" datatype="double" name="SPConf" ucd="ucdSPConf" unit="unitSPConf" utype="Data.SpectralAxis.Accuracy.Confidence"/>
+      <FIELD ID="T1:" datatype="double" name="T" ucd="ucdT" unit="unitT" utype="Data.TimeAxis.Value"/>
+      <FIELD ID="T2:" datatype="double" name="TRes" ucd="ucdTRes" unit="unitTRes" utype="Data.TimeAxis.Resolution"/>
+      <FIELD ID="T3:" datatype="double" name="TBinL" ucd="ucdTBinL" unit="unitTBinL" utype="Data.TimeAxis.Accuracy.BinLow"/>
+      <FIELD ID="T4:" datatype="double" name="TBinH" ucd="ucdTBinH" unit="unitTBinH" utype="Data.TimeAxis.Accuracy.BinHigh"/>
+      <FIELD ID="T5:" datatype="double" name="TSize" ucd="ucdTSize" unit="unitTSize" utype="Data.TimeAxis.Accuracy.BinSize"/>
+      <FIELD ID="T6:" datatype="double" name="TErrL" ucd="ucdTErrL" unit="unitTErrL" utype="Data.TimeAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="T7:" datatype="double" name="TErrH" ucd="ucdTErrH" unit="unitTErrH" utype="Data.TimeAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="T8:" datatype="double" name="TSys" ucd="ucdTSys" unit="unitTSys" utype="Data.TimeAxis.Accuracy.SysError"/>
+      <FIELD ID="T9:" datatype="double" name="TStat" ucd="ucdTStat" unit="unitTStat" utype="Data.TimeAxis.Accuracy.StatError"/>
+      <FIELD ID="T10:" datatype="double" name="TConf" ucd="ucdTConf" unit="unitTConf" utype="Data.TimeAxis.Accuracy.Confidence"/>
+      <FIELD ID="BG1:" datatype="double" name="BG" ucd="ucdBG" unit="unitBG" utype="Data.BackgroundModel.Value"/>
+      <FIELD ID="BG2:" datatype="int" name="BGQual" ucd="ucdBGQual" unit="unitBGQual" utype="Data.BackgroundModel.Quality"/>
+      <FIELD ID="BG3:" datatype="double" name="BGErrL" ucd="ucdBGErrL" unit="unitBGErrL" utype="Data.BackgroundModel.Accuracy.StatErrLow"/>
+      <FIELD ID="BG4:" datatype="double" name="BGErrH" ucd="ucdBGErrH" unit="unitBGErrH" utype="Data.BackgroundModel.Accuracy.StatErrHigh"/>
+      <FIELD ID="BG5:" datatype="double" name="BGSys" ucd="ucdBGSys" unit="unitBGSys" utype="Data.BackgroundModel.Accuracy.SysError"/>
+      <FIELD ID="BG6:" datatype="double" name="BGRes" ucd="ucdBGRes" unit="unitBGRes" utype="Data.BackgroundModel.Resolution"/>
+      <FIELD ID="BG7:" datatype="double" name="BGBinL" ucd="ucdBGBinL" unit="unitBGBinL" utype="Data.BackgroundModel.Accuracy.BinLow"/>
+      <FIELD ID="BG8:" datatype="double" name="BGBinH" ucd="ucdBGBinH" unit="unitBGBinH" utype="Data.BackgroundModel.Accuracy.BinHigh"/>
+      <FIELD ID="BG9:" datatype="double" name="BGSize" ucd="ucdBGSize" unit="unitBGSize" utype="Data.BackgroundModel.Accuracy.BinSize"/>
+      <FIELD ID="BG10:" datatype="double" name="BGStat" ucd="ucdBGStat" unit="unitBGStat" utype="Data.BackgroundModel.Accuracy.StatError"/>
+      <FIELD ID="BG11:" datatype="double" name="BGConf" ucd="ucdBGConf" unit="unitBGConf" utype="Data.BackgroundModel.Accuracy.Confidence"/>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>100.1</TD>
+            <TD>100011</TD>
+            <TD>100.12</TD>
+            <TD>100.13</TD>
+            <TD>100.14</TD>
+            <TD>100.15</TD>
+            <TD>100.16</TD>
+            <TD>100.17</TD>
+            <TD>100.18</TD>
+            <TD>100.19</TD>
+            <TD>101.19</TD>
+            <TD>100.2</TD>
+            <TD>100.21</TD>
+            <TD>100.22</TD>
+            <TD>100.23</TD>
+            <TD>100.24</TD>
+            <TD>100.25</TD>
+            <TD>100.26</TD>
+            <TD>100.27</TD>
+            <TD>100.28</TD>
+            <TD>100.29</TD>
+            <TD>100.3</TD>
+            <TD>100.31</TD>
+            <TD>100.32</TD>
+            <TD>100.33</TD>
+            <TD>100.34</TD>
+            <TD>100.35</TD>
+            <TD>100.36</TD>
+            <TD>100.37</TD>
+            <TD>100.38</TD>
+            <TD>100.39</TD>
+            <TD>100.4</TD>
+            <TD>100041</TD>
+            <TD>100.42</TD>
+            <TD>100.43</TD>
+            <TD>100.44</TD>
+            <TD>100.45</TD>
+            <TD>100.46</TD>
+            <TD>100.47</TD>
+            <TD>100.48</TD>
+            <TD>100.49</TD>
+            <TD>101.49</TD>
+          </TR>
+          <TR>
+            <TD>200.1</TD>
+            <TD>200011</TD>
+            <TD>200.12</TD>
+            <TD>200.13</TD>
+            <TD>200.14</TD>
+            <TD>200.15</TD>
+            <TD>200.16</TD>
+            <TD>200.17</TD>
+            <TD>200.18</TD>
+            <TD>200.19</TD>
+            <TD>201.19</TD>
+            <TD>200.2</TD>
+            <TD>200.21</TD>
+            <TD>200.22</TD>
+            <TD>200.23</TD>
+            <TD>200.24</TD>
+            <TD>200.25</TD>
+            <TD>200.26</TD>
+            <TD>200.27</TD>
+            <TD>200.28</TD>
+            <TD>200.29</TD>
+            <TD>200.3</TD>
+            <TD>200.32</TD>
+            <TD>200.32</TD>
+            <TD>200.33</TD>
+            <TD>200.34</TD>
+            <TD>200.35</TD>
+            <TD>200.36</TD>
+            <TD>200.37</TD>
+            <TD>200.38</TD>
+            <TD>200.39</TD>
+            <TD>200.4</TD>
+            <TD>200041</TD>
+            <TD>200.42</TD>
+            <TD>200.43</TD>
+            <TD>200.44</TD>
+            <TD>200.45</TD>
+            <TD>200.46</TD>
+            <TD>200.47</TD>
+            <TD>200.48</TD>
+            <TD>200.49</TD>
+            <TD>201.49</TD>
+          </TR>
+          <TR>
+            <TD>300.1</TD>
+            <TD>300011</TD>
+            <TD>300.12</TD>
+            <TD>300.13</TD>
+            <TD>300.14</TD>
+            <TD>300.15</TD>
+            <TD>300.16</TD>
+            <TD>300.17</TD>
+            <TD>300.18</TD>
+            <TD>300.19</TD>
+            <TD>301.19</TD>
+            <TD>300.2</TD>
+            <TD>300.21</TD>
+            <TD>300.22</TD>
+            <TD>300.23</TD>
+            <TD>300.24</TD>
+            <TD>300.25</TD>
+            <TD>300.26</TD>
+            <TD>300.27</TD>
+            <TD>300.28</TD>
+            <TD>300.29</TD>
+            <TD>300.3</TD>
+            <TD>300.31</TD>
+            <TD>300.32</TD>
+            <TD>300.33</TD>
+            <TD>300.34</TD>
+            <TD>300.35</TD>
+            <TD>300.36</TD>
+            <TD>300.37</TD>
+            <TD>300.38</TD>
+            <TD>300.39</TD>
+            <TD>300.4</TD>
+            <TD>300041</TD>
+            <TD>300.42</TD>
+            <TD>300.43</TD>
+            <TD>300.44</TD>
+            <TD>300.45</TD>
+            <TD>300.46</TD>
+            <TD>300.47</TD>
+            <TD>300.48</TD>
+            <TD>300.49</TD>
+            <TD>301.49</TD>
+          </TR>
+          <TR>
+            <TD>400.1</TD>
+            <TD>400011</TD>
+            <TD>400.12</TD>
+            <TD>400.13</TD>
+            <TD>400.14</TD>
+            <TD>400.15</TD>
+            <TD>400.16</TD>
+            <TD>400.17</TD>
+            <TD>400.18</TD>
+            <TD>400.19</TD>
+            <TD>401.19</TD>
+            <TD>400.2</TD>
+            <TD>400.21</TD>
+            <TD>400.22</TD>
+            <TD>400.23</TD>
+            <TD>400.24</TD>
+            <TD>400.25</TD>
+            <TD>400.26</TD>
+            <TD>400.27</TD>
+            <TD>400.28</TD>
+            <TD>400.29</TD>
+            <TD>400.3</TD>
+            <TD>400.31</TD>
+            <TD>400.32</TD>
+            <
+          TD>400.33</TD>
+          <TD>400.34</TD>
+          <TD>400.35</TD>
+          <TD>400.36</TD>
+          <TD>400.37</TD>
+          <TD>400.38</TD>
+          <TD>400.39</TD>
+          <TD>400.4</TD>
+          <TD>400041</TD>
+          <TD>400.42</TD>
+          <TD>400.43</TD>
+          <TD>400.44</TD>
+          <TD>400.45</TD>
+          <TD>400.46</TD>
+          <TD>400.47</TD>
+          <TD>400.48</TD>
+          <TD>400.49</TD>
+          <TD>401.49</TD>
+        </TR>
+      </TABLEDATA>
+    </DATA>
+  </TABLE>
+  <TABLE utype="Segment">
+    <GROUP utype="FieldHierarchy">
+      <GROUP utype="Data">
+        <GROUP utype="Data.FluxAxis">
+          <FIELDref ref="F1:"/>
+          <FIELDref ref="F2:"/>
+          <FIELDref ref="F6:"/>
+          <GROUP utype="Data.FluxAxis.Accuracy">
+            <FIELDref ref="F3:"/>
+            <FIELDref ref="F4:"/>
+            <FIELDref ref="F5:"/>
+            <FIELDref ref="F7:"/>
+            <FIELDref ref="F8:"/>
+            <FIELDref ref="F9:"/>
+            <FIELDref ref="F10:"/>
+            <FIELDref ref="F11:"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="Data.SpectralAxis">
+          <FIELDref ref="SP1:"/>
+          <FIELDref ref="SP2:"/>
+          <GROUP utype="Data.SpectralAxis.Accuracy">
+            <FIELDref ref="SP3:"/>
+            <FIELDref ref="SP4:"/>
+            <FIELDref ref="SP5:"/>
+            <FIELDref ref="SP6:"/>
+            <FIELDref ref="SP7:"/>
+            <FIELDref ref="SP8:"/>
+            <FIELDref ref="SP9:"/>
+            <FIELDref ref="SP10:"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="Data.TimeAxis">
+          <FIELDref ref="T1:"/>
+          <FIELDref ref="T2:"/>
+          <GROUP utype="Data.TimeAxis.Accuracy">
+            <FIELDref ref="T3:"/>
+            <FIELDref ref="T4:"/>
+            <FIELDref ref="T5:"/>
+            <FIELDref ref="T6:"/>
+            <FIELDref ref="T7:"/>
+            <FIELDref ref="T8:"/>
+            <FIELDref ref="T9:"/>
+            <FIELDref ref="T10:"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="Data.BackgroundModel">
+          <FIELDref ref="BG1:"/>
+          <FIELDref ref="BG2:"/>
+          <FIELDref ref="BG6:"/>
+          <GROUP utype="Data.BackgroundModel.Accuracy">
+            <FIELDref ref="BG3:"/>
+            <FIELDref ref="BG4:"/>
+            <FIELDref ref="BG5:"/>
+            <FIELDref ref="BG7:"/>
+            <FIELDref ref="BG8:"/>
+            <FIELDref ref="BG9:"/>
+            <FIELDref ref="BG10:"/>
+            <FIELDref ref="BG11:"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+    </GROUP>
+    <FIELD ID="F1:" datatype="double" name="F" ucd="ucdF" unit="unitF" utype="Data.FluxAxis.Value"/>
+    <FIELD ID="F2:" datatype="int" name="FQual" ucd="ucdFQual" unit="unitFQual" utype="Data.FluxAxis.Quality"/>
+    <FIELD ID="F3:" datatype="double" name="FErrL" ucd="ucdFErrL" unit="unitFErrL" utype="Data.FluxAxis.Accuracy.StatErrLow"/>
+    <FIELD ID="F4:" datatype="double" name="FErrH" ucd="ucdFErrH" unit="unitFErrH" utype="Data.FluxAxis.Accuracy.StatErrHigh"/>
+    <FIELD ID="F5:" datatype="double" name="FSys" ucd="ucdFSys" unit="unitFSys" utype="Data.FluxAxis.Accuracy.SysError"/>
+    <FIELD ID="F6:" datatype="double" name="FRes" ucd="ucdFRes" unit="unitFRes" utype="Data.FluxAxis.Resolution"/>
+    <FIELD ID="F7:" datatype="double" name="FBinL" ucd="ucdFBinL" unit="unitFBinL" utype="Data.FluxAxis.Accuracy.BinLow"/>
+    <FIELD ID="F8:" datatype="double" name="FBinH" ucd="ucdFBinH" unit="unitFBinH" utype="Data.FluxAxis.Accuracy.BinHigh"/>
+    <FIELD ID="F9:" datatype="double" name="FSize" ucd="ucdFSize" unit="unitFSize" utype="Data.FluxAxis.Accuracy.BinSize"/>
+    <FIELD ID="F10:" datatype="double" name="FStat" ucd="ucdFStat" unit="unitFStat" utype="Data.FluxAxis.Accuracy.StatError"/>
+    <FIELD ID="F11:" datatype="double" name="FConf" ucd="ucdFConf" unit="unitFConf" utype="Data.FluxAxis.Accuracy.Confidence"/>
+    <FIELD ID="SP1:" datatype="double" name="SP" ucd="ucdSP" unit="unitSP" utype="Data.SpectralAxis.Value"/>
+    <FIELD ID="SP2:" datatype="double" name="SPRes" ucd="ucdSPRes" unit="unitSPRes" utype="Data.SpectralAxis.Resolution"/>
+    <FIELD ID="SP3:" datatype="double" name="SPBinL" ucd="ucdSPBinL" unit="unitSPBinL" utype="Data.SpectralAxis.Accuracy.BinLow"/>
+    <FIELD ID="SP4:" datatype="double" name="SPBinH" ucd="ucdSPBinH" unit="unitSPBinH" utype="Data.SpectralAxis.Accuracy.BinHigh"/>
+    <FIELD ID="SP5:" datatype="double" name="SPSize" ucd="ucdSPSize" unit="unitSPSize" utype="Data.SpectralAxis.Accuracy.BinSize"/>
+    <FIELD ID="SP6:" datatype="double" name="SPErrL" ucd="ucdSPErrL" unit="unitSPErrL" utype="Data.SpectralAxis.Accuracy.StatErrLow"/>
+    <FIELD ID="SP7:" datatype="double" name="SPErrH" ucd="ucdSPErrH" unit="unitSPErrH" utype="Data.SpectralAxis.Accuracy.StatErrHigh"/>
+    <FIELD ID="SP8:" datatype="double" name="SPSys" ucd="ucdSPSys" unit="unitSPSys" utype="Data.SpectralAxis.Accuracy.SysError"/>
+    <FIELD ID="SP9:" datatype="double" name="SPStat" ucd="ucdSPStat" unit="unitSPStat" utype="Data.SpectralAxis.Accuracy.StatError"/>
+    <FIELD ID="SP10:" datatype="double" name="SPConf" ucd="ucdSPConf" unit="unitSPConf" utype="Data.SpectralAxis.Accuracy.Confidence"/>
+    <FIELD ID="T1:" datatype="double" name="T" ucd="ucdT" unit="unitT" utype="Data.TimeAxis.Value"/>
+    <FIELD ID="T2:" datatype="double" name="TRes" ucd="ucdTRes" unit="unitTRes" utype="Data.TimeAxis.Resolution"/>
+    <FIELD ID="T3:" datatype="double" name="TBinL" ucd="ucdTBinL" unit="unitTBinL" utype="Data.TimeAxis.Accuracy.BinLow"/>
+    <FIELD ID="T4:" datatype="double" name="TBinH" ucd="ucdTBinH" unit="unitTBinH" utype="Data.TimeAxis.Accuracy.BinHigh"/>
+    <FIELD ID="T5:" datatype="double" name="TSize" ucd="ucdTSize" unit="unitTSize" utype="Data.TimeAxis.Accuracy.BinSize"/>
+    <FIELD ID="T6:" datatype="double" name="TErrL" ucd="ucdTErrL" unit="unitTErrL" utype="Data.TimeAxis.Accuracy.StatErrLow"/>
+    <FIELD ID="T7:" datatype="double" name="TErrH" ucd="ucdTErrH" unit="unitTErrH" utype="Data.TimeAxis.Accuracy.StatErrHigh"/>
+    <FIELD ID="T8:" datatype="double" name="TSys" ucd="ucdTSys" unit="unitTSys" utype="Data.TimeAxis.Accuracy.SysError"/>
+    <FIELD ID="T9:" datatype="double" name="TStat" ucd="ucdTStat" unit="unitTStat" utype="Data.TimeAxis.Accuracy.StatError"/>
+    <FIELD ID="T10:" datatype="double" name="TConf" ucd="ucdTConf" unit="unitTConf" utype="Data.TimeAxis.Accuracy.Confidence"/>
+    <FIELD ID="BG1:" datatype="double" name="BG" ucd="ucdBG" unit="unitBG" utype="Data.BackgroundModel.Value"/>
+    <FIELD ID="BG2:" datatype="int" name="BGQual" ucd="ucdBGQual" unit="unitBGQual" utype="Data.BackgroundModel.Quality"/>
+    <FIELD ID="BG3:" datatype="double" name="BGErrL" ucd="ucdBGErrL" unit="unitBGErrL" utype="Data.BackgroundModel.Accuracy.StatErrLow"/>
+    <FIELD ID="BG4:" datatype="double" name="BGErrH" ucd="ucdBGErrH" unit="unitBGErrH" utype="Data.BackgroundModel.Accuracy.StatErrHigh"/>
+    <FIELD ID="BG5:" datatype="double" name="BGSys" ucd="ucdBGSys" unit="unitBGSys" utype="Data.BackgroundModel.Accuracy.SysError"/>
+    <FIELD ID="BG6:" datatype="double" name="BGRes" ucd="ucdBGRes" unit="unitBGRes" utype="Data.BackgroundModel.Resolution"/>
+    <FIELD ID="BG7:" datatype="double" name="BGBinL" ucd="ucdBGBinL" unit="unitBGBinL" utype="Data.BackgroundModel.Accuracy.BinLow"/>
+    <FIELD ID="BG8:" datatype="double" name="BGBinH" ucd="ucdBGBinH" unit="unitBGBinH" utype="Data.BackgroundModel.Accuracy.BinHigh"/>
+    <FIELD ID="BG9:" datatype="double" name="BGSize" ucd="ucdBGSize" unit="unitBGSize" utype="Data.BackgroundModel.Accuracy.BinSize"/>
+    <FIELD ID="BG10:" datatype="double" name="BGStat" ucd="ucdBGStat" unit="unitBGStat" utype="Data.BackgroundModel.Accuracy.StatError"/>
+    <FIELD ID="BG11:" datatype="double" name="BGConf" ucd="ucdBGConf" unit="unitBGConf" utype="Data.BackgroundModel.Accuracy.Confidence"/>
+    <DATA>
+      <TABLEDATA>
+        <TR>
+          <TD>100.1</TD>
+          <TD>100011</TD>
+          <TD>100.12</TD>
+          <TD>100.13</TD>
+          <TD>100.14</TD>
+          <TD>100.15</TD>
+          <TD>100.16</TD>
+          <TD>100.17</TD>
+          <TD>100.18</TD>
+          <TD>100.19</TD>
+          <TD>101.19</TD>
+          <TD>100.2</TD>
+          <TD>100.21</TD>
+          <TD>100.22</TD>
+          <TD>100.23</TD>
+          <TD>100.24</TD>
+          <TD>100.25</TD>
+          <TD>100.26</TD>
+          <TD>100.27</TD>
+          <TD>100.28</TD>
+          <TD>100.29</TD>
+          <TD>100.3</TD>
+          <TD>100.31</TD>
+          <TD>100.32</TD>
+          <TD>100.33</TD>
+          <TD>100.34</TD>
+          <TD>100.35</TD>
+          <TD>100.36</TD>
+          <TD>100.37</TD>
+          <TD>100.38</TD>
+          <TD>100.39</TD>
+          <TD>100.4</TD>
+          <TD>100041</TD>
+          <TD>100.42</TD>
+          <TD>100.43</TD>
+          <TD>100.44</TD>
+          <TD>100.45</TD>
+          <TD>100.46</TD>
+          <TD>100.47</TD>
+          <TD>100.48</TD>
+          <TD>100.49</TD>
+          <TD>101.49</TD>
+        </TR>
+        <TR>
+          <TD>200.1</TD>
+          <TD>200011</TD>
+          <TD>200.12</TD>
+          <TD>200.13</TD>
+          <TD>200.14</TD>
+          <TD>200.15</TD>
+          <TD>200.16</TD>
+          <TD>200.17</TD>
+          <TD>200.18</TD>
+          <TD>200.19</TD>
+          <TD>201.19</TD>
+          <TD>200.2</TD>
+          <TD>200.21</TD>
+          <TD>200.22</TD>
+          <TD>200.23</TD>
+          <TD>200.24</TD>
+          <TD>200.25</TD>
+          <TD>200.26</TD>
+          <TD>200.27</TD>
+          <TD>200.28</TD>
+          <TD>200.29</TD>
+          <TD>200.3</TD>
+          <TD>200.32</TD>
+          <TD>200.32</TD>
+          <TD>200.33</TD>
+          <TD>200.34</TD>
+          <TD>200.35</TD>
+          <TD>200.36</TD>
+          <TD>200.37</TD>
+          <TD>200.38</TD>
+          <TD>200.39</TD>
+          <TD>200.4</TD>
+          <TD>200041</TD>
+          <TD>200.42</TD>
+          <TD>200.43</TD>
+          <TD>200.44</TD>
+          <TD>200.45</TD>
+          <TD>200.46</TD>
+          <TD>200.47</TD>
+          <TD>200.48</TD>
+          <TD>200.49</TD>
+          <TD>201.49</TD>
+        </TR>
+        <TR>
+          <TD>300.1</TD>
+          <TD>300011</TD>
+          <TD>300.12</TD>
+          <TD>300.13</TD>
+          <TD>300.14</TD>
+          <TD>300.15</TD>
+          <TD>300.16</TD>
+          <TD>300.17</TD>
+          <TD>300.18</TD>
+          <TD>300.19</TD>
+          <TD>301.19</TD>
+          <TD>300.2</TD>
+          <TD>300.21</TD>
+          <TD>300.22</TD>
+          <TD>300.23</TD>
+          <TD>300.24</TD>
+          <TD>300.25</TD>
+          <TD>300.26</TD>
+          <TD>300.27</TD>
+          <TD>300.28</TD>
+          <TD>300.29</TD>
+          <TD>300.3</TD>
+          <TD>300.31</TD>
+          <TD>300.32</TD>
+          <TD>300.33</TD>
+          <TD>300.34</TD>
+          <TD>300.35</TD>
+          <TD>300.36</TD>
+          <TD>300.37</TD>
+          <TD>300.38</TD>
+          <TD>300.39</TD>
+          <TD>300.4</TD>
+          <TD>300041</TD>
+          <TD>300.42</TD>
+          <TD>300.43</TD>
+          <TD>300.44</TD>
+          <TD>300.45</TD>
+          <TD>300.46</TD>
+          <TD>300.47</TD>
+          <TD>300.48</TD>
+          <TD>300.49</TD>
+          <TD>301.49</TD>
+        </TR>
+        <TR>
+          <TD>400.1</TD>
+          <TD>400011</TD>
+          <TD>400.12</TD>
+          <TD>400.13</TD>
+          <TD>400.14</TD>
+          <TD>400.15</TD>
+          <TD>400.16</TD>
+          <TD>400.17</TD>
+          <TD>400.18</TD>
+          <TD>400.19</TD>
+          <TD>401.19</TD>
+          <TD>400.2</TD>
+          <TD>400.21</TD>
+          <TD>400.22</TD>
+          <TD>400.23</TD>
+          <TD>400.24</TD>
+          <TD>400.25</TD>
+          <TD>400.26</TD>
+          <TD>400.27</TD>
+          <TD>400.28</TD>
+          <TD>400.29</TD>
+          <TD>400.3</TD>
+          <TD>400.31</TD>
+          <TD>400.32</TD>
+          <
+        TD>400.33</TD>
+        <TD>400.34</TD>
+        <TD>400.35</TD>
+        <TD>400.36</TD>
+        <TD>400.37</TD>
+        <TD>400.38</TD>
+        <TD>400.39</TD>
+        <TD>400.4</TD>
+        <TD>400041</TD>
+        <TD>400.42</TD>
+        <TD>400.43</TD>
+        <TD>400.44</TD>
+        <TD>400.45</TD>
+        <TD>400.46</TD>
+        <TD>400.47</TD>
+        <TD>400.48</TD>
+        <TD>400.49</TD>
+        <TD>401.49</TD>
+      </TR>
+    </TABLEDATA>
+  </DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

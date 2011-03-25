@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+vi: expandtab shiftwidth=2 tabstop=2
+-->
+<VOTABLE version="1.1"
+ xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+ xmlns:sed="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="SedType" >
+    <TABLE utype="SedType" >
+
+      <GROUP utype="Target" >
+        <PARAM utype="Target.Name" name="Name" value="testQualityUtype" datatype="char" arraysize="*" />
+        <PARAM utype="Target.Description" name="Desc"
+              value="Target is blue" datatype="char" arraysize="*" />
+
+
+      </GROUP> 
+        <FIELD datatype="double" utype="Data.FluxAxis.Value"       name="Flux" arraysize="1" />
+        <FIELD datatype="int"    utype="Data.FluxAxis.Quality"     name="FluxQuality" ucd="flux_quality" arraysize="1" />
+        <FIELD datatype="double" utype="Data.BackgroundModel.Value"       name="BGM" arraysize="1" />
+        <FIELD datatype="int"    utype="Data.BackgroundModel.Quality"     name="BGMQuality" ucd="bgm_quality" arraysize="1" />
+
+      <DATA>
+        <TABLEDATA>
+          <TR>
+          <TD>1011</TD>
+          <TD>1012</TD>
+          <TD>1041</TD>
+          <TD>1042</TD>
+          </TR>
+          <TR>
+          <TD>2011</TD>
+          <TD>2012</TD>
+          <TD>2041</TD>
+          <TD>2042</TD>
+          </TR>
+        </TABLEDATA>
+       </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

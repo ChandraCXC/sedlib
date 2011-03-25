@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+vi: expandtab shiftwidth=2 tabstop=2
+-->
+<VOTABLE version="1.1"
+ xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+ xmlns:sed="http://www.ivoa.net/xml/SedModel/v0.93"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="SedType" >
+    <TABLE utype="SedType" >
+      <PARAM arraysize="*" datatype="char" name="Date" ucd="UNKOWN_UCD" unit="Julian" utype="Date" value="October 15, 1987"/>
+      <PARAM arraysize="*" datatype="char" name="Creator" ucd="UNKOWN_UCD" utype="SED.Creator" value="TheIntelligentDesigner" />
+      <PARAM arraysize="*" datatype="char" name="CreatorDID" ucd="UNKOWN_UCD" utype="SED.CreatorID" value="DIDforCreataor" />
+        <PARAM arraysize="*" datatype="char" name="Name" ucd="placeholder" utype="Target.Name" value="HD 100006"/>
+        <PARAM arraysize="*" datatype="char" name="Description" ucd="placeholder" utype="Target.Description" value="concentric_circles"/>
+        <PARAM datatype="double" name="Redshift" ucd="Maybe.red.shift" unit="Doppler" utype="Target.Redshift" value="-0.29"/>
+        <PARAM datatype="double" name="VarAmpl" ucd="placeholder" unit="" utype="Target.VarAmpl" value="34.56"/>
+        <PARAM arraysize="*" datatype="char" name="Publisher" ucd="meta.curation" utype="Curation.Publisher" value="NOAO"/>
+        <PARAM arraysize="*" datatype="char" name="Reference" ucd="meta.bib.bibcode" utype="Curation.Reference" value="2004ApJS..152..251V"/>
+        <PARAM arraysize="*" datatype="char" name="PublisherDID" ucd="meta.ref.url;meta.curation" utype="Curation.PublisherID" value="publisherDID"/>
+        <PARAM arraysize="*" datatype="char" name="PublisherId" ucd="meta.ref.url;meta.curation" utype="Curation.PublisherDID" value="ivoa://noao.edu"/>
+        <PARAM arraysize="*" datatype="char" name="Version" ucd="meta.version;meta.dataset" utype="Curation.Version" value="1.0"/>
+        <PARAM arraysize="*" datatype="char" name="Version" ucd="meta.rights;meta.dataset" utype="Curation.Rights" value="Speech,etc."/>
+        <PARAM arraysize="*" datatype="char" name="Version" ucd="meta.version;meta.dataset" utype="Curation.Date" value="7July2008"/>
+        <PARAM arraysize="*" datatype="char" name="Contact" ucd="meta.bib.author;meta.curation" utype="Curation.Contact.Name" value="Francisco Valdes"/>
+        <PARAM arraysize="*" datatype="char" name="email" ucd="meta.email" utype="Curation.Contact.Email" value="valdes@noao.edu"/>
+
+        <FIELD datatype="double" name="Flux" ucd="phot.flux.density;em.wl" unit="Cubits" utype="Data.FluxAxis.Value"/>
+        <FIELD datatype="double" name="Wavelength" ucd="em.wl" utype="Data.SpectralAxis.Value"/>
+        <FIELD datatype="double" name="BinSize" ucd="em.wl;spect.binSize" utype="Data.SpectralAxis.Accuracy.BinSize"/>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+          <TD>6001.0</TD>
+          <TD>0.9801</TD>
+          <TD>0.11</TD>
+          </TR>
+          <TR>
+          <TD>6004.0 </TD>
+          <TD>0.9804</TD>
+          <TD>0.44 </TD>
+          </TR>
+        </TABLEDATA>
+       </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

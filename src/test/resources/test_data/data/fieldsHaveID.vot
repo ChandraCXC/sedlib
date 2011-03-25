@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+ xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+ xmlns:ibi="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="SedType" >
+    <TABLE utype="SedType" >
+
+      <FIELD ID="F1" datatype="double" name="F" ucd="ucdF" unit="unitF" utype="ibi:Data.FluxAxis.Value"/>
+
+      <FIELD ID="SP1" datatype="double" name="SP" ucd="ucdSP" unit="unitSP" utype="ibi:Data.SpectralAxis.Value"/>
+
+      <FIELD ID="F2" datatype="int" name="FQual" ucd="ucdFQual" unit="unitFQual" utype="ibi:Data.FluxAxis.Quality"/>
+
+      <FIELD ID="SP3" datatype="double" name="SPBinL" ucd="ucdSPBinL" unit="unitSPBinL" utype="ibi:Data.SpectralAxis.Accuracy.BinLow"/>
+
+      <FIELD ID="SP2" datatype="double" name="SPRes" ucd="ucdSPRes" unit="unitSPRes" utype="ibi:Data.SpectralAxis.Resolution"/>
+
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>100.1</TD>
+            <TD>100.2</TD>
+            <TD>100011</TD>
+            <TD>100.31</TD>
+            <TD>900.21</TD>
+          </TR>
+          <TR>
+            <TD>200.1</TD>
+            <TD>200.2</TD>
+            <TD>200011</TD>
+            <TD>200.31</TD>
+            <TD>900.21</TD>
+          </TR>
+        </TABLEDATA>
+       </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

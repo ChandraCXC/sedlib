@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SED xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd" xmlns:ns2="http://www.w3.org/1999/xlink">
+    <BaseSegment>
+        <Curation>
+            <Publisher ucd="meta.organization;meta.curation" name="Publisher">SAO</Publisher>
+            <PublisherID ucd="meta.curation.pubid" name="PubID">ivo://cfa.harvard.edu</PublisherID>
+            <Reference ucd="meta.bib.bibcode" name="Reference">TBD</Reference>
+            <Version>TBD</Version>
+            <Contact>
+                <Name ucd="meta.human;meta.curation" name="Contact">Jonathan McDowell</Name>
+                <Email ucd="meta.email" name="email">jcm@cfa.harvard.edu</Email>
+            </Contact>
+            <Rights>TBD</Rights>
+            <Date>2003-12-31T14:00:02</Date>
+            <PublisherDID>TBD</PublisherDID>
+        </Curation>
+        <ArrayOfFlatPoint/>
+    </BaseSegment>
+</SED>

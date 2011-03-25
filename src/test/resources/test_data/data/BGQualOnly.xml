@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+    vi: expandtab shiftwidth=2 tabstop=2
+    -->
+<SED xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd">
+  <Target>
+    <Name name="Target">HD 100006</Name>
+  </Target>
+
+  <BaseSegment>
+        <Type name="SpectrumType">Spectrum</Type>
+        <TimeSI  name="TimeSI_name" ucd="TimeSI_UCD" >the time SI</TimeSI>
+    <Data2>
+      <Point BG_Qual="19" />
+      <Point BG_Qual="19" />
+      <Point BG_Qual="19" />
+      <Point BG_Qual="19" />
+    </Data2>
+  </BaseSegment>
+</SED>

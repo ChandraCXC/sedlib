@@ -1,0 +1,20 @@
+XTENSION= 'BINTABLE'           / Binary table SEDLib version:  1.2              
+BITPIX  =                    8 / bits per byte                                  
+NAXIS   =                    2 / Always 2 for binary extension                  
+NAXIS1  =                    0 / Number bytes per row                           
+NAXIS2  =                    1 / Number of rows in binary table.                
+PCOUNT  =                    0 / Normally 0 (no varying arrays)                 
+GCOUNT  =                    1 / Required value                                 
+TFIELDS =                    0 / Number fields                                  
+DATALEN =                    0                                                  
+VOCLASS = 'Spectrum-1.0'                                                        
+SPEC_RP =                  0.0                                                  
+SPEC_UCD= 'em.wl   '                                                            
+SPEC_UNI= 'Angstrom'                                                            
+SPEC_RES=                  0.0                                                  
+SPEC_CAL= 'TBD     '                                                            
+SPEC_BIN=                  0.0                                                  
+SPEC_ERR=                  0.0                                                  
+SPEC_SYE=                  0.0                                                  
+SPEC_FIL=                  0.0                                                  
+END                                                                             

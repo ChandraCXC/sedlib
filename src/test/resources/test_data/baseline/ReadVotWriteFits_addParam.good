@@ -1,0 +1,71 @@
+XTENSION= 'BINTABLE'           / Binary table SEDLib version:  1.2              
+BITPIX  =                    8 / bits per byte                                  
+NAXIS   =                    2 / Always 2 for binary extension                  
+NAXIS1  =                  384 / Number bytes per row                           
+NAXIS2  =                    1 / Number of rows in binary table.                
+PCOUNT  =                    0 / Normally 0 (no varying arrays)                 
+GCOUNT  =                    1 / Required value                                 
+TFIELDS =                    8 / Number fields                                  
+VOCLASS = 'Spectrum-1.0'       / Data_model                                     
+DATALEN =                    6 / Num_data_points                                
+OBJECT  = 'this is Target.vot' / Target_name                                    
+OBJDESC = 'concentric_circles' / Target_description                             
+SRCCLASS= 'Bright Star'        / Target_sourceClass                             
+SPECTYPE= 'Really Bright Star' / Target_spectralClass                           
+REDSHIFT=                -0.29 / Target_redshft                                 
+RA_TARG =                  1.2 / Target's RA                                    
+DEC_TARG=                  3.4 / Target's Decl                                  
+TARGVAR =                34.56 / Target_varAmpl                                 
+VOSEGT  = 'elite   '           / Spectrum_type                                  
+FREQ_BIN=               3.0009 / BinSize_fromVOTFile                            
+ERR_HI  =               323.45                                                  
+FREQ_RES=               0.0123                                                  
+TIME_LO =              -0.0015                                                  
+TFORM1  = '6D      '           / Flux                                           
+TFORM2  = '6D      '           / Wavelength                                     
+TFORM3  = '6D      '           / BinSize_fromVOTFile                            
+TFORM4  = '6D      '           / BGStatErrLow                                   
+TFORM5  = '6D      '           / BGSysErr                                       
+TFORM6  = '6D      '                                                            
+TFORM7  = '6D      '           / theName                                        
+TFORM8  = '6D      '           / aName                                          
+TTYPE1  = 'Flux    '           / Field name                                     
+TTYPE2  = 'Wavelength'         / Field name                                     
+TTYPE3  = 'BinSize_fromVOTFile' / Field name                                    
+TTYPE4  = 'BGStatErrLow'       / Field name                                     
+TTYPE5  = 'BGSysErr'           / Field name                                     
+TTYPE6  = 'FluxAxis_statErrHigh' / Field name                                   
+TTYPE7  = 'theName '           / Field name                                     
+TTYPE8  = 'aName   '           / Field name                                     
+TUTYP1  = 'sed:Data.FluxAxis.Value' / utype                                     
+TUTYP2  = 'sed:Data.SpectralAxis.Value' / utype                                 
+TUTYP3  = 'sed:Data.SpectralAxis.Accuracy.BinSize' / utype                      
+TUTYP4  = 'sed:Data.BackgroundModel.Accuracy.StatErrLow' / utype                
+TUTYP5  = 'sed:Data.BackgroundModel.Accuracy.SysError' / utype                  
+TUTYP6  = 'sed:Data.FluxAxis.Accuracy.StatErrHigh' / utype                      
+TUTYP7  = 'sed:Data.SpectralAxis.Resolution' / utype                            
+TUTYP8  = 'sed:Data.TimeAxis.Accuracy.BinLow' / utype                           
+TUCD1   = 'JIM SET THIS'       / ucd                                            
+TUCD2   = 'em.wl   '           / ucd                                            
+TUCD3   = 'spect.binSize'      / ucd                                            
+TUCD4   = 'low     '           / ucd                                            
+TUCD5   = 'bgmsysError'        / ucd                                            
+TUCD7   = 'theUcd  '           / ucd                                            
+TUCD8   = 'aUcd    '           / ucd                                            
+TUNIT1  = 'Overwrites'         / units                                          
+TUNIT2  = 'feet    '           / units                                          
+TUNIT3  = '        '           / units                                          
+TUNIT4  = '        '           / units                                          
+TUNIT5  = 'JIM SET THIS UNIT FIELD' / units                                     
+TUNIT6  = '        '           / units                                          
+TUNIT7  = 'Reset   '           / units                                          
+TUNIT8  = 'aUnit   '           / units                                          
+END                                                                             
+12000000000  12000000000  12000000000  12000000000  12000000000  12000000000  
+1012  2012  3012  4012  5012  6012  
+3.0009  3.0009  3.0009  3.0009  3.0009  3.0009  
+1022  2022  3022  4022  5022  6022  
+1043  2043  3043  4043  5043  6043  
+nan  nan  323.45  nan  nan  nan  
+0.0123  0.0123  0.0123  nan  nan  nan  
+-0.0015  -0.0015  -0.0015  -0.0015  -0.0015  -0.0015  

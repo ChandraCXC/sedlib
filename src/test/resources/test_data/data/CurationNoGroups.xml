@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+    vi: expandtab shiftwidth=2 tabstop=2
+    -->
+<SED xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd">
+
+  <Date> March 20, 1949 </Date>
+  <Target>
+    <Name name="Target">HD 100006</Name>
+    <Description name="description" >This is the targetType </Description>
+    <TargetClass name="TgtClass" ucd="src.class">star</TargetClass>
+    <SpectralClass name="SpClass" ucd="src.sptype">K0III</SpectralClass>
+    <Redshift name="Redshift" ucd="src.redshift">8.900000102585182E-5</Redshift>
+    <Pos>
+      <value > 172.62095833</value>
+      <value > 18.40980556</value>
+    </Pos>
+    <VarAmpl name="variableAmplitude" > 43.21 </VarAmpl>
+  </Target>
+
+  <Type >This is the 'type' </Type>
+  <NSegments> 1 </NSegments>
+
+  <BaseSegment>
+        <Type name="SpectrumType">Spectrum</Type>
+        <TimeSI  name="TimeSI_name" ucd="TimeSI_UCD" >the time SI</TimeSI>
+    <Data2>
+      <Point F="0.929099977016449" SP="6009.8" SP_Size="0.43"/>
+    </Data2>
+  </BaseSegment>
+
+  <Creator> Kevin Almighty </Creator>
+  <CreatorDID> Kevin's DID </CreatorDID>
+
+  <SpectralMinWavelength  ucd="SpecMinUCD" unit="miles" name="TheMin" >487</SpectralMinWavelength>
+  <SpectralMaxWavelength  ucd="SpecMaxUCD" unit="miles" name="TheMax" >489</SpectralMaxWavelength>
+</SED>

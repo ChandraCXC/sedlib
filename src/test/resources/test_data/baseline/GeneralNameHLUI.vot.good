@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <PARAM arraysize="*" datatype="char" name="Type" utype="spec:Spectrum.Type" value="Spectrum"/>
+      <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.TimeSI" value="ms_text"/>
+      <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.SpectralSI" value="Angstrom_text"/>
+      <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.FluxSI" value="ergs/m-2s-1Mev-1_text"/>
+      <GROUP utype="spec:Spectrum.Target">
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Target.Name" value="Arp 220_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Target.Description" value="Ultraluminous Infrared Galaxy_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Target.Class" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Target.SpectralClass" value="TBD_text"/>
+        <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Target.Redshift" value="1000.0018"/>
+        <PARAM arraysize="2" datatype="double" name="TargetPos_double" ucd="null_double" unit="deg_double" utype="spec:Spectrum.Target.Pos" value="1233.737917 1023.50333"/>
+        <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Target.VarAmpl" value="1000.0"/>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.Char">
+        <GROUP utype="spec:Spectrum.Char.SpatialAxis">
+          <PARAM arraysize="*" datatype="char" name="Sky" ucd="pos.eq" unit="deg" utype="spec:Spectrum.Char.SpatialAxis.Name" value="Sky"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Resolution" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Char.SpatialAxis.Calibration" value="TBD_text"/>
+          <GROUP utype="spec:Spectrum.Char.SpatialAxis.Coverage">
+            <GROUP utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location">
+              <PARAM datatype="double" name="TimeObs_double_double" ucd="time.obs_double_double" unit="null_double_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Value" value="54148.3252"/>
+              <PARAM datatype="double" name="TimeRes_double" ucd="TBD_double" unit="s_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Resolution" value="1000.125"/>
+              <GROUP utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy">
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.BinLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.BinHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.BinSize" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.StatError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.StatErrLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.StatErrHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.SysError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Accuracy.Confidence" value="1000.0"/>
+              </GROUP>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds">
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds.Extent" value="2500.0"/>
+              <PARAM datatype="double" name="TimeStart_double" ucd="time_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds.Min" value="53100.0"/>
+              <PARAM datatype="double" name="TimeStop_double" ucd="time_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds.Max" value="53300.0"/>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.SpatialAxis.Coverage.Support">
+              <PARAM arraysize="*" datatype="char" name="TBD_text" ucd="TBD_text" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Support.Area" value="TBD_text"/>
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration;obs.exposure_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Support.Extent" value="2500.0"/>
+              <PARAM arraysize="2" datatype="double" name="Range" ucd="time" unit="s" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Support.Range" value="52100.0 52300.0"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.SpatialAxis.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.SpatialAxis.SamplingPrecision">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.SamplingPrecision.SamplingExtent" value="1000.0"/>
+            <GROUP utype="spec:Spectrum.Char.SpatialAxis.SamplingPrecision.SamplingPrecisionRefVal">
+              <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpatialAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="1000.0"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Char.TimeAxis">
+          <PARAM arraysize="*" datatype="char" name="Time" ucd="time" unit="s" utype="spec:Spectrum.Char.TimeAxis.Name" value="Time"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Resolution" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Char.TimeAxis.Calibration" value="TBD_text"/>
+          <GROUP utype="spec:Spectrum.Char.TimeAxis.Coverage">
+            <GROUP utype="spec:Spectrum.Char.TimeAxis.Coverage.Location">
+              <PARAM datatype="double" name="TimeObs_double" ucd="time.obs_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Value" value="53148.3252"/>
+              <PARAM datatype="double" name="TimeRes_double" ucd="TBD_double" unit="s_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Resolution" value="1000.125"/>
+              <GROUP utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy">
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.BinLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.BinHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.BinSize" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.StatError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.StatErrLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.StatErrHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.SysError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Accuracy.Confidence" value="1000.0"/>
+              </GROUP>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds">
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds.Extent" value="2500.0"/>
+              <PARAM datatype="double" name="TimeStart_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds.Min" value="54100.0"/>
+              <PARAM datatype="double" name="TimeStop_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds.Max" value="54300.0"/>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.TimeAxis.Coverage.Support">
+              <PARAM arraysize="*" datatype="char" name="TBD_text" ucd="TBD_text" utype="spec:Spectrum.Char.TimeAxis.Coverage.Support.Area" value="TBD_text"/>
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration;obs.exposure_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Coverage.Support.Extent" value="2500.0"/>
+              <PARAM arraysize="2" datatype="double" name="Range" ucd="time" unit="s" utype="spec:Spectrum.Char.TimeAxis.Coverage.Support.Range" value="52100.0 52300.0"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.TimeAxis.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.TimeAxis.SamplingPrecision">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.SamplingPrecision.SamplingExtent" value="1000.0"/>
+            <GROUP utype="spec:Spectrum.Char.TimeAxis.SamplingPrecision.SamplingPrecisionRefVal">
+              <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.TimeAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="1000.0"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Char.SpectralAxis">
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.ResPower" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="Wavelength" ucd="em.wl" unit="Angstrom" utype="spec:Spectrum.Char.SpectralAxis.Name" value="Wavelength"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Resolution" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Char.SpectralAxis.Calibration" value="TBD_text"/>
+          <GROUP utype="spec:Spectrum.Char.SpectralAxis.Coverage">
+            <GROUP utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location">
+              <PARAM datatype="double" name="TimeObs_double" ucd="time.obs_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Value" value="53148.3252"/>
+              <PARAM datatype="double" name="TimeRes_double" ucd="TBD_double" unit="s_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Resolution" value="1000.125"/>
+              <GROUP utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy">
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.BinLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.BinHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.BinSize" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.StatError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.StatErrLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.StatErrHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.SysError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Accuracy.Confidence" value="1000.0"/>
+              </GROUP>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds">
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Extent" value="2500.0"/>
+              <PARAM datatype="double" name="TimeStart_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Min" value="54100.0"/>
+              <PARAM datatype="double" name="TimeStop_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Max" value="54300.0"/>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.SpectralAxis.Coverage.Support">
+              <PARAM arraysize="*" datatype="char" name="TBD_text" ucd="TBD_text" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Support.Area" value="TBD_text"/>
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration;obs.exposure_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Support.Extent" value="2500.0"/>
+              <PARAM arraysize="2" datatype="double" name="Range" ucd="time" unit="s" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Support.Range" value="52100.0 52300.0"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.SpectralAxis.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingExtent" value="1000.0"/>
+            <GROUP utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal">
+              <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="1000.0"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Char.FluxAxis">
+          <PARAM arraysize="*" datatype="char" name="Flux" ucd="TBD" utype="spec:Spectrum.Char.FluxAxis.Name" value="Flux"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Resolution" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Char.FluxAxis.Calibration" value="TBD_text"/>
+          <GROUP utype="spec:Spectrum.Char.FluxAxis.Coverage">
+            <GROUP utype="spec:Spectrum.Char.FluxAxis.Coverage.Location">
+              <PARAM datatype="double" name="TimeObs_double" ucd="time.obs_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Value" value="53148.3252"/>
+              <PARAM datatype="double" name="TimeRes_double" ucd="TBD_double" unit="s_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Resolution" value="1000.125"/>
+              <GROUP utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy">
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.BinLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.BinHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.BinSize" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.StatError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.StatErrLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.StatErrHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.SysError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Location.Accuracy.Confidence" value="1000.0"/>
+              </GROUP>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.FluxAxis.Coverage.Bounds">
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Bounds.Extent" value="2500.0"/>
+              <PARAM datatype="double" name="TimeStart_double" ucd="time_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Bounds.Min" value="53100.0"/>
+              <PARAM datatype="double" name="TimeStop_double" ucd="time_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Bounds.Max" value="53300.0"/>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.FluxAxis.Coverage.Support">
+              <PARAM arraysize="*" datatype="char" name="TBD_text" ucd="TBD_text" utype="spec:Spectrum.Char.FluxAxis.Coverage.Support.Area" value="TBD_text"/>
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration;obs.exposure_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Coverage.Support.Extent" value="2500.0"/>
+              <PARAM arraysize="2" datatype="double" name="Range" ucd="time" unit="s" utype="spec:Spectrum.Char.FluxAxis.Coverage.Support.Range" value="52100.0 52300.0"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.FluxAxis.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.FluxAxis.SamplingPrecision">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.SamplingPrecision.SamplingExtent" value="1000.0"/>
+            <GROUP utype="spec:Spectrum.Char.FluxAxis.SamplingPrecision.SamplingPrecisionRefVal">
+              <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.FluxAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="1000.0"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Char.CharAxis">
+          <PARAM arraysize="*" datatype="char" name="AXIS1" ucd="TBD" utype="spec:Spectrum.Char.CharAxis.Name" value="AXIS1"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Resolution" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Char.CharAxis.Calibration" value="TBD_text"/>
+          <GROUP utype="spec:Spectrum.Char.CharAxis.Coverage">
+            <GROUP utype="spec:Spectrum.Char.CharAxis.Coverage.Location">
+              <PARAM datatype="double" name="TimeObs_double" ucd="time.obs_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Value" value="53148.3252"/>
+              <PARAM datatype="double" name="TimeRes_double" ucd="TBD_double" unit="s_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Resolution" value="1000.125"/>
+              <GROUP utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy">
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.BinLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.BinHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.BinSize" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.StatError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.StatErrLow" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.StatErrHigh" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.SysError" value="1000.0"/>
+                <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Location.Accuracy.Confidence" value="1000.0"/>
+              </GROUP>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.CharAxis.Coverage.Bounds">
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Bounds.Extent" value="2500.0"/>
+              <PARAM datatype="double" name="TimeStart_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Bounds.Min" value="54100.0"/>
+              <PARAM datatype="double" name="TimeStop_double_double" ucd="time_double_double" unit="null_double_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Bounds.Max" value="54300.0"/>
+            </GROUP>
+            <GROUP utype="spec:Spectrum.Char.CharAxis.Coverage.Support">
+              <PARAM arraysize="*" datatype="char" name="TBD_text" ucd="TBD_text" utype="spec:Spectrum.Char.CharAxis.Coverage.Support.Area" value="TBD_text"/>
+              <PARAM datatype="double" name="TimeExtent_double" ucd="time.duration;obs.exposure_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Coverage.Support.Extent" value="2500.0"/>
+              <PARAM arraysize="2" datatype="double" name="Range" ucd="time" unit="s" utype="spec:Spectrum.Char.CharAxis.Coverage.Support.Range" value="52100.0 52300.0"/>
+            </GROUP>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.CharAxis.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+          <GROUP utype="spec:Spectrum.Char.CharAxis.SamplingPrecision">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.SamplingPrecision.SamplingExtent" value="1000.0"/>
+            <GROUP utype="spec:Spectrum.Char.CharAxis.SamplingPrecision.SamplingPrecisionRefVal">
+              <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Char.CharAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="1000.0"/>
+            </GROUP>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.CoordSys">
+        <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.ID" value="TBD"/>
+        <GROUP utype="spec:Spectrum.CoordSys.TimeFrame">
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.CoordSys.TimeFrame.Zero" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.TimeFrame.ID" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="name" utype="spec:Spectrum.CoordSys.TimeFrame.Name" value="UTC"/>
+          <PARAM arraysize="*" datatype="char" name="referencePosition" utype="spec:Spectrum.CoordSys.TimeFrame.RefPos" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="ucd" utype="spec:Spectrum.CoordSys.TimeFrame.UCD" value="TBD"/>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.CoordSys.SpaceFrame">
+          <PARAM datatype="double" name="Equinox_double" ucd="time.equinox;pos.eq_double" unit="null_double" utype="spec:Spectrum.CoordSys.SpaceFrame.Equinox" value="3000.0"/>
+          <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.SpaceFrame.ID" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="name" utype="spec:Spectrum.CoordSys.SpaceFrame.Name" value="ICRS"/>
+          <PARAM arraysize="*" datatype="char" name="referencePosition" utype="spec:Spectrum.CoordSys.SpaceFrame.RefPos" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="ucd" utype="spec:Spectrum.CoordSys.SpaceFrame.UCD" value="TBD"/>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.CoordSys.SpectralFrame">
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.CoordSys.SpectralFrame.Redshift" value="1000.0"/>
+          <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.SpectralFrame.ID" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="name" utype="spec:Spectrum.CoordSys.SpectralFrame.Name" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="referencePosition" utype="spec:Spectrum.CoordSys.SpectralFrame.RefPos" value="BARYCENTER"/>
+          <PARAM arraysize="*" datatype="char" name="ucd" utype="spec:Spectrum.CoordSys.SpectralFrame.UCD" value="TBD"/>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.CoordSys.RedshiftFrame">
+          <PARAM arraysize="*" datatype="char" name="dopplerDefinition" utype="spec:Spectrum.CoordSys.RedshiftFrame.DopplerDefinition" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.RedshiftFrame.ID" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="name" utype="spec:Spectrum.CoordSys.RedshiftFrame.Name" value="ICRS"/>
+          <PARAM arraysize="*" datatype="char" name="referencePosition" utype="spec:Spectrum.CoordSys.RedshiftFrame.RefPos" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="ucd" utype="spec:Spectrum.CoordSys.RedshiftFrame.UCD" value="TBD"/>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.CoordSys.GenericCoordFrame">
+          <PARAM arraysize="*" datatype="char" name="id" utype="spec:Spectrum.CoordSys.GenericCoordFrame.ID" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="name" utype="spec:Spectrum.CoordSys.GenericCoordFrame.Name" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="referencePosition" utype="spec:Spectrum.CoordSys.GenericCoordFrame.RefPos" value="TBD"/>
+          <PARAM arraysize="*" datatype="char" name="ucd" utype="spec:Spectrum.CoordSys.GenericCoordFrame.UCD" value="TBD"/>
+        </GROUP>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.Curation">
+        <PARAM arraysize="*" datatype="char" name="Publisher_text" ucd="meta.organization;meta.curation_text" utype="spec:Spectrum.Curation.Publisher" value="SAO_text"/>
+        <PARAM arraysize="*" datatype="char" name="PubID_text" ucd="meta.curation.pubid_text" utype="spec:Spectrum.Curation.PublisherID" value="ivo://cfa.harvard.edu_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Curation.PublisherDID" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="Reference_text" ucd="meta.bib.bibcode_text" utype="spec:Spectrum.Curation.Reference" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Curation.Version" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Curation.Rights" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.Curation.Date" value="2003-12-31T14:00:02_text"/>
+        <GROUP utype="spec:Spectrum.Curation.Contact">
+          <PARAM arraysize="*" datatype="char" name="Contact_text" ucd="meta.human;meta.curation_text" utype="spec:Spectrum.Curation.Contact.Name" value="Jonathan McDowell_text"/>
+          <PARAM arraysize="*" datatype="char" name="email_text" ucd="meta.email_text" utype="spec:Spectrum.Curation.Contact.Email" value="jcm@cfa.harvard.edu_text"/>
+        </GROUP>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.DataID">
+        <PARAM arraysize="*" datatype="char" name="Title_text" ucd="null_text" utype="spec:Spectrum.DataID.Title" value="Arp 220 SED_text"/>
+        <PARAM arraysize="*" datatype="char" name="Creator_text" ucd="meta.curation.creator_text" utype="spec:Spectrum.DataID.Creator" value="ivo://sao/FLWO_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.DataID.DatasetID" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="DataDate_text" ucd="time;soft.dataset;meta.curation_text" utype="spec:Spectrum.DataID.Date" value="2003-12-31T14:00:02Z_text"/>
+        <PARAM arraysize="*" datatype="char" name="Version_text" ucd="soft.dataset.version;meta.curation_text" utype="spec:Spectrum.DataID.Version" value="1_text"/>
+        <PARAM arraysize="*" datatype="char" name="Instrument_text" ucd="inst.id_text" utype="spec:Spectrum.DataID.Instrument" value="BCS_text"/>
+        <PARAM arraysize="*" datatype="char" name="CreationType_text" ucd="null_text" utype="spec:Spectrum.DataID.CreationType" value="Archival_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.DataID.Bandpass" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.DataID.CreatorDID" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="Logo_text" ucd="meta.curation.logo_text" utype="spec:Spectrum.DataID.Logo" value="http://cfa-www.harvard.edu/nvo/cfalogo.jpg_text"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.DataID.DataSource" value="TBD_text"/>
+        <PARAM arraysize="*" datatype="char" name="Filter" ucd="inst.filter.id" utype="spec:Spectrum.DataID.Collection" value="G300"/>
+        <PARAM arraysize="*" datatype="char" name="Filter_text" ucd="inst.filter.id_text" utype="spec:Spectrum.DataID.Collection" value="G300text"/>
+        <PARAM arraysize="*" datatype="char" name="Contributor" utype="spec:Spectrum.DataID.Contributor" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="null_text" ucd="null_text" utype="spec:Spectrum.DataID.Contributor" value="TBDtext"/>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.Derived">
+        <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.SNR" value="1003.0"/>
+        <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.VarAmpl" value="1000.0"/>
+        <GROUP utype="spec:Spectrum.Derived.Redshift">
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Value" value="1000.0"/>
+          <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Resolution" value="1000.0"/>
+          <PARAM datatype="int" name="null_int" ucd="null_int" unit="null_int" utype="spec:Spectrum.Derived.Redshift.Quality" value="1000"/>
+          <GROUP utype="spec:Spectrum.Derived.Redshift.Accuracy">
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.BinSize" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatErrLow" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.StatErrHigh" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.SysError" value="1000.0"/>
+            <PARAM datatype="double" name="null_double" ucd="null_double" unit="null_double" utype="spec:Spectrum.Derived.Redshift.Accuracy.Confidence" value="1000.0"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <PARAM datatype="double" name="pi" ucd="TBD" unit="TBD" value="3.14159"/>
+      <PARAM datatype="int" name="daysofweek" ucd="TBD" unit="TBD" value="7"/>
+      <PARAM arraysize="*" datatype="char" name="TargetType" ucd="TBD" value="Galaxy"/>
+      <PARAM arraysize="*" datatype="char" name="camdate" ucd="TBD" value="2011-01-04T22:01:59"/>
+      <PARAM arraysize="*" datatype="char" name="age" ucd="TBD" value="1.8"/>
+      <PARAM datatype="double" name="TargetPos" unit="deg" value="233.737917"/>
+      <PARAM datatype="double" name="TargetPos" unit="deg" value="23.50333"/>
+      <GROUP utype="spec:Spectrum.Data">
+        <GROUP utype="spec:Spectrum.Data.TimeAxis">
+          <FIELDref ref="ID_0"/>
+          <FIELDref ref="ID_1"/>
+          <GROUP utype="spec:Spectrum.Data.TimeAxis.Accuracy">
+            <FIELDref ref="ID_2"/>
+            <FIELDref ref="ID_3"/>
+            <FIELDref ref="ID_4"/>
+            <FIELDref ref="ID_5"/>
+            <FIELDref ref="ID_6"/>
+            <FIELDref ref="ID_7"/>
+            <FIELDref ref="ID_8"/>
+            <FIELDref ref="ID_9"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.SpectralAxis">
+          <FIELDref ref="ID_10"/>
+          <FIELDref ref="ID_11"/>
+          <GROUP utype="spec:Spectrum.Data.SpectralAxis.Accuracy">
+            <FIELDref ref="ID_12"/>
+            <FIELDref ref="ID_13"/>
+            <FIELDref ref="ID_14"/>
+            <FIELDref ref="ID_15"/>
+            <FIELDref ref="ID_16"/>
+            <FIELDref ref="ID_17"/>
+            <FIELDref ref="ID_18"/>
+            <FIELDref ref="ID_19"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.FluxAxis">
+          <FIELDref ref="ID_20"/>
+          <FIELDref ref="ID_21"/>
+          <FIELDref ref="ID_22"/>
+          <GROUP utype="spec:Spectrum.Data.FluxAxis.Accuracy">
+            <FIELDref ref="ID_23"/>
+            <FIELDref ref="ID_24"/>
+            <FIELDref ref="ID_25"/>
+            <FIELDref ref="ID_26"/>
+            <FIELDref ref="ID_27"/>
+            <FIELDref ref="ID_28"/>
+            <FIELDref ref="ID_29"/>
+            <FIELDref ref="ID_30"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.BackgroundModel">
+          <FIELDref ref="ID_31"/>
+          <FIELDref ref="ID_32"/>
+          <FIELDref ref="ID_33"/>
+          <GROUP utype="spec:Spectrum.Data.BackgroundModel.Accuracy">
+            <FIELDref ref="ID_34"/>
+            <FIELDref ref="ID_35"/>
+            <FIELDref ref="ID_36"/>
+            <FIELDref ref="ID_37"/>
+            <FIELDref ref="ID_38"/>
+            <FIELDref ref="ID_39"/>
+            <FIELDref ref="ID_40"/>
+            <FIELDref ref="ID_41"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <FIELD ID="ID_0" datatype="double" name="timeValue_data" ucd="timeValueUcd_data" unit="timeValueUnit_data" utype="spec:Spectrum.Data.TimeAxis.Value"/>
+      <FIELD ID="ID_1" datatype="double" name="timeResol_data" ucd="timeResolUcd_data" unit="timeResolUnit_data" utype="spec:Spectrum.Data.TimeAxis.Resolution"/>
+      <FIELD ID="ID_2" datatype="double" name="timeBinLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_3" datatype="double" name="timeBinHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_4" datatype="double" name="timeBinSize_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_5" datatype="double" name="timeStatErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_6" datatype="double" name="timeErrLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_7" datatype="double" name="timeErrHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_8" datatype="double" name="timeSysErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_9" datatype="double" name="timeConf_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.TimeAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_10" datatype="double" name="spectralValue_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Value"/>
+      <FIELD ID="ID_11" datatype="double" name="spectralResol_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Resolution"/>
+      <FIELD ID="ID_12" datatype="double" name="spectralBinLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_13" datatype="double" name="spectralBinHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_14" datatype="double" name="spectralBinSize_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_15" datatype="double" name="spectralStatErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_16" datatype="double" name="spectralErrLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_17" datatype="double" name="spectralErrHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_18" datatype="double" name="spectralSysErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_19" datatype="double" name="spectralConf_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_20" datatype="double" name="fluxValue_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Value"/>
+      <FIELD ID="ID_21" datatype="double" name="fluxResol_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Resolution"/>
+      <FIELD ID="ID_22" datatype="int" name="fluxQual_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Quality"/>
+      <FIELD ID="ID_23" datatype="double" name="fluxBinLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_24" datatype="double" name="fluxBinHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_25" datatype="double" name="fluxBinSize_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_26" datatype="double" name="fluxStatErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_27" datatype="double" name="fluxErrLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_28" datatype="double" name="fluxErrHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_29" datatype="double" name="fluxSysErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_30" datatype="double" name="fluxConf_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.FluxAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_31" datatype="double" name="bkgValue_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Value"/>
+      <FIELD ID="ID_32" datatype="double" name="bkgResol_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Resolution"/>
+      <FIELD ID="ID_33" datatype="int" name="bkgQual_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Quality"/>
+      <FIELD ID="ID_34" datatype="double" name="bkgBinLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinLow"/>
+      <FIELD ID="ID_35" datatype="double" name="bkgBinHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinHigh"/>
+      <FIELD ID="ID_36" datatype="double" name="bkgBinSize_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinSize"/>
+      <FIELD ID="ID_37" datatype="double" name="bkgStatErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatError"/>
+      <FIELD ID="ID_38" datatype="double" name="bkgErrLow_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_39" datatype="double" name="bkgErrHigh_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_40" datatype="double" name="bkgSysErr_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.SysError"/>
+      <FIELD ID="ID_41" datatype="double" name="bkgConf_data" ucd="TBD_data" unit="TBD_data" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.Confidence"/>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>1000.101</TD>
+            <TD>1000.102</TD>
+            <TD>1000.108</TD>
+            <TD>1000.109</TD>
+            <TD>1000.11</TD>
+            <TD>1000.105</TD>
+            <TD>1000.106</TD>
+            <TD>1000.107</TD>
+            <TD>1000.103</TD>
+            <TD>1000.104</TD>
+            <TD>1000.301</TD>
+            <TD>1000.302</TD>
+            <TD>1000.308</TD>
+            <TD>1000.309</TD>
+            <TD>1000.31</TD>
+            <TD>1000.305</TD>
+            <TD>1000.306</TD>
+            <TD>1000.307</TD>
+            <TD>1000.303</TD>
+            <TD>1000.304</TD>
+            <TD>1000.201</TD>
+            <TD>1000.202</TD>
+            <TD>1000</TD>
+            <TD>1000.208</TD>
+            <TD>1000.209</TD>
+            <TD>1000.21</TD>
+            <TD>1000.205</TD>
+            <TD>1000.206</TD>
+            <TD>1000.207</TD>
+            <TD>1000.203</TD>
+            <TD>1000.204</TD>
+            <TD>1000.401</TD>
+            <TD>1000.402</TD>
+            <TD>1000</TD>
+            <TD>1000.408</TD>
+            <TD>1000.409</TD>
+            <TD>1000.41</TD>
+            <TD>1000.405</TD>
+            <TD>1000.406</TD>
+            <TD>1000.407</TD>
+            <TD>1000.403</TD>
+            <TD>1000.404</TD>
+          </TR>
+          <TR>
+            <TD>1001.101</TD>
+            <TD>1001.102</TD>
+            <TD>1001.108</TD>
+            <TD>1001.109</TD>
+            <TD>1001.11</TD>
+            <TD>1001.105</TD>
+            <TD>1001.106</TD>
+            <TD>1001.107</TD>
+            <TD>1001.103</TD>
+            <TD>1001.104</TD>
+            <TD>1001.301</TD>
+            <TD>1001.302</TD>
+            <TD>1001.308</TD>
+            <TD>1001.309</TD>
+            <TD>1001.31</TD>
+            <TD>1001.305</TD>
+            <TD>1001.306</TD>
+            <TD>1001.307</TD>
+            <TD>1001.303</TD>
+            <TD>1001.304</TD>
+            <TD>1001.201</TD>
+            <TD>1001.202</TD>
+            <TD>1001</TD>
+            <TD>1001.208</TD>
+            <TD>1001.209</TD>
+            <TD>1001.21</TD>
+            <TD>1001.205</TD>
+            <TD>1001.206</TD>
+            <TD>1001.207</TD>
+            <TD>1001.203</TD>
+            <TD>1001.204</TD>
+            <TD>1001.401</TD>
+            <TD>1001.402</TD>
+            <TD>1001</TD>
+            <TD>1001.408</TD>
+            <TD>1001.409</TD>
+            <TD>1001.41</TD>
+            <TD>1001.405</TD>
+            <TD>1001.406</TD>
+            <TD>1001.407</TD>
+            <TD>1001.403</TD>
+            <TD>1001.404</TD>
+          </TR>
+          <TR>
+            <TD>1002.101</TD>
+            <TD>1002.102</TD>
+            <TD>1002.108</TD>
+            <TD>1002.109</TD>
+            <TD>
+            1002.11</TD>
+            <TD>1002.105</TD>
+            <TD>1002.106</TD>
+            <TD>1002.107</TD>
+            <TD>1002.103</TD>
+            <TD>1002.104</TD>
+            <TD>1002.301</TD>
+            <TD>1002.302</TD>
+            <TD>1002.308</TD>
+            <TD>1002.309</TD>
+            <TD>1002.31</TD>
+            <TD>1002.305</TD>
+            <TD>1002.306</TD>
+            <TD>1002.307</TD>
+            <TD>1002.303</TD>
+            <TD>1002.304</TD>
+            <TD>1002.201</TD>
+            <TD>1002.202</TD>
+            <TD>1002</TD>
+            <TD>1002.208</TD>
+            <TD>1002.209</TD>
+            <TD>1002.21</TD>
+            <TD>1002.205</TD>
+            <TD>1002.206</TD>
+            <TD>1002.207</TD>
+            <TD>1002.203</TD>
+            <TD>1002.204</TD>
+            <TD>1002.401</TD>
+            <TD>1002.402</TD>
+            <TD>1002</TD>
+            <TD>1002.408</TD>
+            <TD>1002.409</TD>
+            <TD>1002.41</TD>
+            <TD>1002.405</TD>
+            <TD>1002.406</TD>
+            <TD>1002.407</TD>
+            <TD>1002.403</TD>
+            <TD>1002.404</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

@@ -1,0 +1,81 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+      <p>The SED Library allows serialization and deserialization of Spectral Energy Distribution files according to the
+        <a href="http://ivoa.net/Documents/cover/SpectrumDM-20071029.html">IVOA Spectrum Data Model v1.03.</a></p>
+
+      <p>
+          This is a development version of the SED library and is a work in
+          progress.  It's interfaces and functionality are subject to change.
+      </p>
+
+      <p>The currently supported serialization formats are VOTable and FITS. XML serialization might be included in future versions.</p>
+
+      <p>A Spectral Energy Distribution is represented by the {@link cfa.vo.sedlib.Sed} class. In the current implementation, this class provides methods to access
+        and manipulate a list of {@link cfa.vo.sedlib.Segment} objects, each segment being the representation of a Spectrum or a collection of Photometry points.</p>
+
+      <p>A {@link cfa.vo.sedlib.Sed} object can be read from a file using the {@link cfa.vo.sedlib.io.SedIOFactory}. For example, the following code
+          reads the <code>sample.vot</code> VOTable from disk:</p>
+
+      <pre><code>
+      Sed doc;
+
+	try
+	{
+	    ISedDeserializer deserializer = SedIOFactory.createDeserializer( SedFormat.VOT );
+	    doc = deserializer.deserialize( "sample.vot" );
+	}
+	catch ( Exception exp )
+	{
+	   /* ... handle exception ... */
+	}
+      </code></pre>
+
+      On the other hand, to write the {@link cfa.vo.sedlib.Sed} object <code>sed</code> to disk in a given {@link cfa.vo.sedlib.io.SedFormat}, e.g. VOTable:
+
+      <pre><code>
+      try
+	{
+	    ISedSerializer serializer = SedIOFactory.createSerializer( SedFormat.VOT );
+	    serializer.serialize( "sample.vot", sed );
+	}
+	catch ( Exception exp )
+	{
+	    /* ... handle exception ... */
+	}
+      </code></pre>
+
+
+      <p>The library also provides a collection of Java classes that map to the
+        datatypes defined in the schema.</p>
+
+      <p>SED documents (in various file
+        formats) can be read by the library and the corresponding Java objects
+        instantianted.  These objects can then be modified as desired - which
+        is equivalent to editing the document - and the results written as a
+        modified document.  The library API can also be used to create
+        documents by instantiating the appropriate Java objects
+        directly.
+      </p>
+
+        <p>
+        The library can be used to transform SED documents from one file
+        format to another by reading the document, which builds the
+        appropriate Java
+        object(s) and then writing it out in another format.
+        </p>
+        <p>
+        The API also provides access to the spectral data in a document. This
+        permits, for example, plotting of the data, statistical analysis of
+        multiple spectra, or fitting theoretical models to the data.
+        </p>
+  </body>
+</html>

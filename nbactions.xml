@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-Site skipping tests</actionName>
+            <displayName>Site skipping tests</displayName>
+            <goals>
+                <goal>site:site</goal>
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-site</actionName>
+            <displayName>site</displayName>
+            <goals>
+                <goal>site:site</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-Changelog</actionName>
+            <displayName>Changelog</displayName>
+            <goals>
+                <goal>changelog:changelog</goal>
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </action>
+    </actions>

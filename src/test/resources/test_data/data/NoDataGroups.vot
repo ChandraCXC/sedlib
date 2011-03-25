@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ! This originated from the VOTable example in the standards document found at
+ !    http://www.ivoa.net/Documents/REC/DM/SpectrumDM-20071029.pdf
+ ! The original version (cvs rev 1.1 ) was obtained from /data/jcm/src/linux/java/ntest/new.vot
+ !-->
+    
+<VOTABLE version="1.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="xmlns:http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd"
+      xmlns:spec="http://www.ivoa.net/xml/SpectrumModel/v1.01"
+      xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+  <RESOURCE utype="spec:Spectrum">
+        
+    <TABLE utype="spec:Spectrum">
+      <GROUP utype="spec:Target">
+        <PARAM name="Target" utype="spec:Target.Name" datatype="char" arraysize="*" value="Arp 220"/>
+        <PARAM name="TargetPos" utype="spec:Target.pos" unit="deg" datatype="double"
+              arraysize="2" value="233.737917 23.503330"/>
+        <PARAM name="z" utype="spec:Target.redshift" datatype="float" value="0.0018"/>
+      </GROUP>
+          
+      <!-- SegmentType can be Photometry, TimeSeries or Spectrum -->
+      <PARAM name="Segtype" utype="spec:Type" datatype="char" arraysize="*" value="Photometry" ucd="meta.code"/>
+          
+          
+<PARAM name="SysErr" utype="spec:Data.FluxAxis.Accuracy.SysError" unit=""
+datatype="float" value="0.05"/>
+<PARAM name="Resolution" utype="spec:Data.SpectralAxis.Resolution"
+ucd="spect.resolution;em.wave"    unit="Angstrom" datatype="float" value="14.2"/>
+      <FIELD name="Coord" ID="Coord" utype="spec:Data.SpectralAxis.Value" ucd="em.wavelength"
+            datatype="double" unit="Angstrom"/>
+      <FIELD name="BinLow" ID="BinLow" utype="spec:Data.SpectralAxis.Accuracy.BinLow"
+            ucd="stat.min;em.wavelength"
+            datatype="double" unit="Angstrom"/>
+      <FIELD name="BinHigh" ID="BinHigh" utype="spec:Data.SpectralAxis.Accuracy.BinHigh"
+            ucd="stat.max;em.wavelength"
+            datatype="double" unit="Angstrom"/>
+      <FIELD name="Flux" ID="Flux1" utype="spec:Data.FluxAxis.value" ucd="phot.flux.density;em.wavelength"
+            datatype="double" unit="erg cm**(-2) s**(-1) Angstrom**(-1)"/>
+      <FIELD name="ErrorLow" ID="ErrorLow" utype="spec:Data.FluxAxis.Accuracy.StatErrLow"
+            datatype="double" unit="erg cm**(-2) s**(-1) Angstrom**(-1)"/>
+      <FIELD name="ErrorHigh" ID="ErrorHigh" utype="spec:Data.FluxAxis.Accuracy.StatErrHigh"
+            datatype="double" unit="erg cm**(-2) s**(-1) Angstrom**(-1)"/>
+      <FIELD name="Quality" ID="Quality" datatype="int" utype="spec:Data.FluxAxis.Quality"/>
+      <DATA>
+        <TABLEDATA>
+          <!-- Note slightly nonlinear wavelength solution -->
+          <!-- Second row is upper limit -->
+          <!-- Third row has quality mask set -->
+          <TR><TD>3200.0</TD><TD>3195.0</TD><TD>3205.0</TD><TD>1.38E-12</TD><TD>5.2E-14</TD><TD>6.2E-14</TD>
+          <TD>0</TD></TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>
+

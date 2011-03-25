@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sedType xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd" xmlns:ns2="http://www.w3.org/1999/xlink">
+    <BaseSegment>
+        <Target>
+            <Name>Arp 220</Name>
+            <Description>Ultraluminous Infrared Galaxy</Description>
+            <TargetClass>TBD</TargetClass>
+            <SpectralClass>TBD</SpectralClass>
+            <Redshift>0.0018</Redshift>
+            <Pos>
+                <value unit="deg" name="TargetPos">233.737917</value>
+                <value unit="deg" name="TargetPos">23.503330</value>
+            </Pos>
+            <VarAmpl>0.0</VarAmpl>
+        </Target>
+        <ArrayOfFlatPoint/>
+    </BaseSegment>
+</sedType>

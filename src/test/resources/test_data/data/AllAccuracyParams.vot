@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+vi: expandtab shiftwidth=2 tabstop=2
+-->
+<VOTABLE version="1.1"
+ xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+ xmlns:sed="http://www.ivoa.net/xml/SedModel/v0.93"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="SedType" >
+    <TABLE utype="SedType" >
+      <PARAM arraysize="*" datatype="char" name="Creator" ucd="UNKOWN_UCD" utype="SED.Creator" value="TheIntelligentDesigner" />
+      <PARAM arraysize="*" datatype="char" name="CreatorID" ucd="UNKOWN_UCD" utype="SED.CreatorID" value="DIDforCreataor" />
+      <PARAM arraysize="*" datatype="char" name="Date" ucd="UNKOWN_UCD" unit="Julian" utype="Date" value="October 15, 1987"/>
+      <GROUP utype="Target" >
+        <PARAM arraysize="*" datatype="char" name="Name" ucd="placeholder" utype="Target.Name" value="HD 100006"/>
+        <PARAM arraysize="*" datatype="char" name="Description" ucd="placeholder" utype="Target.Description" value="concentric_circles"/>
+        <PARAM datatype="double" name="Redshift" ucd="Maybe.red.shift" unit="Doppler" utype="Target.Redshift" value="-0.29"/>
+        <PARAM datatype="double" name="VarAmpl" ucd="placeholder" unit="feet" utype="Target.VarAmpl" value="34.56"/>
+      </GROUP>
+        <FIELD ID="F" datatype="double" name="Flux" ucd="phot.flux.density;em.wl" unit="Cubits" utype="Data.FluxAxis.Value"/>
+        <FIELD datatype="double" name="Wavelength" ucd="em.wl" utype="Data.SpectralAxis.Value"/>
+        <FIELD datatype="double" name="BinSize" ucd="em.wl;spect.binSize" utype="Data.SpectralAxis.Accuracy.BinSize"/>
+
+        <FIELD datatype="double" name="BinHigh" ucd="em.wl;spect.binHigh" utype="Data.SpectralAxis.Accuracy.BinHigh"/>
+        <FIELD datatype="double" name="BinLow"  ucd="em.wl;spect.binLow"  utype="Data.SpectralAxis.Accuracy.BinLow" />
+        <FIELD datatype="double" name="StatError "  ucd="em.wl;spect.StatError"   utype="Data.SpectralAxis.Accuracy.StatError" />
+        <FIELD datatype="double" name="StatErrLow"  ucd="em.wl;spect.StatErrLow"  utype="Data.SpectralAxis.Accuracy.StatErrLow"/>
+        <FIELD datatype="double" name="StatErrHigh" ucd="em.wl;spect.StatErrHigh" utype="Data.SpectralAxis.Accuracy.StatErrHigh"/>
+        <FIELD datatype="double" name="SysError"    ucd="em.wl;spect.SysError"    utype="Data.SpectralAxis.Accuracy.SysError"   />
+      <DATA>
+        <TABLEDATA>
+          <TR>
+          <TD>6001.0</TD>
+          <TD>0.9801</TD>
+          <TD>0.11</TD>
+          <TD>1.4</TD>
+          <TD>1.5</TD>
+          <TD>1.6</TD>
+          <TD>1.7</TD>
+          <TD>1.8</TD>
+          <TD>1.9</TD>
+          </TR>
+          <TR>
+          <TD>6004.0</TD>
+          <TD>0.9804</TD>
+          <TD>0.44</TD>
+         <TD>2.1</TD>
+         <TD>2.5</TD>
+         <TD>2.6</TD>
+         <TD>2.7</TD>
+         <TD>2.8</TD>
+         <TD>2.9</TD>
+          </TR>
+        </TABLEDATA>
+       </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    vi: expandtab shiftwidth=2 tabstop=2
+    -->
+<VOTABLE version="1.1"
+      xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+      xmlns:sed="http://www.ivoa.net/xml/SedModel/v0.93"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+      >
+  <RESOURCE utype="SedType" >
+    <TABLE utype="SedType" >
+
+    <GROUP utype="Char" >
+      <GROUP utype="Char.SpatialAxis">
+        <GROUP utype="Char.SpatialAxis.Coverage">
+          <GROUP utype="Char.SpatialAxis.Coverage.Bounds">
+            <PARAM name="TimeExtent" utype="Char.SpatialAxis.Coverage.Bounds.Extent" ucd="time.duration"
+                  unit="s" datatype="double" value="1500.0" />
+            <PARAM name="TimeStart" utype="Char.SpatialAxis.Coverage.Bounds.Min" ucd="time" unit="s"
+                  datatype="double" value="52100.000" />
+            <PARAM name="TimeStop" utype="Char.SpatialAxis.Coverage.Bounds.Max" ucd="time" unit="s"
+                  datatype="double" value="52300.000" />
+          </GROUP>
+        </GROUP>
+      </GROUP>
+    </GROUP>
+
+          <FIELD datatype="double" name="Flux" ucd="phot.flux.density;em.wl" unit="Cubits" utype="Data.FluxAxis.Value"/>
+          <DATA>
+            <TABLEDATA>
+              <TR>
+                <TD>0.11</TD>
+              </TR>
+              <TR>
+                <TD>4.0 </TD>
+              </TR>
+            </TABLEDATA>
+          </DATA>
+        </TABLE>
+      </RESOURCE>
+    </VOTABLE>

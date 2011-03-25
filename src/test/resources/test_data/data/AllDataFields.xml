@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+    vi: expandtab shiftwidth=2 tabstop=2
+    -->
+<SED xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd">
+
+  <Date> March 20, 1949 </Date>
+  <Target>
+    <Name name="Target">HD 100006</Name>
+    <Description name="description" >This is the targetType </Description>
+    <TargetClass name="TgtClass" ucd="src.class">star</TargetClass>
+    <SpectralClass name="SpClass" ucd="src.sptype">K0III</SpectralClass>
+    <Redshift name="Redshift" ucd="src.redshift">8.900000102585182E-5</Redshift>
+    <Pos>
+      <value > 172.62095833</value>
+      <value > 18.40980556</value>
+    </Pos>
+    <VarAmpl name="variableAmplitude" > 43.21 </VarAmpl>
+  </Target>
+
+  <Type >This is the 'type' </Type>
+
+  <NSegments> 1 </NSegments>
+  <BaseSegment>
+        <Type name="SpectrumType">Spectrum</Type>
+        <TimeSI  name="TimeSI_name" ucd="TimeSI_UCD" >the time SI</TimeSI>
+    <Data2>
+                <Point
+                        F="1.01"
+                        F_ErrL="1.02"
+                        F_ErrH="1.03"
+                        F_Sys="1.04"
+                        F_Qual="105"
+                        SP="1.06"
+                        SP_BinL="1.07"
+                        SP_BinH="1.08"
+                        SP_Size="1.09"
+                        SP_Res="1.10"
+                        T="1.11"
+                        T_BinL="1.12"
+                        T_BinH="1.13"
+                        T_Size="1.14"
+                        T_Res="1.15"
+                        BG="1.16"
+                        BG_ErrL="1.17"
+                        BG_ErrH="1.18"
+                        BG_Sys="1.19"
+                        BG_Qual="120"
+                />
+                <Point
+                        F="2.01"
+                        F_ErrL="2.02"
+                        F_ErrH="2.03"
+                        F_Sys="2.04"
+                        F_Qual="205"
+                        SP="2.06"
+                        SP_BinL="2.07"
+                        SP_BinH="2.08"
+                        SP_Size="2.09"
+                        SP_Res="2.10"
+                        T="2.11"
+                        T_BinL="2.12"
+                        T_BinH="2.13"
+                        T_Size="2.14"
+                        T_Res="2.15"
+                        BG="2.16"
+                        BG_ErrL="2.17"
+                        BG_ErrH="2.18"
+                        BG_Sys="2.19"
+                        BG_Qual="220"
+                />
+    </Data2>
+  </BaseSegment>
+
+  <Creator> Kevin Almighty </Creator>
+  <CreatorDID> Kevin's DID </CreatorDID>
+
+  <SpectralMinWavelength  ucd="SpecMinUCD" unit="miles" name="TheMin" >487</SpectralMinWavelength>
+
+  <SpectralMaxWavelength  ucd="SpecMaxUCD" unit="miles" name="TheMax" >489</SpectralMaxWavelength>
+
+</SED>

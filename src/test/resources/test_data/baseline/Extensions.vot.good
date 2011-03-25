@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <PARAM arraysize="*" datatype="char" name="Type" utype="spec:Spectrum.Type" value="Photometry"/>
+      <GROUP utype="spec:Spectrum.Target">
+        <PARAM arraysize="*" datatype="char" name="TargetName" ucd="meta.id;src" utype="spec:Spectrum.Target.Name" value="3C 279"/>
+        <PARAM arraysize="2" datatype="double" name="TargetPos" ucd="pos.eq;src" unit="deg" utype="spec:Spectrum.Target.Pos" value="194.0465271 -5.7893119"/>
+        <GROUP>
+          <PARAM arraysize="*" datatype="char" value="target subgroup param"/>
+        </GROUP>
+      </GROUP>
+      <GROUP utype="spec:Spectrum.DataID">
+        <PARAM arraysize="*" datatype="char" name="Title" ucd="meta.title;meta.dataset" utype="spec:Spectrum.DataID.Title" value="Photometric Data"/>
+        <PARAM arraysize="*" datatype="char" name="Creator" utype="spec:Spectrum.DataID.Creator" value="NASA/IPAC Extragalactic Database (NED)"/>
+        <PARAM arraysize="*" datatype="char" name="CreationType" utype="spec:Spectrum.DataID.CreationType" value="Derived"/>
+        <PARAM datatype="double" name="p3" value="0.102"/>
+        <PARAM arraysize="*" datatype="char" name="p6" value="test2"/>
+      </GROUP>
+      <PARAM arraysize="*" datatype="char" name="p1" value="blah"/>
+      <PARAM arraysize="*" datatype="char" name="p2" value="blah"/>
+      <PARAM datatype="double" name="p3" value="0.102"/>
+      <PARAM arraysize="*" datatype="char" name="TargetName" value="3C 279"/>
+      <PARAM datatype="int" name="p5" value="1"/>
+      <PARAM arraysize="*" datatype="char" name="p6" value="test2"/>
+      <GROUP utype="spec:Spectrum.Data">
+        <FIELDref ref="ID_0"/>
+        <GROUP utype="spec:Spectrum.Data.FluxAxis">
+          <PARAM ID="col5" datatype="double" name="col5" unit="Jy" utype="spec:Spectrum.Data.FluxAxis.Value" value="1.9E-11"/>
+          <PARAM ID="p5" datatype="int" name="p5" ucd="meta.code.qual;phot.flux.density;em.*" utype="spec:Spectrum.Data.FluxAxis.Quality" value="1"/>
+          <PARAM ID="DataFluxUcd" arraysize="*" datatype="char" name="DataFluxUcd" value="phot.flux.density;em.freq"/>
+          <PARAM ID="DataFluxUnit" arraysize="*" datatype="char" name="DataFluxUnit" value="Jy"/>
+          <FIELDref ref="col4"/>
+        </GROUP>
+        <GROUP ID="Model">
+          <GROUP ID="Model.FluxAxis">
+            <PARAM ID="p2" arraysize="*" datatype="char" name="p2" value="blah"/>
+            <PARAM ID="ID_1" datatype="double" name="chisq" value="4.01"/>
+            <PARAM ID="p6" arraysize="*" datatype="char" name="p6" value="test2"/>
+            <FIELDref ref="col2"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <FIELD ID="ID_0" arraysize="*" datatype="char" name="DBref"/>
+      <FIELD ID="col4" datatype="double" name="col4" unit="Jy"/>
+      <FIELD ID="col2" datatype="double" name="col2" unit="Jy"/>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>E77.293</TD>
+            <TD>1.48E-24</TD>
+            <TD>1.8E-11</TD>
+          </TR>
+          <TR>
+            <TD>G87.544</TD>
+            <TD>1.52E-14</TD>
+            <TD>1.89E-11</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

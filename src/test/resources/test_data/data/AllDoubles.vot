@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ! Original: /data/nvo/staff/mccusker/inputs/vot/testalldoubles.vot
+ !-->
+
+<VOTABLE version="1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:sed="http://www.ivoa.net/xml/SedModel/v0.93"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+<RESOURCE utype="sed:SED">
+<!-- @@@@ I changed Quality from int to double and Points.Time from float to double -->
+<TABLE utype="sed:SED">   
+<PARAM name="Date" utype="sed:Date" datatype="char" arraysize="*" value="2004-05-10"/>
+<PARAM name="Nseg" utype="sed:NSegments" ucd="meta.number" datatype="int" value="1"/>
+<GROUP utype="sed:Target">
+ <PARAM name="Target" utype="sed:Target.Name" datatype="char" arraysize="*" value="Arp 220"/>
+ <PARAM name="z" utype="sed:Target.Redshift" datatype="float" value="0.0018"/>
+
+
+ <PARAM name="TargetPos" utype="sed:Target.Pos" unit="deg" datatype="double" arraysize="2" value="233.737917,12.34"/>
+
+
+ <PARAM name="z" utype="sed:Target.Redshift" datatype="float" value="0.0018"/>
+</GROUP>
+</TABLE>
+
+</RESOURCE>
+</VOTABLE>
+

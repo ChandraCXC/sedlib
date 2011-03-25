@@ -1,0 +1,46 @@
+XTENSION= 'BINTABLE'           / Binary table SEDLib version:  1.2              
+BITPIX  =                    8 / bits per byte                                  
+NAXIS   =                    2 / Always 2 for binary extension                  
+NAXIS1  =                   48 / Number bytes per row                           
+NAXIS2  =                    1 / Number of rows in binary table.                
+PCOUNT  =                    0 / Normally 0 (no varying arrays)                 
+GCOUNT  =                    1 / Required value                                 
+TFIELDS =                    3 / Number fields                                  
+VOCLASS = 'Spectrum-1.0'       / Data_model                                     
+DATALEN =                    2 / Num_data_points                                
+TITLE   = 'title for DataID'   / DataID_title                                   
+AUTHOR  = 'Creator for DataID' / DataID_creator                                 
+DS_IDENT= 'DatasetID for DataID' / DataId_datasetID                             
+CR_IDENT= 'CreatorDID for DataID' / DataID_creatorDID                           
+DATE    = 'Date for DataID'    / DataID_data                                    
+VERSION = 'Version for DataID' / DataID_version                                 
+INSTRUME= 'Instrument for DataID' / DataID_instrument                           
+CRETYPE = 'CreationType for DataID' / DataId-creationType                       
+VOLOGO  = 'Logo for DataID'    / DataID_logo                                    
+DSSOURCE= 'DataSource for DataID' / DataID_dateSource                           
+SPECBAND= 'Bandpass for DataID' / DateID_bandpass                               
+COLLECT1= 'Collection1'        / DataID_Collection                              
+COLLECT2= 'Collection2'        / DataID_Collection                              
+COLLECT3= 'Collection3'        / DataID_Collection                              
+CONTRIB1= 'Contributor1'       / DataID_contributor                             
+CONTRIB2= 'Contributor2'       / DataID_contributor                             
+CONTRIB3= 'Contributor3'       / DataID_contributor                             
+TFORM1  = '2D      '           / Flux                                           
+TFORM2  = '2D      '           / Wavelength                                     
+TFORM3  = '2D      '           / BinSize                                        
+TTYPE1  = 'Flux    '           / Field name                                     
+TTYPE2  = 'Wavelength'         / Field name                                     
+TTYPE3  = 'BinSize '           / Field name                                     
+TUTYP1  = 'Data.FluxAxis.Value' / utype                                         
+TUTYP2  = 'Data.SpectralAxis.Value' / utype                                     
+TUTYP3  = 'Data.SpectralAxis.Accuracy.BinSize' / utype                          
+TUCD1   = 'phot.flux.density;em.wl' / ucd                                       
+TUCD2   = 'em.wl   '           / ucd                                            
+TUCD3   = 'em.wl;spect.binSize' / ucd                                           
+TUNIT1  = 'Cubits  '           / units                                          
+TUNIT2  = '        '           / units                                          
+TUNIT3  = '        '           / units                                          
+END                                                                             
+6001  6004  
+0.9801  0.9804  
+0.11  0.44  

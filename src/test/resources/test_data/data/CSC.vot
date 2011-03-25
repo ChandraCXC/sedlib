@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<VOTABLE version="1.2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+  xsi:SchemaLocation="http://www.ivoa.net/xml/VOTable/v1.2"
+  xmlns:stc="http://www.ivoa.net/xml/STC/v1.30">
+<!--
+  Results from simple query on Chandra Source Catalogue.
+  This is a generic VOTable file which is making use of 
+  the STC model for some of its elements.
+-->
+<RESOURCE name="CSC">
+<TABLE name="null">
+ <GROUP utype="stc:AstroCoordSystem" ID="ICRS">
+   <DESCRIPTION>ICRS Coordinate System</DESCRIPTION>
+   <GROUP utype="stc:AstroCoordSystem.TimeFrame">
+     <PARAM name="TimeScale" datatype="char" arraysize="*"
+           utype="stc:AstroCoordSystem.TimeFrame.TimeScale" value="TT"/>
+     <PARAM name="TimeRefPosition" datatype="char" arraysize="*"
+           utype="stc:AstroCoordSystem.TimeFrame.ReferencePosition"
+           value="TOPOCENTER"/>
+   </GROUP>
+   <GROUP utype="stc:AstroCoordSystem.SpaceFrame">
+     <PARAM name="SpaceRefFrame" datatype="char" arraysize="*"
+           utype="stc:AstroCoordSystem.SpaceFrame.SpaceRefFrame"
+           value="ICRS"/>
+     <PARAM name="SpaceRefPosition" datatype="char" arraysize="*"
+           utype="stc:AstroCoordSystem.SpaceFrame.ReferencePosition"
+           value="TOPOCENTER"/>
+   </GROUP>
+   <GROUP utype="stc:AstroCoordSystem.SpectralFrame">
+     <PARAM name="SpectralRefPosition" datatype="char" arraysize="*"
+           utype="stc:AstroCoordSystem.SpectralFrame.ReferencePosition"
+           value="TOPOCENTER"/>
+   </GROUP>
+ </GROUP>
+ <GROUP ID="ICRScoords" utype="stc:AstroCoords">
+   <DESCRIPTION>ICRS coordinates</DESCRIPTION>
+   <PARAM datatype="char" arraysize="*" ucd="pos.frame" name="cooframe"
+         utype="stc:AstroCoords.coord_system_id" value="ICRS"/>
+     <FIELDref ref="col3"/>
+     <FIELDref ref="col4"/>
+     <FIELDref ref="col5"/>
+ </GROUP>
+<FIELD ID="col0" datatype="double" name="separation" precision="F2" ucd="pos.angDistance" unit="arcsec" width="9">
+<DESCRIPTION>Distance from master source to center of cone search</DESCRIPTION>
+</FIELD>
+<FIELD ID="col1" datatype="int" name="dataset_id" ucd="meta.id" width="10">
+<DESCRIPTION>Dataset identifier used to access Data Products</DESCRIPTION>
+<VALUES null='-2147483648'/>
+</FIELD>
+<FIELD ID="col2" arraysize="*" datatype="char" name="name" ucd="meta.id;meta.main" width="20">
+<DESCRIPTION>Source name in the format 'CXO Jhhmmss.s +/- ddmmss'</DESCRIPTION>
+</FIELD>
+<FIELD ID="col3" datatype="double" name="ra" precision="F5" ref="ICRScoords" ucd="pos.eq.ra;meta.main" utype="stc:AstroCoords.Position2D.Value2.C1" width="9">
+<DESCRIPTION>Source position, ICRS right ascension</DESCRIPTION>
+</FIELD>
+<FIELD ID="col4" datatype="double" name="dec" precision="F5" ref="ICRScoords" ucd="pos.eq.dec;meta.main" utype="stc:AstroCoords.Position2D.Value2.C2" width="9">
+<DESCRIPTION>Source position, ICRS declination</DESCRIPTION>
+</FIELD>
+<FIELD ID="col5" datatype="double" name="err_ellipse_r0" precision="F2" ref="ICRScoords" ucd="phys.angSize.smaj;pos.errorEllipse" unit="arcsec" utype="stc:AstroCoords.Position2D.Error2.C1" width="7">
+<DESCRIPTION>Major radius of the 95% confidence level error ellipse</DESCRIPTION>
+</FIELD>
+<FIELD ID="col6" datatype="boolean" name="conf_flag" ucd="meta.code" width="5">
+<DESCRIPTION>Source regions overlap (source is confused)</DESCRIPTION>
+</FIELD>
+<FIELD ID="col7" datatype="boolean" name="sat_src_flag" ucd="meta.code.qual;instr.saturation" width="5">
+<DESCRIPTION>Source is saturated in all observations; source properties are unreliable</DESCRIPTION>
+</FIELD>
+<FIELD ID="col8" datatype="double" name="significance" precision="F2" ucd="stat.snr" width="7">
+<DESCRIPTION>Highest source flux significance across all observations</DESCRIPTION>
+</FIELD>
+<FIELD ID="col9" datatype="double" name="flux_aper_b" precision="E3" ucd="phot.flux;src.net;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events; ACIS broad energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col10" datatype="double" name="flux_aper_lolim_b" precision="E3" ucd="stat.error;phot.flux;src.net;stat.min;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events (68% lower confidence limit); ACIS broad energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col11" datatype="double" name="flux_aper_hilim_b" precision="E3" ucd="stat.error;phot.flux;src.net;stat.max;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events (68% upper confidence limit); ACIS broad energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col12" datatype="double" name="flux_aper_w" precision="E3" ucd="phot.flux;src.net;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events; HRC wide energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col13" datatype="double" name="flux_aper_lolim_w" precision="E3" ucd="stat.error;phot.flux;src.net;stat.min;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events (68% lower confidence limit); HRC wide energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col14" datatype="double" name="flux_aper_hilim_w" precision="E3" ucd="stat.error;phot.flux;src.net;stat.max;em.X-ray" unit="erg/s*cm^2" width="9">
+<DESCRIPTION>Aperture-corrected net energy flux inferred from the source region aperture, calculated by counting X-ray events (68% upper confidence limit); HRC wide energy band</DESCRIPTION>
+</FIELD>
+<DATA>
+<TABLEDATA>
+  <TR>
+    <TD>189.61727234855022</TD>
+    <TD>101</TD>
+    <TD>CXO J183658.2+384352</TD>
+    <TD>279.24261035785094</TD>
+    <TD>38.731379777829915</TD>
+    <TD>0.833996</TD>
+    <TD>F</TD>
+    <TD>F</TD>
+    <TD>3.41699</TD>
+    <TD>5.84441E-14</TD>
+    <TD>3.77594E-14</TD>
+    <TD>5.72643E-14</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD></TD>
+  </TR>
+  <TR>
+    <TD>264.10105183193053</TD>
+    <TD>202465</TD>
+    <TD>CXO J183717.4+384833</TD>
+    <TD>279.32288771</TD>
+    <TD>38.80941448</TD>
+    <TD>1.36098</TD>
+    <TD>F</TD>
+    <TD>F</TD>
+    <TD>5.38123</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD>1.62073E-13</TD>
+    <TD>1.32323E-13</TD>
+    <TD>1.92123E-13</TD>
+  </TR>
+  <TR>
+    <TD>294.5975538287131</TD>
+    <TD>202474</TD>
+    <TD>CXO J183659.0+384208</TD>
+    <TD>279.24589506</TD>
+    <TD>38.7023236</TD>
+    <TD>1.0932</TD>
+    <TD>F</TD>
+    <TD>F</TD>
+    <TD>5.24487</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD>8.97593E-14</TD>
+    <TD>8.18815E-14</TD>
+    <TD>9.77166E-14</TD>
+  </TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

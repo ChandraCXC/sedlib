@@ -1,0 +1,19 @@
+XTENSION= 'BINTABLE'           / Binary table SEDLib version:  1.2              
+BITPIX  =                    8 / bits per byte                                  
+NAXIS   =                    2 / Always 2 for binary extension                  
+NAXIS1  =                    0 / Number bytes per row                           
+NAXIS2  =                    1 / Number of rows in binary table.                
+PCOUNT  =                    0 / Normally 0 (no varying arrays)                 
+GCOUNT  =                    1 / Required value                                 
+TFIELDS =                    0 / Number fields                                  
+DATALEN =                    0                                                  
+VOCLASS = 'Spectrum-1.0'                                                        
+OBJECT  = 'Arp 220 '                                                            
+OBJDESC = 'Ultraluminous Infrared Galaxy'                                       
+SRCCLASS= 'TBD     '                                                            
+SPECTYPE= 'TBD     '                                                            
+REDSHIFT=               0.0018                                                  
+RA_TARG =           233.737917 / [deg]                                          
+DEC_TARG=             23.50333 / [deg]                                          
+TARGVAR =                  0.0                                                  
+END                                                                             

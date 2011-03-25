@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <GROUP utype="spec:Spectrum.Data">
+        <FIELDref ref="idA"/>
+        <FIELDref ref="idC"/>
+        <FIELDref ref="idB"/>
+        <GROUP utype="spec:Spectrum.Data.TimeAxis">
+          <FIELDref ref="ID_0"/>
+          <FIELDref ref="ID_1"/>
+          <GROUP utype="spec:Spectrum.Data.TimeAxis.Accuracy">
+            <FIELDref ref="ID_2"/>
+            <FIELDref ref="ID_3"/>
+            <FIELDref ref="ID_4"/>
+            <FIELDref ref="ID_5"/>
+            <FIELDref ref="ID_6"/>
+            <FIELDref ref="ID_7"/>
+            <FIELDref ref="ID_8"/>
+            <FIELDref ref="ID_9"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.SpectralAxis">
+          <FIELDref ref="ID_10"/>
+          <FIELDref ref="ID_11"/>
+          <GROUP utype="spec:Spectrum.Data.SpectralAxis.Accuracy">
+            <FIELDref ref="ID_12"/>
+            <FIELDref ref="ID_13"/>
+            <FIELDref ref="ID_14"/>
+            <FIELDref ref="ID_15"/>
+            <FIELDref ref="ID_16"/>
+            <FIELDref ref="ID_17"/>
+            <FIELDref ref="ID_18"/>
+            <FIELDref ref="ID_19"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.FluxAxis">
+          <FIELDref ref="ID_20"/>
+          <FIELDref ref="ID_21"/>
+          <FIELDref ref="ID_22"/>
+          <GROUP utype="spec:Spectrum.Data.FluxAxis.Accuracy">
+            <FIELDref ref="ID_23"/>
+            <FIELDref ref="ID_24"/>
+            <FIELDref ref="ID_25"/>
+            <FIELDref ref="ID_26"/>
+            <FIELDref ref="ID_27"/>
+            <FIELDref ref="ID_28"/>
+            <FIELDref ref="ID_29"/>
+            <FIELDref ref="ID_30"/>
+          </GROUP>
+        </GROUP>
+        <GROUP utype="spec:Spectrum.Data.BackgroundModel">
+          <FIELDref ref="ID_31"/>
+          <FIELDref ref="ID_32"/>
+          <FIELDref ref="ID_33"/>
+          <GROUP utype="spec:Spectrum.Data.BackgroundModel.Accuracy">
+            <FIELDref ref="ID_34"/>
+            <FIELDref ref="ID_35"/>
+            <FIELDref ref="ID_36"/>
+            <FIELDref ref="ID_37"/>
+            <FIELDref ref="ID_38"/>
+            <FIELDref ref="ID_39"/>
+            <FIELDref ref="ID_40"/>
+            <FIELDref ref="ID_41"/>
+          </GROUP>
+        </GROUP>
+      </GROUP>
+      <FIELD ID="idA" datatype="double" name="nameA"/>
+      <FIELD ID="idC" arraysize="*" datatype="char" name="nameC"/>
+      <FIELD ID="idB" datatype="int" name="nameB" ucd="unitB" unit="ucdB"/>
+      <FIELD ID="ID_0" datatype="double" name="timeValue" ucd="timeValueUcd" unit="timeValueUnit" utype="spec:Spectrum.Data.TimeAxis.Value"/>
+      <FIELD ID="ID_1" datatype="double" name="timeResol" ucd="timeResolUcd" unit="timeResolUnit" utype="spec:Spectrum.Data.TimeAxis.Resolution"/>
+      <FIELD ID="ID_2" datatype="double" name="timeBinLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_3" datatype="double" name="timeBinHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_4" datatype="double" name="timeBinSize" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_5" datatype="double" name="timeStatErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_6" datatype="double" name="timeErrLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_7" datatype="double" name="timeErrHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_8" datatype="double" name="timeSysErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_9" datatype="double" name="timeConf" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_10" datatype="double" name="spectralValue" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Value"/>
+      <FIELD ID="ID_11" datatype="double" name="spectralResol" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Resolution"/>
+      <FIELD ID="ID_12" datatype="double" name="spectralBinLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_13" datatype="double" name="spectralBinHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_14" datatype="double" name="spectralBinSize" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_15" datatype="double" name="spectralStatErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_16" datatype="double" name="spectralErrLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_17" datatype="double" name="spectralErrHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_18" datatype="double" name="spectralSysErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_19" datatype="double" name="spectralConf" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.SpectralAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_20" datatype="double" name="fluxValue" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Value"/>
+      <FIELD ID="ID_21" datatype="double" name="fluxResol" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Resolution"/>
+      <FIELD ID="ID_22" datatype="int" name="fluxQual" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Quality"/>
+      <FIELD ID="ID_23" datatype="double" name="fluxBinLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinLow"/>
+      <FIELD ID="ID_24" datatype="double" name="fluxBinHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinHigh"/>
+      <FIELD ID="ID_25" datatype="double" name="fluxBinSize" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.BinSize"/>
+      <FIELD ID="ID_26" datatype="double" name="fluxStatErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatError"/>
+      <FIELD ID="ID_27" datatype="double" name="fluxErrLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_28" datatype="double" name="fluxErrHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_29" datatype="double" name="fluxSysErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.SysError"/>
+      <FIELD ID="ID_30" datatype="double" name="fluxConf" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.FluxAxis.Accuracy.Confidence"/>
+      <FIELD ID="ID_31" datatype="double" name="bkgValue" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Value"/>
+      <FIELD ID="ID_32" datatype="double" name="bkgResol" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Resolution"/>
+      <FIELD ID="ID_33" datatype="int" name="bkgQual" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Quality"/>
+      <FIELD ID="ID_34" datatype="double" name="bkgBinLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinLow"/>
+      <FIELD ID="ID_35" datatype="double" name="bkgBinHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinHigh"/>
+      <FIELD ID="ID_36" datatype="double" name="bkgBinSize" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.BinSize"/>
+      <FIELD ID="ID_37" datatype="double" name="bkgStatErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatError"/>
+      <FIELD ID="ID_38" datatype="double" name="bkgErrLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatErrLow"/>
+      <FIELD ID="ID_39" datatype="double" name="bkgErrHigh" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.StatErrHigh"/>
+      <FIELD ID="ID_40" datatype="double" name="bkgSysErr" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.SysError"/>
+      <FIELD ID="ID_41" datatype="double" name="bkgConf" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.BackgroundModel.Accuracy.Confidence"/>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>11.1</TD>
+            <TD>ABC_test</TD>
+            <TD>
+            </TD>
+            <TD>0.101</TD>
+            <TD>0.102</TD>
+            <TD>0.108</TD>
+            <TD>0.109</TD>
+            <TD>0.11</TD>
+            <TD>0.105</TD>
+            <TD>0.106</TD>
+            <TD>0.107</TD>
+            <TD>0.103</TD>
+            <TD>0.104</TD>
+            <TD>0.301</TD>
+            <TD>0.302</TD>
+            <TD>0.308</TD>
+            <TD>0.309</TD>
+            <TD>0.31</TD>
+            <TD>0.305</TD>
+            <TD>0.306</TD>
+            <TD>0.307</TD>
+            <TD>0.303</TD>
+            <TD>0.304</TD>
+            <TD>0.201</TD>
+            <TD>0.202</TD>
+            <TD>0</TD>
+            <TD>0.208</TD>
+            <TD>0.209</TD>
+            <TD>0.21</TD>
+            <TD>0.205</TD>
+            <TD>0.206</TD>
+            <TD>0.207</TD>
+            <TD>0.203</TD>
+            <TD>0.204</TD>
+            <TD>0.401</TD>
+            <TD>0.402</TD>
+            <TD>0</TD>
+            <TD>0.408</TD>
+            <TD>0.409</TD>
+            <TD>0.41</TD>
+            <TD>0.405</TD>
+            <TD>0.406</TD>
+            <TD>0.407</TD>
+            <TD>0.403</TD>
+            <TD>0.404</TD>
+          </TR>
+          <TR>
+            <TD>
+            </TD>
+            <TD>DEF_test</TD>
+            <TD>12</TD>
+            <TD>1.101</TD>
+            <TD>1.102</TD>
+            <TD>1.108</TD>
+            <TD>1.109</TD>
+            <TD>1.11</TD>
+            <TD>1.105</TD>
+            <TD>1.106</TD>
+            <TD>1.107</TD>
+            <TD>1.103</TD>
+            <TD>1.104</TD>
+            <TD>1.301</TD>
+            <TD>1.302</TD>
+            <TD>1.308</TD>
+            <TD>1.309</TD>
+            <TD>1.31</TD>
+            <TD>1.305</TD>
+            <TD>1.306</TD>
+            <TD>1.307</TD>
+            <TD>1.303</TD>
+            <TD>1.304</TD>
+            <TD>1.201</TD>
+            <TD>1.202</TD>
+            <TD>1</TD>
+            <TD>1.208</TD>
+            <TD>1.209</TD>
+            <TD>1.21</TD>
+            <TD>1.205</TD>
+            <TD>1.206</TD>
+            <TD>1.207</TD>
+            <TD>1.203</TD>
+            <TD>1.204</TD>
+            <TD>1.401</TD>
+            <TD>1.4020000000000001</TD>
+            <TD>1</TD>
+            <TD>1.408</TD>
+            <TD>1.409</TD>
+            <TD>1.41</TD>
+            <TD>1.405</TD>
+            <TD>1.4060000000000001</TD>
+            <TD>1.407</TD>
+            <TD>1.403</TD>
+            <TD>1.404</TD>
+          </TR>
+          <TR>
+            <TD>13.3</TD>
+            <TD>
+            </TD>
+            <TD>13</TD>
+            <TD>2.101</TD>
+            <TD>2.102</TD>
+            <TD>2.108</TD>
+            <TD>2.109</TD>
+            <TD>2.11</TD>
+            <TD>2.105</TD>
+            <TD>2.106</TD>
+            <TD>2.107</TD>
+            <TD>2.103</TD>
+            <TD>2.104</TD>
+            <TD>2.301</TD>
+            <TD>2.302</TD>
+            <TD>2.308</TD>
+            <TD>2.309</TD>
+            <TD>2.31</TD>
+            <TD>2.305</TD>
+            <TD>2.306</TD>
+            <TD>2.307</TD>
+            <TD>2.303</TD>
+            <TD>2.304</TD>
+            <TD>2.201</TD>
+            <TD>2.202</TD>
+            <TD>2</TD>
+            <TD>2.208</TD>
+            <TD>2.209</TD>
+            <TD>2.21</TD>
+            <TD>2.205</TD>
+            <TD>2.206</TD>
+            <TD>2.207</TD>
+            <TD>2.203</TD>
+            <TD>2.204</TD>
+            <TD>2.401</TD>
+            <TD>2.402</TD>
+            <TD>2</TD>
+            <TD>2.408</TD>
+            <TD>2.409</TD>
+            <TD>2.41</TD>
+            <TD>2.4050000000000002</TD>
+            <TD>2.406</TD>
+            <TD>2.407</TD>
+            <TD>2.403</TD>
+            <TD>2.404</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

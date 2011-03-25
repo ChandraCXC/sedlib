@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SED xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd" xmlns:ns2="http://www.w3.org/1999/xlink">
+    <BaseSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="spectrumType">
+        <Target>
+            <Name>Arp 220</Name>
+            <Description>Ultraluminous Infrared Galaxy</Description>
+            <TargetClass>TBD</TargetClass>
+            <SpectralClass>TBD</SpectralClass>
+            <Redshift>0.0018</Redshift>
+            <Pos>
+                <value unit="deg" name="TargetPos">233.737917</value>
+                <value unit="deg" name="TargetPos">23.503330</value>
+            </Pos>
+            <VarAmpl>0.0</VarAmpl>
+        </Target>
+        <Char>
+            <SpatialAxis unit="deg" ucd="pos.eq" name="Sky">
+                <Coverage>
+                    <Location>
+                        <Value>4.61</Value>
+                        <Value>4.62</Value>
+                        <Resolution>4.88</Resolution>
+                    </Location>
+                    <Bounds/>
+                    <Support>
+                        <Area>This is the #4 sky region</Area>
+                        <Extent>4.8</Extent>
+                        <Range>
+                            <Min>4.02</Min>
+                            <Max>4.22</Max>
+                        </Range>
+                    </Support>
+                </Coverage>
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </SpatialAxis>
+            <TimeAxis unit="s" ucd="time" name="Time">
+                <Coverage>
+                    <Location>
+                        <Value ucd="time.obs" name="TimeObs">52148.3252</Value>
+                        <Accuracy>
+                            <BinLow>0.0</BinLow>
+                            <BinHigh>0.0</BinHigh>
+                            <BinSize>0.0</BinSize>
+                            <StatError>0.0</StatError>
+                            <StatErrLow>0.0</StatErrLow>
+                            <StatErrHigh>0.0</StatErrHigh>
+                            <SysError>0.0</SysError>
+                            <Confidence>0.0</Confidence>
+                        </Accuracy>
+                        <Resolution unit="s" ucd="TBD" name="TimeRes">0.125</Resolution>
+                    </Location>
+                    <Bounds>
+                        <Extent ucd="time.duration" name="TimeExtent">1500.0</Extent>
+                        <Range>
+                            <Min ucd="time" name="TimeStart">52100.0</Min>
+                            <Max ucd="time" name="TimeStop">52300.0</Max>
+                        </Range>
+                    </Bounds>
+                    <Support>
+                        <Area ucd="TBD" name="TBD">TBD</Area>
+                        <Extent ucd="time.duration;obs.exposure" name="TimeExtent">1500.0</Extent>
+                        <Range>
+                            <Min unit="s" ucd="time" name="TimeStart">52100.0</Min>
+                            <Max unit="s" ucd="time" name="TimeStop">52300.0</Max>
+                        </Range>
+                    </Support>
+                </Coverage>
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </TimeAxis>
+            <SpectralAxis unit="Angstrom" ucd="em.wl" name="Wavelength">
+                <Coverage>
+                    <Location>
+                        <Value>1.61</Value>
+                        <Value>1.62</Value>
+                        <Resolution>1.88</Resolution>
+                    </Location>
+                    <Bounds/>
+                    <Support>
+                        <Area>This is the #1 sky region</Area>
+                        <Extent>1.8</Extent>
+                        <Range>
+                            <Min>1.02</Min>
+                            <Max>1.22</Max>
+                        </Range>
+                    </Support>
+                </Coverage>
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+                <ResPower>0.0</ResPower>
+            </SpectralAxis>
+            <FluxAxis ucd="TBD" name="Flux">
+                <Coverage>
+                    <Location>
+                        <Value>3.61</Value>
+                        <Value>3.62</Value>
+                        <Resolution>3.88</Resolution>
+                    </Location>
+                    <Bounds/>
+                    <Support>
+                        <Area>This is the #3 sky region</Area>
+                        <Extent>3.8</Extent>
+                        <Range>
+                            <Min>3.02</Min>
+                            <Max>3.22</Max>
+                        </Range>
+                    </Support>
+                </Coverage>
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </FluxAxis>
+            <CharacterizationAxis ucd="TBD" name="AXIS1">
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </CharacterizationAxis>
+            <CharacterizationAxis ucd="TBD" name="AXIS2">
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </CharacterizationAxis>
+            <CharacterizationAxis ucd="TBD" name="AXIS3">
+                <Resolution>0.0</Resolution>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <SamplingPrecision>
+                    <SamplingPrecisionRefVal>
+                        <FillFactor>0.0</FillFactor>
+                    </SamplingPrecisionRefVal>
+                    <SampleExtent>0.0</SampleExtent>
+                </SamplingPrecision>
+                <Calibration>TBD</Calibration>
+            </CharacterizationAxis>
+        </Char>
+        <CoordSys id="TBD">
+            <TimeFrame ucd="TBD" id="TBD">
+                <Name>UTC</Name>
+                <ReferencePosition>TBD</ReferencePosition>
+                <Zero>0.0</Zero>
+            </TimeFrame>
+            <SpaceFrame ucd="TBD" id="TBD">
+                <Name>ICRS</Name>
+                <ReferencePosition>TBD</ReferencePosition>
+                <Equinox ucd="time.equinox;pos.eq" name="Equinox">2000.0</Equinox>
+            </SpaceFrame>
+            <CoordFrame xsi:type="spectralFrameType" ucd="TBD" id="TBD">
+                <Name>TBD</Name>
+                <ReferencePosition>BARYCENTER</ReferencePosition>
+                <Redshift>0.0</Redshift>
+            </CoordFrame>
+            <RedshiftFrame ucd="TBD" id="TBD">
+                <Name>ICRS</Name>
+                <ReferencePosition>TBD</ReferencePosition>
+                <DopplerDefinition>TBD</DopplerDefinition>
+            </RedshiftFrame>
+            <CoordFrame ucd="TBD" id="TBD">
+                <Name>TBD</Name>
+                <ReferencePosition>TBD</ReferencePosition>
+            </CoordFrame>
+        </CoordSys>
+        <Curation>
+            <Publisher ucd="meta.organization;meta.curation" name="Publisher">SAO</Publisher>
+            <PublisherID ucd="meta.curation.pubid" name="PubID">ivo://cfa.harvard.edu</PublisherID>
+            <Reference ucd="meta.bib.bibcode" name="Reference">TBD</Reference>
+            <Version>TBD</Version>
+            <Contact>
+                <Name ucd="meta.human;meta.curation" name="Contact">Jonathan McDowell</Name>
+                <Email ucd="meta.email" name="email">jcm@cfa.harvard.edu</Email>
+            </Contact>
+            <Rights>TBD</Rights>
+            <Date>2003-12-31T14:00:02</Date>
+            <PublisherDID>TBD</PublisherDID>
+        </Curation>
+        <DataID>
+            <Title name="Title">Arp 220 SED</Title>
+            <Creator ucd="meta.curation.creator" name="Creator">ivo://sao/FLWO</Creator>
+            <Collection ucd="inst.filter.id" name="Filter">G300</Collection>
+            <DatasetID>TBD</DatasetID>
+            <Date ucd="time;soft.dataset;meta.curation" name="DataDate">2003-12-31T14:00:02Z</Date>
+            <Version ucd="soft.dataset.version;meta.curation" name="Version">1</Version>
+            <Instrument ucd="inst.id" name="Instrument">BCS</Instrument>
+            <CreationType name="CreationType">Archival</CreationType>
+            <Bandpass>TBD</Bandpass>
+            <CreatorDID>TBD</CreatorDID>
+            <Contributor>TBD</Contributor>
+            <Logo ucd="meta.curation.logo" name="Logo">http://cfa-www.harvard.edu/nvo/cfalogo.jpg</Logo>
+            <DataSource>TBD</DataSource>
+        </DataID>
+        <Derived>
+            <SNR>3.0</SNR>
+            <VarAmpl>0.0</VarAmpl>
+            <Redshift>
+                <Value>0.0</Value>
+                <Accuracy>
+                    <BinLow>0.0</BinLow>
+                    <BinHigh>0.0</BinHigh>
+                    <BinSize>0.0</BinSize>
+                    <StatError>0.0</StatError>
+                    <StatErrLow>0.0</StatErrLow>
+                    <StatErrHigh>0.0</StatErrHigh>
+                    <SysError>0.0</SysError>
+                    <Confidence>0.0</Confidence>
+                </Accuracy>
+                <Resolution>0.0</Resolution>
+                <Quality>0</Quality>
+            </Redshift>
+        </Derived>
+        <CustomParams>
+            <Param xsi:type="doubleParamType" unit="TBD" ucd="TBD" name="pi">3.14159</Param>
+            <Param xsi:type="intParamType" unit="TBD" ucd="TBD" name="daysofweek">7</Param>
+            <Param xsi:type="textParamType" ucd="TBD" name="TargetType">Galaxy</Param>
+            <Param xsi:type="dateParamType" ucd="TBD" name="camdate">2011-01-04T22:01:59</Param>
+            <Param xsi:type="timeParamType" unit="Gyr" ucd="TBD" name="age">1.8</Param>
+            <Param xsi:type="doubleParamType" unit="deg" name="TargetPos">233.737917</Param>
+            <Param xsi:type="doubleParamType" unit="deg" name="TargetPos">23.503330</Param>
+        </CustomParams>
+        <Type>Spectrum</Type>
+        <Length>3</Length>
+        <TimeSI>ms</TimeSI>
+        <SpectralSI>Angstrom</SpectralSI>
+        <FluxSI>ergs/m-2s-1Mev-1</FluxSI>
+        <ArrayOfFlatPoint>
+            <Point BG_Qual="0" BG_Sys="0.403" BG_ErrH="0.407" BG_ErrL="0.406" BG="0.401" F_Qual="0" F_Sys="0.203" F_ErrH="0.207" F_ErrL="0.206" F="0.201" SP_Res="0.302" SP_Size="0.31" SP_BinH="0.309" SP_BinL="0.308" SP="0.301" T_Res="0.102" T_Size="0.11" T_BinH="0.109" T_BinL="0.108" T="0.101"/>
+            <Point BG_Qual="1" BG_Sys="1.403" BG_ErrH="1.407" BG_ErrL="1.4060000000000001" BG="1.401" F_Qual="1" F_Sys="1.203" F_ErrH="1.207" F_ErrL="1.206" F="1.201" SP_Res="1.302" SP_Size="1.31" SP_BinH="1.309" SP_BinL="1.308" SP="1.301" T_Res="1.102" T_Size="1.11" T_BinH="1.109" T_BinL="1.108" T="1.101"/>
+            <Point BG_Qual="2" BG_Sys="2.403" BG_ErrH="2.407" BG_ErrL="2.406" BG="2.401" F_Qual="2" F_Sys="2.203" F_ErrH="2.207" F_ErrL="2.206" F="2.201" SP_Res="2.302" SP_Size="2.31" SP_BinH="2.309" SP_BinL="2.308" SP="2.301" T_Res="2.102" T_Size="2.11" T_BinH="2.109" T_BinL="2.108" T="2.101"/>
+        </ArrayOfFlatPoint>
+    </BaseSegment>
+</SED>

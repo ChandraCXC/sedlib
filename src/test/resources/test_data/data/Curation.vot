@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.1"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
+  >
+  <RESOURCE utype="spec:Spectrum.Sed">
+    <TABLE utype="spec:Spectrum.Segment">
+      <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
+      <GROUP utype="spec:Spectrum.Curation">
+        <PARAM arraysize="*" datatype="char" name="Publisher" ucd="meta.organization;meta.curation" utype="spec:Spectrum.Curation.Publisher" value="SAO"/>
+        <PARAM arraysize="*" datatype="char" name="PubID" ucd="meta.curation.pubid" utype="spec:Spectrum.Curation.PublisherID" value="ivo://cfa.harvard.edu"/>
+        <PARAM arraysize="*" datatype="char" name="PublisherDID" ucd="meta.ref.url;meta.curation" utype="spec:Spectrum.Curation.PublisherDID" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="Reference" ucd="meta.bib.bibcode" utype="spec:Spectrum.Curation.Reference" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="Version" ucd="meta.version;meta.curation" utype="spec:Spectrum.Curation.Version" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="Rights" utype="spec:Spectrum.Curation.Rights" value="TBD"/>
+        <PARAM arraysize="*" datatype="char" name="Date" utype="spec:Spectrum.Curation.Date" value="2003-12-31T14:00:02"/>
+        <GROUP utype="spec:Spectrum.Curation.Contact">
+          <PARAM arraysize="*" datatype="char" name="Contact" ucd="meta.human;meta.curation" utype="spec:Spectrum.Curation.Contact.Name" value="Jonathan McDowell"/>
+          <PARAM arraysize="*" datatype="char" name="email" ucd="meta.email" utype="spec:Spectrum.Curation.Contact.Email" value="jcm@cfa.harvard.edu"/>
+        </GROUP>
+      </GROUP>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

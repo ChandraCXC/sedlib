@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><ObsDataLocation xmlns="http://www.ivoa.net/xml/STC/stc-v1.30.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/STC/stc-v1.30.xsd http://www.ivoa.net/xml/STC/stc-v1.30.xsd">
+  <NEW_ELEMENT_0/>
+  <ObservationLocation>
+    <NEW_ELEMENT_1/>
+    <AstroCoords coord_system_id="TT-ICRS-TOPO">
+      <Time unit="s">
+        <TimeInstant>
+          <ISOTime>2004-07-15T08:23:56</ISOTime>
+        </TimeInstant>
+      </Time>
+      <Position2D unit="deg">
+        <Value2>
+          <C1>148.88821</C1>
+          <C2>69.06529</C2>
+        </Value2>
+      </Position2D>
+    </AstroCoords>
+  </ObservationLocation>
+</ObsDataLocation>
