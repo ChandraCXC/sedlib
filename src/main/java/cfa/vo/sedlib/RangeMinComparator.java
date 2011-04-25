@@ -18,7 +18,7 @@ public class RangeMinComparator implements Comparator<RangeParam>
         Double r1_max = r1.getMax ();
         Double r2_max = r2.getMax ();
 
-        if ((r1.getMin () == r2.getMin ()) && (r1.getMax () == r2.getMax ()))
+        if ((r1.getMin ().equals( r2.getMin () ) ) && (r1.getMax () .equals( r2.getMax () ) ))
             return 0;
 
         if (!r1.isSetMin ())
