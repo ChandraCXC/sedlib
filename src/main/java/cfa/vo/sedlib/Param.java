@@ -5,7 +5,7 @@ package cfa.vo.sedlib;
  * 
  * 
  */
-public class Param {
+public class Param implements Cloneable {
 
     protected Field header;
     protected String value;
@@ -13,12 +13,6 @@ public class Param {
     public Param ()
     {
         this.header = new Field ();
-    }
-
-    public Param (Param param)
-    {
-        this.header = new Field (param.header);
-        this.value = param.value;
     }
 
     public Param (String value, String name, String ucd)
@@ -37,6 +31,26 @@ public class Param {
        this.header = new Field ();
        this.value = value;
     }
+
+    @Override
+    public Object clone ()
+    {
+        Param param = null;
+        try
+        {
+            param = (Param) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }
+
+        header = (Field)header.clone ();
+
+        return param;
+    }
+
 
     /**
      * Gets the value of the value property.
@@ -195,8 +209,18 @@ public class Param {
      * Overloaded equals operator to compare two Params
      *
      */
-    public boolean equals (Param param)
+    @Override
+    public boolean equals (Object other)
     {
+
+        if (other == null) {
+            return false;
+        }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        final Param param = (Param) other;
+
         boolean compValue = this.header.equals (param.header);
 
         if (compValue)
@@ -208,6 +232,14 @@ public class Param {
         }
 
         return compValue;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + (this.header != null ? this.header.hashCode() : 0);
+        hash = 73 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
     }
 
 

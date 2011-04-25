@@ -14,8 +14,6 @@
 
 package cfa.vo.sedlib;
 
-import cfa.vo.sedlib.common.SedNoDataException;
-import org.apache.log4j.Logger;
 
 import junit.framework.TestCase;
 
@@ -38,13 +36,14 @@ import cfa.vo.sedlib.io.ISedSerializer;
 import cfa.vo.sedlib.io.VOTableDeserializer;
 import cfa.vo.sedlib.io.VOTableSerializer;
 import java.net.URL;
-import java.util.Map;
-import org.apache.log4j.Level;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 
 public class SedTestBase extends TestCase
 {
-	static Logger logger = Logger.getLogger( SedTestBase.class );
+	static final Logger logger = Logger.getLogger( SedTestBase.class.getName() );
 
 	static SedLibTestUtils  tu = SedLibTestUtils.getTestUtils();
 
@@ -53,6 +52,8 @@ public class SedTestBase extends TestCase
 	static public final String  EXT_VOT  = ".vot";
 	static public final String  EXT_XML  = ".xml";
 	static public final String  EXT_FITS = ".fits";
+
+        protected List<SedFormat> formats = new ArrayList();
 
 	static public String getOutputDir() { return m_outputDir; }
 	static String m_dataRoot = "";
@@ -378,6 +379,9 @@ public class SedTestBase extends TestCase
 	public SedTestBase( String name )
 	{
 		super(name);
+
+                formats.add(SedFormat.VOT);
+                formats.add(SedFormat.FITS);
 	}
 
     static void handleException( Throwable exp )

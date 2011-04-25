@@ -20,6 +20,31 @@ public class Characterization
     protected CharacterizationAxis fluxAxis;
     protected List<CharacterizationAxis> characterizationAxis;
 
+    @Override
+    public Object clone ()
+    {
+        Characterization _char = null;
+
+        _char = (Characterization) super.clone();
+
+        if (this.isSetSpatialAxis ())
+            _char.spatialAxis = (CharacterizationAxis)this.spatialAxis.clone ();
+        if (this.isSetTimeAxis ())
+            _char.timeAxis = (CharacterizationAxis)this.timeAxis.clone ();
+        if (this.isSetSpectralAxis ())
+            _char.spectralAxis = (SpectralCharacterizationAxis)this.spectralAxis.clone ();
+        if (this.isSetFluxAxis ())
+            _char.fluxAxis = (CharacterizationAxis)this.fluxAxis.clone ();
+        if (this.isSetCharacterizationAxis ())
+        {
+            _char.characterizationAxis = new ArrayList<CharacterizationAxis>();
+            for (CharacterizationAxis charAxis : this.characterizationAxis)
+                _char.characterizationAxis.add ((CharacterizationAxis)charAxis.clone ());
+        }
+        return _char;
+    }
+
+
     /**
      * Gets the value of the spatialAxis property.
      * 

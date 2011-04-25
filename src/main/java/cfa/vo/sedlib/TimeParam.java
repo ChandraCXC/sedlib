@@ -30,11 +30,6 @@ public class TimeParam
         super (value);
     }
 
-   public TimeParam (TimeParam param)
-   {
-      super (param);
-   }
-
 
 
     /**
@@ -63,6 +58,16 @@ public class TimeParam
 
     public boolean isSetUnit() {
         return (this.header.isSetUnit ());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
 }

@@ -1,0 +1,76 @@
+XTENSION= 'BINTABLE'           / Java FITS: Thu Mar 31 10:19:08 EDT 2011        
+BITPIX  =                    8                                                  
+NAXIS   =                    2 / Dimensionality                                 
+NAXIS1  =                  192                                                  
+NAXIS2  =                    1                                                  
+PCOUNT  =                    0                                                  
+GCOUNT  =                    1                                                  
+TFIELDS =                    6                                                  
+VOCLASS = 'Spectrum-1.0'                                                        
+VOSEGT  = 'Photometry'                                                          
+OBJECT  = '3C 279  '                                                            
+RA_TARG =          194.0465271 / [deg]                                          
+DEC_TARG=           -5.7893119 / [deg]                                          
+FLUXNAME= 'col5    '                                                            
+FLUXUNIT= 'Jy      '                                                            
+TTYPE1  = 'col5    '                                                            
+TUTYP1  = 'Spectrum.Data.FluxAxis.Value'                                        
+TUNIT1  = 'Jy      '                                                            
+TTYPE2  = 'p5      '                                                            
+TUTYP2  = 'Spectrum.Data.FluxAxis.Quality'                                      
+TUCD2   = 'meta.code.qual;phot.flux.density;em.*'                               
+TTYPE3  = 'col4    '                                                            
+TUNIT3  = 'Jy      '                                                            
+TTYPE4  = 'chisq   '                                                            
+TTYPE5  = 'col2    '                                                            
+TUNIT5  = 'Jy      '                                                            
+TTYPE6  = 'scol    '                                                            
+TITLE   = 'Photometric Data'                                                    
+AUTHOR  = 'NASA/IPAC Extragalactic Database (NED)'                              
+CRETYPE = 'Derived '                                                            
+EXTNAME = 'HDU     '                                                            
+EXTVER  =                    2                                                  
+HDUNAME = 'HDU2    '                                                            
+LONGSTRN= 'OGIP 1.0'                                                            
+COMMENT This FITS file may contain long string keyword values that are          
+COMMENT continued over multiple keywords.  The HEASARC convention uses the &    
+COMMENT character at the end of each substring which is then continued          
+COMMENT on the next keyword which has the name CONTINUE.                        
+P3      =                0.102                                                  
+P6      = 'test2   '                                                            
+P1      = 'blah    '                                                            
+HISTORY TOOL  :dmcopy   2011-03-29T17:37:45                            ASC00001 
+HISTORY PARM  :infile=/pool1/jmiller/Extensions.fits.out               ASC00002 
+HISTORY PARM  :outfile=/pool1/jmiller/Extensions.dtf[opt kernel=text/dtASC00003 
+HISTORY CONT  :f]                                                      ASC00004 
+HISTORY PARM  :kernel=default                                          ASC00005 
+HISTORY PARM  :option=                                                 ASC00006 
+HISTORY PARM  :verbose=0                                               ASC00007 
+HISTORY PARM  :clobber=no                                              ASC00008 
+HISTNUM =                   15                                                  
+HISTORY TOOL  :dmcopy   2011-03-29T17:50:19                            ASC00009 
+HISTORY PARM  :infile=/pool1/jmiller/Extensions.dtf                    ASC00010 
+HISTORY PARM  :outfile=/pool1/jmiller/Extensions.fits                  ASC00011 
+HISTORY PARM  :kernel=default                                          ASC00012 
+HISTORY PARM  :option=                                                 ASC00013 
+HISTORY PARM  :verbose=0                                               ASC00014 
+HISTORY PARM  :clobber=yes                                             ASC00015 
+TFORM1  = '2D      '                                                            
+TDIM1   = '(2)     '                                                            
+TFORM2  = '2J      '                                                            
+TDIM2   = '(2)     '                                                            
+TFORM3  = '2D      '                                                            
+TDIM3   = '(2)     '                                                            
+TFORM4  = '2D      '                                                            
+TDIM4   = '(2)     '                                                            
+TFORM5  = '2D      '                                                            
+TDIM5   = '(2)     '                                                            
+TFORM6  = '120A    '                                                            
+TDIM6   = '(60,2)  '                                                            
+END                                                                             
+1.9e-11  1.9e-11  
+1  1  
+1.48e-24  1.52e-14  
+4.01  4.01  
+1.8e-11  1.89e-11  
+Test1                                                         Test2                                                         

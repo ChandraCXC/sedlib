@@ -375,10 +375,10 @@ public class Utypes
     static public final int   SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE=360;
 
 
-    static protected String[] name = new String[max_enum];
-    static protected String[] ucd = new String[max_enum];
+    static final String[] name = new String[max_enum];
+    static final String[] ucd = new String[max_enum];
 
-    static protected HashMap<String,Integer> nameMap = new HashMap<String,Integer> ();
+    static protected final HashMap<String,Integer> nameMap = new HashMap<String,Integer> ();
     static
     {
 
@@ -846,7 +846,7 @@ public class Utypes
         for (int ii=0; ii<name.length; ii++)
         {
             if (name[ii] != null)
-                nameMap.put (name[ii], ii);
+                nameMap.put (name[ii].toLowerCase (), ii);
         }
 
     }
@@ -857,9 +857,14 @@ public class Utypes
      */
     static public int getUtypeFromString (String name)
     {
-    	Integer utypeEnum = nameMap.get (name);
+    	Integer utypeEnum;
+
+        if (name == null)
+            return INVALID_UTYPE;
+
+        utypeEnum = nameMap.get (name.toLowerCase ());
     	if (utypeEnum == null)
-    		return INVALID_UTYPE;
+    	    return INVALID_UTYPE;
     	
     	return utypeEnum;
     	

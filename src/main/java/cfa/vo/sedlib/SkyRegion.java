@@ -26,10 +26,5 @@ public class SkyRegion
       super (value);
    }
 
-   public SkyRegion (SkyRegion param)
-   {
-      super (param);
-   }
-
 
 }

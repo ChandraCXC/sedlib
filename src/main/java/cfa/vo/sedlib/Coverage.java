@@ -13,6 +13,23 @@ public class Coverage
     protected CoverageBounds bounds;
     protected CoverageSupport support;
 
+    @Override
+    public Object clone ()
+    {
+        Coverage coverage = (Coverage) super.clone();
+        
+
+        if (this.isSetLocation ())
+            coverage.location = (CoverageLocation)this.location.clone ();
+        if (this.isSetBounds ())
+            coverage.bounds = (CoverageBounds)this.bounds.clone ();
+        if (this.isSetSupport ())
+            coverage.support = (CoverageSupport)this.support.clone ();
+
+        return coverage;
+    }
+
+
     /**
      * Gets the value of the location property.
      * 

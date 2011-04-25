@@ -18,6 +18,34 @@ public class Curation
     protected DateParam date;
     protected TextParam publisherDID;
 
+    @Override
+    public Object clone ()
+    {
+        Curation curation = (Curation) super.clone();
+        
+
+        if (this.isSetPublisher ())
+            curation.publisher = (TextParam)this.publisher.clone ();
+        if (this.isSetPublisherID ())
+            curation.publisherID = (TextParam)this.publisherID.clone ();
+        if (this.isSetReference ())
+            curation.reference = (TextParam)this.reference.clone ();
+        if (this.isSetVersion ())
+            curation.version = (TextParam)this.version.clone ();
+        if (this.isSetContact ())
+            curation.contact = (Contact)this.contact.clone ();
+        if (this.isSetRights ())
+            curation.rights = (TextParam)this.rights.clone ();
+        if (this.isSetDate ())
+            curation.date = (DateParam)this.date.clone ();
+        if (this.isSetPublisherDID ())
+            curation.publisherDID = (TextParam)this.publisherDID.clone ();
+
+
+        return curation;
+    }
+
+
     /**
      * Gets the value of the publisher property.
      * 

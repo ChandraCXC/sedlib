@@ -15,8 +15,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nom.tam.fits.BasicHDU;
@@ -25,11 +25,12 @@ import nom.tam.fits.BinaryTableHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
+import nom.tam.util.Cursor;
 import nom.tam.fits.HeaderCardException;
 import cfa.vo.sedlib.Accuracy;
 import cfa.vo.sedlib.ArrayOfFlatPoint;
 import cfa.vo.sedlib.ArrayOfGenPoint;
-import cfa.vo.sedlib.ArrayOfParam;
 import cfa.vo.sedlib.ArrayOfPoint;
 import cfa.vo.sedlib.Characterization;
 import cfa.vo.sedlib.CharacterizationAxis;
@@ -44,6 +45,7 @@ import cfa.vo.sedlib.Curation;
 import cfa.vo.sedlib.DataID;
 import cfa.vo.sedlib.DerivedData;
 import cfa.vo.sedlib.DoubleParam;
+import cfa.vo.sedlib.Group;
 import cfa.vo.sedlib.IntParam;
 import cfa.vo.sedlib.Param;
 import cfa.vo.sedlib.Point;
@@ -60,6 +62,7 @@ import cfa.vo.sedlib.SpectralFrame;
 import cfa.vo.sedlib.Target;
 import cfa.vo.sedlib.TextParam;
 import cfa.vo.sedlib.TimeFrame;
+import cfa.vo.sedlib.TimeParam;
 import cfa.vo.sedlib.common.FitsKeywords;
 import cfa.vo.sedlib.common.SedConstants;
 import cfa.vo.sedlib.common.SedInconsistentException;
@@ -79,8 +82,7 @@ public class FitsSerializer implements ISedSerializer
         UCD ("TUCD"),
         NAME ("TTYPE"),
         UTYPE ("TUTYP"),
-        UNIT ("TUNIT"),
-        FORM ("TFORM");
+        UNIT ("TUNIT");
 
         String keyword;
 
@@ -93,15 +95,14 @@ public class FitsSerializer implements ISedSerializer
         String name = "";
         String utype = "";
         String unit = ""; 
-        String form = "";
-        int bytes = 0;
+        Class dataClass = null;
         ArrayList data = null;
     }
 
     protected int numFields = 0;
     protected int numPoints = 0;
-    protected Vector<Integer> columnOrder = null;
-    protected HashMap <Integer,Column> dataTable = null;
+    protected Vector<String> columnOrder = null;
+    protected HashMap <String,Column> dataTable = null;
     protected HashMap <Integer,String> overrides = new HashMap<Integer, String> ();
     protected HashMap <Integer,String> ucdOverrides = new HashMap<Integer, String> ();
 
@@ -183,23 +184,10 @@ public class FitsSerializer implements ISedSerializer
                 this.overrideDataColumnInfo(segment);
                 this.extractDataTable (segment.getData());
             }
-            
-            header = new Header();
-            header = this.createHeader (segment);
-
-            // add metadata to header
-            this.addSegmentToHeader (segment, header);
 
             // handle the data 
             if (segment.isSetData())
             {
-
-                // override specific attributes with data values
-                this.overrideKeywords( segment.getData (), header );
-
-                // add the data information to the header
-                this.addDataToHeader (header);
-
                 // add data to table
                 try
                 {
@@ -225,17 +213,34 @@ public class FitsSerializer implements ISedSerializer
                 }
             }
 
-
-
-            binaryTableHDU = new BinaryTableHDU( header, binaryTable );
             try
             {
+                binaryTableHDU = (BinaryTableHDU) Fits.makeHDU (binaryTable);
                 fits.addHDU (binaryTableHDU);
+
             }
             catch (FitsException exp)
             {
             	throw new SedWritingException (exp.getMessage (), exp);
             }
+
+            header = binaryTableHDU.getHeader ();
+
+            //make sure the header is at the end of it's default information
+            this.setHeaderCursor (header);
+
+            this.addSegmentToHeader (segment, header);
+
+            if (segment.isSetData())
+            {
+
+                // override specific attributes with data values
+                this.overrideKeywords( segment.getData (), header );
+
+                // add the data information to the header
+                this.addDataToHeader (header);
+            }
+
         }
         
         // update the primary hdu so that the NAXIS is zero
@@ -293,10 +298,8 @@ public class FitsSerializer implements ISedSerializer
             this.addDataIDToHeader (segment.getDataID (), header);
         if (segment.isSetDerived ())
             this.addDerivedToHeader (segment.getDerived (), header);
-/*        if (segment.isSetCustomParams ())
-            this.addArrayOfParamsToHeader (segment.getCustomParams (), header, FitsKeywords.CUSTOM);
- */
-
+        
+        this.addCustomParamsToHeader (segment, header);
         
     }
 
@@ -329,13 +332,8 @@ public class FitsSerializer implements ISedSerializer
         }
         if (target.isSetVarAmpl ())
            this.addSedParam (target.getVarAmpl (), header, FitsKeywords.TARGET_VARAMPL);
-/*        if (target.isSetCustomParams ())
-        {
 
-            // create a group for the customparams
-            this.addArrayOfParamsToHeader (target.getCustomParams (), group, FitsKeywords.INVALID_UTYPE);
-        }
-*/
+        this.addCustomParamsToHeader (target, header);
     }
 
     /**
@@ -370,6 +368,8 @@ public class FitsSerializer implements ISedSerializer
             }
         }
 */
+
+        this.addCustomParamsToHeader (_char, header);
     }
 
     /**
@@ -408,7 +408,6 @@ public class FitsSerializer implements ISedSerializer
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_CHAR_CHARAXIS_CAL, functionName);
             this.addSedParam (charAxis.getCalibration (), header, newUtype);
 
-;
         }
         if (charAxis.isSetCoverage ())
         {
@@ -425,6 +424,8 @@ public class FitsSerializer implements ISedSerializer
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_CHAR_CHARAXIS_SAMPPREC, functionName);
             this.addSamplingPrecisionToHeader (charAxis.getSamplingPrecision (), header, newUtype);
         }
+
+        this.addCustomParamsToHeader (charAxis, header);
 
     }
 
@@ -449,7 +450,7 @@ public class FitsSerializer implements ISedSerializer
             case FitsKeywords.SEG_CHAR_FLUXAXIS_COV:
                 break;
             default:
-                logger.warning ("The keyword, "+FitsKeywords.getName (utype)+", cannot be included as part of the Coverage.");
+                logger.log (Level.WARNING, "The keyword, {0}, cannot be included as part of the Coverage.", FitsKeywords.getName(utype));
         }
 
         if (coverage.isSetLocation ())
@@ -492,6 +493,8 @@ public class FitsSerializer implements ISedSerializer
                 int accUtype = this.mergeUtypes (newUtype, FitsKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC, functionName);
                 this.addAccuracyToHeader (location.getAccuracy (), header, accUtype);
             }
+
+            this.addCustomParamsToHeader (location, header);
         }
         if (coverage.isSetBounds ())
         {
@@ -527,6 +530,7 @@ public class FitsSerializer implements ISedSerializer
                     logger.warning ("The keyword for the 'spectral axis coverage bounds stop' could not be written because the spectral axis column could not be found.");
 
             }
+            this.addCustomParamsToHeader (bounds, header);
         }
         if (coverage.isSetSupport ())
         {
@@ -550,6 +554,7 @@ public class FitsSerializer implements ISedSerializer
                 // it would be handled
             }
 */
+            this.addCustomParamsToHeader (support, header);
         }
     }
 
@@ -626,7 +631,7 @@ public class FitsSerializer implements ISedSerializer
                 utypeTable.put ("confidence", FitsKeywords.SEG_DATA_BGM_ACC_CONFIDENCE);
                 break;
             default:
-                logger.warning ("The keyword, "+FitsKeywords.getName (utype)+", cannot be included as part of the Accuracy.");
+                logger.log (Level.WARNING, "The keyword, {0}, cannot be included as part of the Accuracy.", FitsKeywords.getName(utype));
         }
 
         if (accuracy.isSetBinLow ())
@@ -669,6 +674,8 @@ public class FitsSerializer implements ISedSerializer
             newUtype = this.mergeUtypes (utype, utypeTable.get("confidence"), functionName);
             this.addSedParam (accuracy.getConfidence (), header, newUtype);
         }
+
+        this.addCustomParamsToHeader (accuracy, header);
     }
 
     /**
@@ -692,7 +699,7 @@ public class FitsSerializer implements ISedSerializer
             case FitsKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC:
                 break;
             default:
-                logger.warning ("The keyword, "+FitsKeywords.getName (utype)+", cannot be included as part of the SamplingPrecision.");
+                logger.log (Level.WARNING, "The keyword, {0}, cannot be included as part of the SamplingPrecision.", FitsKeywords.getName(utype));
         }
 
         if (samplingPrecision.isSetSampleExtent ())
@@ -709,7 +716,11 @@ public class FitsSerializer implements ISedSerializer
                           samplingPrecision.getSamplingPrecisionRefVal ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL, functionName);
             this.addSedParam (samplingPrecisionRefVal.getFillFactor (), header, newUtype);
+
+            this.addCustomParamsToHeader (samplingPrecisionRefVal, header);
         }
+
+        this.addCustomParamsToHeader (samplingPrecision, header);
     }
 
     /**
@@ -728,6 +739,8 @@ public class FitsSerializer implements ISedSerializer
             this.addSedParam (new TextParam (coordSys.getType ()), header, FitsKeywords.SEG_CS_TYPE);
         if (coordSys.isSetHref ())
             this.addSedParam (new TextParam (coordSys.getHref ()), header, FitsKeywords.SEG_CS_HREF);
+
+        this.addCustomParamsToHeader (coordSys, header);
 
         // NOTE: we don't include idref here because it's not clear how to
         // serialize it
@@ -813,6 +826,8 @@ public class FitsSerializer implements ISedSerializer
             if (keywordMatch)
                 this.addSedParam (new TextParam (coordFrame.getUcd ()), header, newUtype);
         }
+
+        this.addCustomParamsToHeader (coordFrame, header);
     }
 
     /**
@@ -834,6 +849,9 @@ public class FitsSerializer implements ISedSerializer
             this.addSedParam (curation.getRights (), header, FitsKeywords.SEG_CURATION_RIGHTS);
         if (curation.isSetDate ())
             this.addSedParam (curation.getDate (), header, FitsKeywords.SEG_CURATION_DATE);
+
+        this.addCustomParamsToHeader (curation, header);
+
         if (curation.isSetContact ())
         {
             Contact contact = curation.getContact ();
@@ -841,7 +859,10 @@ public class FitsSerializer implements ISedSerializer
                 this.addSedParam (contact.getName (), header, FitsKeywords.SEG_CURATION_CONTACT_NAME);
             if (contact.isSetEmail ())
                 this.addSedParam (contact.getEmail (), header, FitsKeywords.SEG_CURATION_CONTACT_EMAIL);
+
+            this.addCustomParamsToHeader (contact, header);
         }
+
     }
 
     /**
@@ -879,7 +900,7 @@ public class FitsSerializer implements ISedSerializer
             // remove the "n" from the end of the keyword
             keyword = keyword.substring (0, keyword.length ()-1);
             for (int ii=0; ii < collection.size (); ii++)
-                this.addSedParam (collection.get(ii), header, keyword+(ii+1), FitsKeywords.SEG_DATAID_COLLECTION);
+                this.addSedParam (collection.get(ii), header, keyword+(ii+1));
         }
         if (dataID.isSetContributor ())
         {
@@ -889,8 +910,10 @@ public class FitsSerializer implements ISedSerializer
             // remove the "n" from the end of the keyword
             keyword = keyword.substring (0, keyword.length ()-1);
             for (int ii=0; ii < collection.size (); ii++)
-                this.addSedParam (collection.get(ii), header, keyword+(ii+1), FitsKeywords.SEG_DATAID_CONTRIBUTOR);
+                this.addSedParam (collection.get(ii), header, keyword+(ii+1));
         }
+
+        this.addCustomParamsToHeader (dataID, header);
     }
 
     /**
@@ -902,6 +925,9 @@ public class FitsSerializer implements ISedSerializer
             this.addSedParam (derived.getSNR (), header, FitsKeywords.SEG_DD_SNR);
         if (derived.isSetVarAmpl ())
             this.addSedParam (derived.getVarAmpl (), header, FitsKeywords.SEG_DD_VARAMPL);
+
+        this.addCustomParamsToHeader (derived, header);
+
         if (derived.isSetRedshift ())
         {
             SedQuantity redshift = derived.getRedshift ();
@@ -914,25 +940,35 @@ public class FitsSerializer implements ISedSerializer
                 this.addSedParam (redshift.getQuality (), header, FitsKeywords.SEG_DD_REDSHIFT_QUALITY);
             if (redshift.isSetAccuracy ())
                 this.addAccuracyToHeader (redshift.getAccuracy (), header, FitsKeywords.SEG_DD_REDSHIFT_ACC);
+
+            this.addCustomParamsToHeader (redshift, header);
         }
     }
 
     /**
      * Add information from the custom params to the header of the HDU
      */
-    private void addArrayOfParamsToHeader (ArrayOfParam params, Header header, int utype) throws SedInconsistentException
+    private void addCustomParamsToHeader (Group group, Header header) throws SedInconsistentException, SedWritingException
     {
-/* TODO ** Not clear how to handle param arrays ** 
-        List<Param> paramList;
+        List<? extends Param> params = group.getCustomParams ();
+        List<? extends Group> groups = group.getCustomGroups ();
 
-        if (params.isSetParam ())
+        // add custom params to header use the id as the keyword
+        for (Param param : params)
         {
-            paramList = params.getParam ();
-
-            for (Param param : paramList)
-                this.addSedParam (param, header, utype);
+            if (param.isSetName ())
+                this.addSedParam (param, header, param.getName ());
+            else if (param.isSetId ())
+                this.addSedParam (param, header, param.getId ());
+            else if (param.isSetInternalId ())
+                this.addSedParam (param, header, param.getInternalId ());
+            else
+            	logger.warning ("A parameter was found that has no id or name. It will not be serialized.");
         }
-*/
+
+        // flatten out the groups and add all custom params
+        for (Group grp : groups)
+            this.addCustomParamsToHeader (grp, header);
     }
 
     /**
@@ -1062,8 +1098,8 @@ public class FitsSerializer implements ISedSerializer
 
         this.numPoints = pointList.size ();
 
-        this.dataTable = new HashMap <Integer, Column> ();
-        this.columnOrder = new Vector <Integer> ();
+        this.dataTable = new HashMap <String, Column> ();
+        this.columnOrder = new Vector <String> ();
 
         // extract the point information values and create a table
         for (int row=0; row<this.numPoints; row++)
@@ -1095,6 +1131,8 @@ public class FitsSerializer implements ISedSerializer
                                           row,
                                           FitsKeywords.SEG_DATA_BGM);
             }
+
+            processCustomData (point, row);
             
         }
 
@@ -1110,36 +1148,37 @@ public class FitsSerializer implements ISedSerializer
     {
         String keyword; 
         Column column;
-        Integer utype;
+        String colId;
 
         // go through the columns and add the respective
         // keywords to the header
         for (int col=0; col<this.numFields; col++)
         {
         	
-            utype = this.columnOrder.get (col);
-            column = this.dataTable.get (utype);
+            colId = this.columnOrder.get (col);
+            column = this.dataTable.get (colId);
             try
             {
                 keyword = ParamInfoKeys.NAME.keyword+(col+1);
                 header.addValue (keyword, column.name, null);
-                keyword = ParamInfoKeys.UTYPE.keyword+(col+1);
-                header.addValue (keyword, column.utype, null);
-                keyword = ParamInfoKeys.UCD.keyword+(col+1);
 
-                if (column.ucd != null)
+                if ((column.utype != null) && (column.utype.length () > 0))
                 {
-                    header.addValue (keyword, column.ucd, null);
+                    keyword = ParamInfoKeys.UTYPE.keyword+(col+1);
+                    header.addValue (keyword, column.utype, null);
+                }
+                if ((column.ucd != null) && (column.ucd.length () > 0))
+                {
                     keyword = ParamInfoKeys.UCD.keyword+(col+1);
+                    header.addValue (keyword, column.ucd, null);
                 }
 
-                if (column.unit != null)
+                if ((column.unit != null) && (column.unit.length () > 0))
                 {
                     keyword = ParamInfoKeys.UNIT.keyword+(col+1);
                     header.addValue (keyword, column.unit, null);
                 }
-                keyword = ParamInfoKeys.FORM.keyword+(col+1);
-                header.addValue (keyword, column.form, null);
+
             }
             catch (HeaderCardException exp)
             {
@@ -1158,29 +1197,37 @@ public class FitsSerializer implements ISedSerializer
 
         int iCol[][] = new int[1][this.numPoints];
         double dCol[][] = new double[1][this.numPoints];
+        String sCol[][] = new String[1][this.numPoints];
         Column column;
-        Integer utype;
+        String colId;
 
         // go through the columns and add the respective
         // keywords to the header
         for (int col=0; col<this.numFields; col++)
         {
-            utype = this.columnOrder.get (col);
-            column = this.dataTable.get (utype);
+            colId = this.columnOrder.get (col);
+            column = this.dataTable.get (colId);
             try
             {
-                if (column.form.matches (String.format("[0-9]*%1c",IOConstants.FITS_FORMAT_CODE_DOUBLE_PRECISION)))
+                if (column.dataClass == Double.class)
                 {
                     for (int ii=0; ii<this.numPoints; ii++)
                         dCol[0][ii] = (Double)(column.data.get(ii));
                     binaryTable.addColumn (dCol);
                 }
-                else if (column.form.matches (String.format("[0-9]*%1c",IOConstants.FITS_FORMAT_CODE_INTEGER32)))
+                else if (column.dataClass == Integer.class)
                 {
                     for (int ii=0; ii<this.numPoints; ii++)
                         iCol[0][ii] = (Integer)(column.data.get(ii));
                     binaryTable.addColumn (iCol);
                 }
+                else if (column.dataClass == String.class)
+                {
+                    for (int ii=0; ii<this.numPoints; ii++)
+                        sCol[0][ii] = (String)(column.data.get(ii));
+                    binaryTable.addColumn (sCol);
+                }
+
 
             }
             catch (Exception exp)
@@ -1207,13 +1254,13 @@ public class FitsSerializer implements ISedSerializer
         {
             param = coord.getValue ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_TIMEAXIS_VALUE, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (coord.isSetResolution ())
         {
             param = coord.getResolution ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_TIMEAXIS_RESOLUTION, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (coord.isSetAccuracy ())
         {
@@ -1223,6 +1270,8 @@ public class FitsSerializer implements ISedSerializer
 
             this.processAccuracyData (accuracy, row, newUtype);
         }
+
+        processCustomData (coord, row);
     }
 
     /**
@@ -1241,19 +1290,19 @@ public class FitsSerializer implements ISedSerializer
         {
             param = quantity.getValue ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_VALUE, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (quantity.isSetResolution ())
         {
             param = quantity.getResolution ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_RESOLUTION, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (quantity.isSetQuality ())
         {
             param = quantity.getQuality ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_QUALITY, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (quantity.isSetAccuracy ())
         {
@@ -1261,6 +1310,8 @@ public class FitsSerializer implements ISedSerializer
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC, functionName);
             this.processAccuracyData (accuracy, row, newUtype);
         }
+
+        processCustomData (quantity, row);
 
     }
 
@@ -1282,132 +1333,117 @@ public class FitsSerializer implements ISedSerializer
         {
             param = accuracy.getBinLow ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_BINLOW, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetBinHigh ())
         {
             param = accuracy.getBinHigh ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_BINHIGH, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetBinSize ())
         {
             param = accuracy.getBinSize ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_BINSIZE, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetStatError ())
         {
             param = accuracy.getStatError ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_STATERR, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
 
         }
         if (accuracy.isSetStatErrLow ())
         {
             param = accuracy.getStatErrLow ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRLOW, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetStatErrHigh ())
         {
             param = accuracy.getStatErrHigh ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRHIGH, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetSysError ())
         {
             param = accuracy.getSysError ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_SYSERR, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
         if (accuracy.isSetConfidence ())
         {
             param = accuracy.getConfidence ();
             newUtype = this.mergeUtypes (utype, FitsKeywords.SEG_DATA_FLUXAXIS_ACC_CONFIDENCE, functionName);
-            this.addColumn (param, newUtype, row);
+            this.addColumn (param, FitsKeywords.getName (newUtype), newUtype, row);
         }
+
+        processCustomData (accuracy, row);
     }
 
-
-
-    /*
-    *  Fills out the header with the 7 required cards for a fits
-    *  extension. nom.tam.fits complains if these are not there.
-    *  Note: the Fits object holds the data in binary table in
-    *  which has a segment in a single row; each cell in the row contains
-    *  the data for one field (in the VOTable sense).  The data in an
-    *  individual cell is a vector with one element for each
-    *  observation or data point (analagous to a row in a VOTable.)
-    *  Thus, an element within the vector within a cell of the Fits
-    *  binary table corresponds to the contents of a table data
-    *  element (<TD>) in the votable.  All the elements for a given
-    *  field in the VOTable are in the same vector in the binary
-    *  table.
-    */
-    private Header createHeader( Segment segment) throws SedWritingException, SedInconsistentException
+    
+    private void processCustomData (Group parent,
+                                    int row)
     {
-        Header hdr = null;
-        int numBytes = 0;
 
-        // find number of columns
-        if (segment.isSetData ())
+        List<? extends Param> params = parent.getCustomParams ();
+        List<? extends Group> groups = parent.getCustomGroups ();
+
+        for (Param param : params)
         {
-            this.numPoints = segment.getLength ();
 
-            // count the number of bytes for each field
-            for (Map.Entry<Integer, Column> pair : this.dataTable.entrySet ())
-                numBytes += pair.getValue().bytes;
+            if (!param.isSetInternalId ())
+                logger.warning ("A column parameter was found that has no id. It will not be serialized.");
+
+            this.addColumn (param, param.getInternalId (), FitsKeywords.INVALID_UTYPE, row);
         }
-
-        try
-        {
-            hdr = new Header();
-
-            int bytesPerRow = numBytes*this.numPoints;
-
-            hdr.addValue( "XTENSION", "BINTABLE",
-                            "Binary table SEDLib version:  "
-                            + SedConstants.SEDLIB_VERSION  );
-
-            hdr.addValue( "BITPIX",           8,  "bits per byte" );
-            hdr.addValue( "NAXIS",            2,  "Always 2 for binary extension" );
-            hdr.addValue( "NAXIS1", bytesPerRow,  "Number bytes per row" );
-            hdr.addValue( "NAXIS2", 1,  "Number of rows in binary table." );
-            hdr.addValue( "PCOUNT",           0,  "Normally 0 (no varying arrays)" );
-            hdr.addValue( "GCOUNT",           1,  "Required value" );
-            hdr.addValue( "TFIELDS",  this.numFields,  "Number fields" );
-
-            this.addSedParam (new IntParam (this.numPoints), hdr, FitsKeywords.LENGTH);
-
-        }
-        catch( FitsException exp )
-        {
-            throw new SedWritingException(exp.getMessage (), exp);
-        }
-
         
-
-        return hdr;
+ 
+        for (Group group : groups)
+            this.processCustomData (group, row);
     }
 
 
     /**
-     * Add the specified DoubleParam to the HDU header.
+     * Finish adding the specified Param to the HDU header.
      */
-    private void addSedParam(DoubleParam param, Header header, int utype) throws SedInconsistentException, SedWritingException
+    private void finalizeAddSedParam(Param param, Header header, String keyword) throws HeaderCardException
     {
-        if (utype == FitsKeywords.INVALID_UTYPE)
-            throw new SedInconsistentException ("addSedParam: Could not add parameter. There was an invalid utype");
+        // extract the units from the parameter
+        String value = param.getValue ();
 
-        if (!param.isSetValue ())
-        {
-            logger.warning ("The keyword, "+FitsKeywords.getName (utype) + ", parameter does not have a value set. The keyword will be ignored.");
-            return;
-        }
+        if (keyword.equalsIgnoreCase ("HISTORY"))
+            header.insertHistory (value);
+        else if (keyword.equalsIgnoreCase ("COMMENT"))
+            header.insertComment (value);
+        else
+            header.addValue(keyword, value, null);
+    }
 
-        String keyword = FitsKeywords.getKeyword(utype);
 
+    /**
+     * Finish adding the specified TimeParam to the HDU header.
+     */
+    private void finalizeAddSedParam(TimeParam param, Header header, String keyword) throws HeaderCardException
+    {
+        // extract the units from the parameter
+        String comment = null;
+        if (param.isSetUnit ())
+            comment =  "[" + param.getUnit () + "]";
+
+        String value = param.getValue ();
+
+        header.addValue(keyword, value, comment);
+    }
+
+
+
+    /**
+     * Finish adding the specified DoubleParam to the HDU header.
+     */
+    private void finalizeAddSedParam(DoubleParam param, Header header, String keyword) throws HeaderCardException
+    {
         // extract the units from the parameter
         String comment = null;
         if (param.isSetUnit ())
@@ -1415,43 +1451,15 @@ public class FitsSerializer implements ISedSerializer
 
         double value = ((Double)param.getCastValue ());
 
-        // if the keyword starts with todo then no keyword has been
-        // defined for the enumeration
-        if (keyword.startsWith ("_todo"))
-            return;
-
-        // if the keyword ends in an 'n' then replace it with the column number
-        if (this.overrides.containsKey (utype))
-            keyword = overrides.get(utype);
-
-       try
-       {
-            header.addValue(keyword, value, comment);
-       }
-       catch (HeaderCardException exp)
-       {
-           throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+value+" to header.", exp);
-       }
-
+        header.addValue(keyword, value, comment);
     }
 
     /**
      * Add the specified IntParam to the HDU header.
      */
-    private void addSedParam(IntParam param, Header header, int utype) throws SedInconsistentException, SedWritingException
+    private void finalizeAddSedParam(IntParam param, Header header, String keyword) throws HeaderCardException
     {
 
-        if (utype == FitsKeywords.INVALID_UTYPE)
-            throw new SedInconsistentException ("addSedParam: Could not add parameter. There was an invalid utype");
-
-        if (!param.isSetValue ())
-        {
-            logger.warning ("The keyword, "+FitsKeywords.getName (utype) + ", parameter does not have a value set. The keyword will be ignored.");
-            return;
-        }
-
-        String keyword = FitsKeywords.getKeyword(utype);
-        
         // extract the units from the parameter
         String comment = null;
         if (param.isSetUnit ())
@@ -1459,24 +1467,7 @@ public class FitsSerializer implements ISedSerializer
 
         int value = ((Integer)param.getCastValue ());
 
-        // if the keyword starts with todo then no keyword has been
-        // defined for the enumeration
-        if (keyword.startsWith ("_todo"))
-            return;
-
-        // if the keyword ends in an 'n' then replace it with the column number
-        if (this.overrides.containsKey (utype))
-            keyword = overrides.get(utype);
-
-       try
-       {
-            header.addValue(keyword, value, comment);
-       }
-       catch (HeaderCardException exp)
-       {
-            throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+value+" to header.", exp);
-       }
-
+        header.addValue(keyword, value, comment);
     }
 
     /**
@@ -1484,10 +1475,18 @@ public class FitsSerializer implements ISedSerializer
      */
     private void addSedParam(Param param, Header header, int utype) throws SedInconsistentException, SedWritingException
     {
+        String keyword;
         if (utype == FitsKeywords.INVALID_UTYPE)
             throw new SedInconsistentException ("addSedParam: Could not add parameter. There was an invalid utype");
 
-        this.addSedParam (param, header, FitsKeywords.getKeyword(utype), utype);
+        keyword = FitsKeywords.getKeyword(utype);
+
+        // if the keyword ends in an 'n' then replace it with the column number
+        if (this.overrides.containsKey (utype))
+            keyword = overrides.get(utype);
+
+
+        this.addSedParam (param, header, keyword);
 
     }
 
@@ -1495,36 +1494,36 @@ public class FitsSerializer implements ISedSerializer
      * Add the specified generic Param to the HDU header. This also allows for
      * keyword to be specified (opposed to just using the defaul)
      */
-    private void addSedParam(Param param, Header header, String keyword, int utype) throws SedInconsistentException, SedWritingException
+    private void addSedParam(Param param, Header header, String keyword) throws SedInconsistentException, SedWritingException
     {
-        if (utype == FitsKeywords.INVALID_UTYPE)
-            throw new SedInconsistentException ("addSedParam: Could not add parameter. There was an invalid utype");
-
         if (!param.isSetValue ())
         {
-            logger.warning ("The keyword, "+FitsKeywords.getName (utype) + ", parameter does not have a value set. The keyword will be ignored.");
+            logger.log (Level.WARNING, "The keyword, {0}, parameter does not have a value set. The keyword will be ignored.", keyword);
             return;
         }
-
-        String value = param.getValue ();
 
         // if the keyword starts with todo then no keyword has been
         // defined for the enumeration
         if (keyword.startsWith ("_todo"))
             return;
 
-        // if the keyword ends in an 'n' then replace it with the column number
-        if (this.overrides.containsKey (utype))
-            keyword = overrides.get(utype);
-
-       try
-       {
-            header.addValue(keyword, value, null);
-       }
-       catch (HeaderCardException exp)
-       {
-    	    throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+value+" to header.", exp);
-       }
+        keyword = keyword.toUpperCase();
+        try
+        {
+        	if (param instanceof IntParam)
+        		this.finalizeAddSedParam ((IntParam)param, header, keyword);
+        	else if (param instanceof DoubleParam)
+        		this.finalizeAddSedParam ((DoubleParam)param, header, keyword);
+        	else if (param instanceof TimeParam)
+        		this.finalizeAddSedParam ((TimeParam)param, header, keyword);
+        	else
+        		this.finalizeAddSedParam (param, header, keyword);
+        }
+        catch (HeaderCardException exp)
+        {
+//    	    throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+param.getValue ()+" to header.", exp);
+        	logger.log(Level.WARNING, "Failed to add keyword,{0}, with value {1} to header. The following fits exception was given \"{2}\".", new Object[]{keyword, param.getValue(), exp.getMessage()});
+        }
     }
 
     /**
@@ -1546,82 +1545,104 @@ public class FitsSerializer implements ISedSerializer
      * Update a column in the data table with information from the Param.
      * If the column does not exist in the table then a new one is created.
      */
-    private void addColumn (Param param, int utype, int row)
+    private void addColumn (Param param, String id, int utype, int row)
         
     {
         Column column;
-        if (!this.dataTable.containsKey (utype))
+
+
+        if (!this.dataTable.containsKey (id))
         {
             column = new Column();
-            this.dataTable.put (utype, column);
-            this.columnOrder.add (utype);
-        }
-        else
-            column = this.dataTable.get (utype);
+            this.dataTable.put (id, column);
+            this.columnOrder.add (id);
             
 
-        if (param.isSetName ())
-            column.name = param.getName ();
-        else if (this.overrides.containsKey (utype))
-            column.name = this.overrides.get (utype);
-        else
-        {
-            column.name = FitsKeywords.getDefaultColumnName (utype);
+            if (param.isSetName ())
+                column.name = param.getName ();
+            else if (utype != FitsKeywords.INVALID_UTYPE)
+            {   
+                if (this.overrides.containsKey (utype))
+                    column.name = this.overrides.get (utype);
+                else
+                {
+                    column.name = FitsKeywords.getDefaultColumnName (utype);
 
-            // if the column doesn't have a default name it can't be added
-            if (column.name ==  null)
-            {
-                logger.warning ("The utype, "+FitsKeywords.getName (utype)+" does not have a column name associated with it. This column will be ignored");
-                return;
+                    // if the column doesn't have a default name it can't be added
+                    if (column.name ==  null)
+                    {
+                        logger.log (Level.WARNING, "The utype, {0} does not have a column name associated with it. This column will be ignored", FitsKeywords.getName(utype));
+                        return;
+                    }
+                }
             }
+            else
+                column.name = id;
         }
+        else
+            column = this.dataTable.get (id);
+
       
             
         if (param.isSetUcd ())
             column.ucd = param.getUcd ();
         else if (this.ucdOverrides.containsKey (utype))
             column.ucd = this.ucdOverrides.get (utype);
-        else
+        else if (utype != FitsKeywords.INVALID_UTYPE)
             column.ucd = FitsKeywords.getUcd (utype);
-        column.utype = FitsKeywords.getName (utype);
+
+        if (utype != FitsKeywords.INVALID_UTYPE)
+            column.utype = FitsKeywords.getName (utype);
 
         if (param instanceof DoubleParam)
         {
             column.unit = ((DoubleParam)param).getUnit ();
-            column.form = String.format( "%d%1c", this.numPoints, IOConstants.FITS_FORMAT_CODE_DOUBLE_PRECISION);
-            column.bytes = IOConstants.FITS_BYTES_PER_DOUBLE_PRECISION;
+            column.dataClass = Double.class;
 
             if (column.data == null)
             {
                column.data = new ArrayList<Double>(this.numPoints);
                for (int ii=0; ii<this.numPoints; ii++)
-                  column.data.add(Double.NaN);
+                  column.data.add(SedConstants.DEFAULT_DOUBLE);
             }
 
-            column.data.set (row, (Double)(param.getCastValue ()));
+            if (param.isSetValue ())
+                column.data.set (row, (Double)(param.getCastValue ()));
                
         }
         else if (param instanceof IntParam)
         {
             column.unit = ((IntParam)param).getUnit ();
-            column.form = String.format( "%d%1c", this.numPoints, IOConstants.FITS_FORMAT_CODE_INTEGER32);
 
-            column.bytes = IOConstants.FITS_BYTES_PER_INTEGER32;
+            column.dataClass = Integer.class;
+
 
             if (column.data == null)
             {
                column.data = new ArrayList<Integer>(this.numPoints);
                for (int ii=0; ii<this.numPoints; ii++)
-                  column.data.add(0);
+                  column.data.add(SedConstants.DEFAULT_INTEGER);
             }
 
-            column.data.set (row, (Integer)(param.getCastValue ()));
+            if (param.isSetValue ())
+                column.data.set (row, (Integer)(param.getCastValue ()));
 
 
         }
         else
         {
-        ; // we don't handle strings right now
+            column.dataClass = String.class;
+        
+            if (column.data == null)
+            {
+               column.data = new ArrayList<String>(this.numPoints);
+               for (int ii=0; ii<this.numPoints; ii++)
+                  column.data.add(SedConstants.DEFAULT_STRING);
+            }
+
+            if (param.isSetValue ())
+                column.data.set (row, param.getValue ());
+
         }
     }
 
@@ -1638,17 +1659,21 @@ public class FitsSerializer implements ISedSerializer
             return keywordSet;
 
         for (int ii=0; ii<this.columnOrder.size (); ii++)
-           if (this.columnOrder.get(ii) == columnUtype)
-           {
-               // replace "n" with the column number
-               newKeyword = FitsKeywords.getKeyword (keywordUtype);
-               newKeyword = newKeyword.replace ("n", Integer.toString (ii+1));
-               this.overrides.put (keywordUtype, newKeyword); 
-               keywordSet = true;
-               break;
-           }
+        {
+      
+            int utype = FitsKeywords.getUtypeFromString (this.columnOrder.get(ii));
+            if (utype == columnUtype)
+            {
+                // replace "n" with the column number
+                newKeyword = FitsKeywords.getKeyword (keywordUtype);
+                newKeyword = newKeyword.replace ("n", Integer.toString (ii+1));
+                this.overrides.put (keywordUtype, newKeyword); 
+                keywordSet = true;
+                break;
+            }
+        }
 
-       return keywordSet;
+        return keywordSet;
     }
 
     /**
@@ -1671,7 +1696,10 @@ public class FitsSerializer implements ISedSerializer
         else
             pointList = ((ArrayOfPoint)data).getPoint ();
 
-        if ((pointList != null) && (pointList.isEmpty()))
+        if(pointList==null)
+            return;
+
+        if (pointList.isEmpty())
             return;
 
         for (Point point : pointList)
@@ -1730,5 +1758,31 @@ public class FitsSerializer implements ISedSerializer
             }
         }
 
+    }
+
+    /**
+     * Set the header to the end of the keywords
+     **/
+    private void setHeaderCursor (Header header)
+    {
+    	
+    	//TODO This is a hack to push the header to the end. The front
+    	// of the header must be the basic header for the module to validate
+    	// correctly. Go to the of data. Changes to the fits module may
+    	// render this code useless or even incorrect.
+    	Cursor cursor = header.iterator();
+    	String key = "";
+    	while (cursor.hasNext())
+    	{
+    		key = ((HeaderCard)cursor.next()).getKey();
+    		// stop right after the field to try and keep column cards together
+    		if (key.equalsIgnoreCase("TFIELDS") && cursor.hasNext())
+    		{
+    			key = ((HeaderCard)cursor.next()).getKey();
+    			break;
+    		}
+    	}
+    	header.findCard (key);
+    	
     }
 }

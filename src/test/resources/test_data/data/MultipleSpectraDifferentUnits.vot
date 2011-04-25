@@ -8,8 +8,8 @@
 <RESOURCE utype="spec:Sed">
 <TABLE name="Spectrum Data for NGC_4321" utype="spec:Spectrum">
 
-<FIELD name="DataSpectralValue" datatype="double" ucd="em.freq" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="Hz"/>
-<FIELD name="DataFluxValue" datatype="double" ucd="phot.flux.density;em.freq" utype="spec:Spectrum.Data.FluxAxis.Value" unit="W/m^2/Hz"/>
+<FIELD name="DataSpectralValue" datatype="double" ucd="em.wl" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="m"/>
+<FIELD name="DataFluxValue" datatype="double" ucd="phot.flux.density;em.wl" utype="spec:Spectrum.Data.FluxAxis.Value" unit="W/m^2/m"/>
 
 
 <PARAM datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.03" arraysize="*"/>
@@ -25,13 +25,13 @@
 <GROUP name="Spectrum.Char" utype="spec:Spectrum.Char">
 
   <GROUP name="Char.FluxAxis" utype="spec:Spectrum.Char.FluxAxis">
-    <PARAM datatype="char" name="FluxAxisUcd" utype="spec:Spectrum.Char.FluxAxis.Ucd" value="phot.flux.density;em.freq" arraysize="*"/>
-    <PARAM datatype="char" name="FluxAxisUnit" utype="spec:Spectrum.Char.FluxAxis.Unit" value="W/m^2/Hz" arraysize="*"/>
+    <PARAM datatype="char" name="FluxAxisUcd" utype="spec:Spectrum.Char.FluxAxis.Ucd" value="phot.flux.density;em.wl" arraysize="*"/>
+    <PARAM datatype="char" name="FluxAxisUnit" utype="spec:Spectrum.Char.FluxAxis.Unit" value="W/m^2/m" arraysize="*"/>
   </GROUP>
   
   <GROUP name="Char.SpectralAxis" utype="spec:Spectrum.Char.SpectralAxis">
-    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.freq" arraysize="*"/>
-    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="Hz" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.wl" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="m" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageLocation" ucd="instr.bandpass" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Value" value="" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageBoundsExtent" ucd="instr.bandwidth" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageBoundsStart" ucd="em.freq;stat.min" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Start" value="" arraysize="*"/>
@@ -78,7 +78,7 @@
 </TABLE>
 <TABLE name="Spectrum Data for NGC_4321" utype="spec:Spectrum">
 
-<FIELD name="DataSpectralValue" datatype="double" ucd="em.freq" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="Hz"/>
+<FIELD name="DataSpectralValue" datatype="double" ucd="em.wl" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="m"/>
 <FIELD name="DataFluxValue" datatype="double" ucd="phot.flux.density;em.freq" utype="spec:Spectrum.Data.FluxAxis.Value" unit="W/m^2/Hz"/>
 
 
@@ -100,8 +100,8 @@
   </GROUP>
   
   <GROUP name="Char.SpectralAxis" utype="spec:Spectrum.Char.SpectralAxis">
-    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.freq" arraysize="*"/>
-    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="Hz" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.wl" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="m" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageLocation" ucd="instr.bandpass" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Value" value="" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageBoundsExtent" ucd="instr.bandwidth" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
     <PARAM datatype="char" name="SpectralAxisCoverageBoundsStart" ucd="em.freq;stat.min" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Start" value="" arraysize="*"/>

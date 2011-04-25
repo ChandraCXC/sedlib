@@ -7,15 +7,16 @@ import cfa.vo.sedlib.common.SedNullException;
 import java.util.List;
 import java.util.ArrayList;
 
+
 /**
  * <p>Java class for Group complex type.
  * 
  */
-public class Group {
+public class Group implements Cloneable {
 
     protected String groupId;
     protected Object idref;
-    protected List<Param> customParams = new ArrayList <Param> ();;
+    protected List<Param> customParams = new ArrayList <Param> ();
     protected List<Group> customGroups = new ArrayList <Group> ();
     protected int linkRef;
 
@@ -34,6 +35,30 @@ public class Group {
     {
         this.linkRef = linkRef;
     }
+
+    @Override
+    public Object clone ()
+    {
+        Group group = null;
+        try
+        {
+            group = (Group) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }
+
+        group.customParams = new ArrayList <Param> ();
+        group.customGroups = new ArrayList <Group> ();
+        for (Param param : this.customParams)
+            group.customParams.add (param);
+        for (Group grp : this.customGroups)
+            group.customGroups.add (grp);
+        return group;
+    }
+
 
     /**
      * Gets the value of the id property.
@@ -118,7 +143,7 @@ public class Group {
     /**
      * Sets the custom param list to a new list
      *
-     * @param customParam
+     * @param customParams
      *     allowed object is List<Param>
      *     {@link Param }
      *

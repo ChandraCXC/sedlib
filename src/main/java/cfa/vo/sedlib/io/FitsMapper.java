@@ -12,6 +12,7 @@ package cfa.vo.sedlib.io;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nom.tam.fits.BasicHDU;
@@ -45,14 +46,16 @@ import cfa.vo.sedlib.TimeFrame;
 import cfa.vo.sedlib.common.FitsKeywords;
 import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
+import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
+import java.io.IOException;
 
 /**
 Maps Sed objects to Fits objects
 */
 public class FitsMapper extends SedMapper
 {
-    static Logger logger = Logger.getLogger ("cfa.vo.sedlib");
+    static final Logger logger = Logger.getLogger ("cfa.vo.sedlib");
     enum ParamInfoKeys {
     	INVALID (""),
         UCD ("^TUCD[1-9][0-9]{0,3}$"),
@@ -93,7 +96,7 @@ public class FitsMapper extends SedMapper
       *    {@link Sed}
       * @throws SedException
       */
-    public Sed populateSed (Object data, Sed sed) throws SedParsingException, SedInconsistentException
+    public Sed populateSed (Object data, Sed sed) throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
         Segment segment;
         BasicHDU[] hdus;
@@ -121,6 +124,10 @@ public class FitsMapper extends SedMapper
             }
         }
         catch (FitsException exp) {
+            if(exp.getMessage().contains("java.io.IOException")
+                    && !exp.getMessage().contains("Not FITS format"))
+                        throw new IOException(exp.getMessage ());
+
             throw new SedParsingException (exp.getMessage(), exp);
         }
 
@@ -174,8 +181,7 @@ public class FitsMapper extends SedMapper
             key = card.getKey();
 
             // ignore comments
-            if (( key.compareTo("COMMENT")==0 )
-                || ( key.compareTo("END")==0 ) )
+            if ( key.compareTo("END")==0 )
                 continue;
 
             // ignore keywords for data and fits specific
@@ -227,6 +233,7 @@ public class FitsMapper extends SedMapper
     
                         // ensure ra is added in the right place
                         targetPos[0] = new DoubleParam (value, null, null, unit, null);
+                        segment.getTarget().setPos(pos);
                         break;
                     }
                     case FitsKeywords.TARGET_DECL:
@@ -236,6 +243,7 @@ public class FitsMapper extends SedMapper
 
                         // ensure dec is added after ra
                         targetPos[1] = new DoubleParam (value, null, null, unit, null);
+                        segment.getTarget().setPos(pos);
                         break;
                     }
 
@@ -522,7 +530,7 @@ public class FitsMapper extends SedMapper
                     //
                     case FitsKeywords.SEG_CHAR_FLUXAXIS_CAL:
                         segment.createChar().createFluxAxis().setCalibration( new TextParam( value ) ) ;
-                    break;
+                        break;
                     case FitsKeywords.SEG_CHAR_FLUXAXIS_NAME:
                         segment.createChar().createFluxAxis().setName( value );
                         break;
@@ -724,7 +732,53 @@ public class FitsMapper extends SedMapper
                     break;
 
                     default:
-                        logger.warning("The keyword, "+key+" is not recognized and will be ignored.");
+                    {
+                    	try
+                    	{
+
+                            Param param;
+                            // Since there can be multiple copies of the history and comments
+                            // we don't include an id for these since id's need to be unique
+                            if (key.equalsIgnoreCase ("HISTORY") || key.equalsIgnoreCase ("COMMENT"))
+                            {
+                                // history and comment values are being recognized as comments
+                                if (value == null)
+                                    value = card.getComment ();
+                                param = new TextParam (value, key, null, null);
+                            }
+                            else
+                            {
+                                // the type isn't included in the module. try to 
+                                // guess which type best fits the data
+                            	
+                                if (card.isStringValue())
+                                    param = new TextParam (value, key, null, key);
+                                else
+                                {
+                                    try
+                                    {
+                                        param = new IntParam (Integer.valueOf (value), key, null, unit, key);
+                                    }
+                                    catch (NumberFormatException exp1)
+                                    {
+                                        try
+                                        {
+                                            param = new DoubleParam (Double.valueOf (value), key, null, unit, key);
+                                        }
+                                        catch (NumberFormatException exp2)
+                                        {
+                                            param = new TextParam (value, key, null, key);
+                                        }
+                                    }
+                                }
+                            }
+                            segment.addCustomParam (param);
+                    	}
+                    	catch (SedException exp)
+                    	{
+                    		logger.warning(exp.getMessage ());
+                    	}
+                    }
                     break;
                 }
             }
@@ -738,10 +792,16 @@ public class FitsMapper extends SedMapper
      */
     private void loadDataIntoSegment( TableHDU table, Segment segment ) throws SedParsingException
     {
-        Object[] row;
+ /*       Object[] row;
+  * 
+  */
         int columns;
         ArrayOfPoint pointData;
         List<Point> pointList;
+        Object column;
+        Point currentPoint;
+        int dim;
+
 
         if (table.getNRows() == 0)
            return;
@@ -749,7 +809,7 @@ public class FitsMapper extends SedMapper
         if (table.getNRows() > 1)
            throw new SedParsingException ("An Unexpected number of rows were found. Expected one row per segment, but found " + table.getNRows () + " rows.");
         
-
+/*
         try
         {
             row = table.getRow( 0 );
@@ -760,30 +820,39 @@ public class FitsMapper extends SedMapper
                     "A fits exception was encountered when attempting to access row 0.", exp);
 
         }
+ */       
+        columns = table.getNCols ();
 
         // create tables of the 
-        String[][] paramInfoTable = this.createParamInfoTable (table.getHeader(), row.length);
+        String[][] paramInfoTable = this.createParamInfoTable (table.getHeader(), columns);
 
 
         pointData = new ArrayOfPoint ();
         pointList = pointData.createPoint ();
 
-        // the number of columns in the row is the row length
-        columns = row.length;
-
 
         // Create the points we need.  We could create an array of points and
         // convert it to a List with Arrays.asList() but this returns a fixed
         // size list and the user needs to be allowed to grow or shrink it.
-
-        int numPoints = this.getMaxFieldDepth( row );
+/*
+        int numPoints = this.getMaxFieldDepth( table );
         for ( int ii = 0; ii < numPoints; ii++ )
             pointList.add( new Point () );
+*/
 
         // loop over the row; each elements contains all the data one
         // field in the Fits document
         for ( int ii = 0; ii <  columns; ii++ )
         {
+            try
+            {
+                column = table.getColumn (ii);
+            }
+            catch (FitsException exp)
+            {
+                throw new SedParsingException ("Problems accessing fits column "+ii, exp);
+            }
+
             // Get the utupe for this field.
             String utype   = paramInfoTable[ParamInfoKeys.UTYPE.ordinal()][ii];
             String ucd     = paramInfoTable[ParamInfoKeys.UCD.ordinal ()][ii];
@@ -795,25 +864,47 @@ public class FitsMapper extends SedMapper
             try
             {
                 columnFormat = table.getColumnFormat(ii);
-                dataType = columnFormat.charAt( columnFormat.length() - 1 );
+                dataType = columnFormat.replaceAll("[0-9]", "").charAt(0);
             }
             catch( FitsException exp )
             {
-                    throw new SedParsingException (
+                throw new SedParsingException (
                             "A fits exception was encountered attempting to get column format, column="
                             + ii
                             + ";  Fits error: ");
             }
 
+            dim = FitsMapper.getObjectDim (column);
 
             switch ( dataType )
             {
                 case IOConstants.FITS_FORMAT_CODE_INTEGER16:
                 {
-                    short[] data = (short[])row[ii];
+                    short[] data;
+
+                    // this is true if there are more than one point in the array
+                    // the first element should be the first row
+                    if (dim == 1)
+                        data = (short[])column;
+                    else if (dim == 2)
+                        data = ((short[][])column)[0];
+                    else
+                    {
+                        logger.log (Level.WARNING, "Points with multiple dimensional data is not supported. The data for column {0} will be ingored.", ii);
+                        break;
+                    }
+
                     for ( int jj= 0; jj <  data.length; jj++ )
                     { 
-                        this.setPointDataField( pointList.get(jj),
+                        if (pointList.size () <= jj)
+                        {
+                            currentPoint = new Point ();
+                            pointList.add(currentPoint);
+                        }
+                        else
+                            currentPoint = pointList.get (jj);
+
+                        this.setPointDataField( currentPoint,
                                 utype,
                                 new IntParam ((int)data[jj], name, ucd, unit, null));
                     }
@@ -822,37 +913,164 @@ public class FitsMapper extends SedMapper
 
                 case IOConstants.FITS_FORMAT_CODE_INTEGER32:
                 {
-                    int[] data = (int[])row[ii];
+                    int[] data;
+
+                    // this is true if there are more than one point in the array
+                    // the first element should be the first row
+                    if (dim == 1)
+                        data = (int[])column;
+                    else if (dim == 2)
+                        data = ((int[][])column)[0];
+                    else
+                    {
+                        logger.log (Level.WARNING, "Points with multiple dimensional data is not supported. The data for column {0} will be ingored.", ii);
+                        break;
+                    }
+
+
                     for ( int jj = 0; jj <  data.length; jj++ )
                     {
-                        this.setPointDataField( pointList.get(jj),
+                        if (pointList.size () <= jj)
+                        {
+                            currentPoint = new Point ();
+                            pointList.add(currentPoint);
+                        }
+                        else
+                            currentPoint = pointList.get (jj);
+                        
+                        this.setPointDataField( currentPoint,
                                 utype,
-                                new IntParam ((int)data[jj], name, ucd, unit, null));
+                                new IntParam (data[jj], name, ucd, unit, null));
                     }
                 }
                 break;
                 case IOConstants.FITS_FORMAT_CODE_DOUBLE_PRECISION:
                 {
-                    double[] data = (double[]) row[ ii ];
+                    double[] data;
+
+                    // this is true if there are more than one point in the array
+                    // the first element should be the first row
+                    if (dim == 1)
+                        data = (double[])column;
+                    else if (dim == 2)
+                        data = ((double[][])column)[0];
+                    else
+                    {
+                        logger.log (Level.WARNING, "Points with multiple dimensional data is not supported. The data for column {0} will be ingored.", ii);
+                        break;
+                    }
+
                     for ( int jj = 0; jj <  data.length; jj++ )
                     {
-                        this.setPointDataField( pointList.get(jj),
+                        if (pointList.size () <= jj)
+                        {
+                            currentPoint = new Point ();
+                            pointList.add(currentPoint);
+                        }
+                        else
+                            currentPoint = pointList.get (jj);
+
+                        this.setPointDataField( currentPoint,
                                 utype,
-                                new DoubleParam ((double)data[jj], name, ucd, unit, null));
+                                new DoubleParam (data[jj], name, ucd, unit, null));
                     }
                 }
                 break;
                 case IOConstants.FITS_FORMAT_CODE_SINGLE_PRECISION:
                 {
-                    float[] data = (float[]) row[ ii ];
+                    float[] data;
+
+                    // this is true if there are more than one point in the array
+                    // the first element should be the first row
+                    if (dim == 1)
+                        data = (float[])column;
+                    else if (dim == 2)
+                        data = ((float[][])column)[0];
+                    else
+                    {
+                        logger.log (Level.WARNING, "Points with multiple dimensional data is not supported. The data for column {0} will be ingored.", ii);
+                        break;
+                    }
+
                     for ( int jj = 0; jj <  data.length; jj++ )
                     {
-                        this.setPointDataField( pointList.get(jj),
+                        if (pointList.size () <= jj)
+                        {
+                            currentPoint = new Point ();
+                            pointList.add(currentPoint);
+                        }
+                        else
+                            currentPoint = pointList.get (jj);
+
+                        this.setPointDataField( currentPoint,
                                 utype,
                                 new DoubleParam ((double)data[jj], name, ucd, unit, null));
                     }
                 }
                 break;
+                case IOConstants.FITS_FORMAT_CODE_STRING:
+                {
+                    String[] data;
+                    int maxStringSize = 1;
+                    int pointIndex = 0;
+                    
+                    // this is true if there are more than one point in the array
+                    // the first element should be the first row
+                    if (dim == 1)
+                        data = (String[])column;
+                    else if (dim == 2)
+                        data = ((String[][])column)[0];
+                    else
+                    {
+                        logger.log (Level.WARNING, "Points with multiple dimensional data is not supported. The data for column {0} will be ingored.", ii);
+                        break;
+                    }
+
+                    // FIXME verify the length of each string. a bug in the module creates
+                    // a situation where #A# creates a single string instead of 
+                    // multiple strings. extract the actual sizes
+                    if (columnFormat.matches ("^[0-9]+A[0-9]+$"))
+                    {
+                        maxStringSize = Integer.valueOf (columnFormat.replaceFirst ("^[0-9]+A",""));
+                    }
+                    else if (columnFormat.matches ("^[0-9]+A$"))
+                    {
+                        maxStringSize = Integer.valueOf (columnFormat.replaceFirst ("A$",""));
+                    }
+
+                    for ( int jj = 0; jj <  data.length; jj++ )
+                    {
+                    	String dataString = data[jj];
+                        while (dataString.length () > 0)
+                        {
+                    	
+                            if (pointList.size () <= pointIndex)
+                            {
+                                currentPoint = new Point ();
+                                pointList.add(currentPoint);
+                            }
+                            else
+                                currentPoint = pointList.get (pointIndex);
+
+                            TextParam tparam;
+                            if (dataString.length () > maxStringSize)
+                            {
+                                tparam = new TextParam (dataString.substring (0, maxStringSize), name, ucd, null);
+                                dataString = dataString.substring (maxStringSize);
+                            }
+                            else
+                            {
+                                tparam = new TextParam (dataString, name, ucd, null);
+                                dataString = "";
+                            }
+                            this.setPointDataField( currentPoint, utype, tparam);
+
+                            pointIndex++;
+                        }
+                    }
+                }
+                break;
+
                 default:
                     logger.warning (String.format (
                         "The specified data format code, %s for column %d, is not supported and will be ignored.", columnFormat, ii));
@@ -861,7 +1079,7 @@ public class FitsMapper extends SedMapper
         }
 
         // only add point data if there are points
-        if (numPoints > 0)
+        if (pointList.size() > 0)
            segment.setData( pointData );
     }
 
@@ -1047,8 +1265,18 @@ public class FitsMapper extends SedMapper
                 break;
 
             default:
-                //TODO store unknown fields
-                logger.warning ("The utype "+utype+" is not supported. This data will be ignored");
+            {
+            	try
+            	{
+                    // set the id of the parameter to be the name of the column 
+                    param.setId (param.getName ());
+                    point.addCustomParam (param);
+            	}
+            	catch (SedException exp)
+            	{
+            		logger.warning(exp.getMessage ());
+            	}
+            }
         }
     }
 
@@ -1074,29 +1302,32 @@ public class FitsMapper extends SedMapper
 
         CoordFrame coordFrame = null;
 
-        // find the spectral coord frame
         for (int ii=0; ii<coordFrames.size (); ii++)
         {
+            coordFrame = coordFrames.get (ii);
+
             if ((utype == FitsKeywords.SEG_CS_SPECTRALFRAME) &&
                 (coordFrame instanceof SpectralFrame))
-                coordFrame = coordFrames.get (ii);
+                break;
+
             if ((utype == FitsKeywords.SEG_CS_TIMEFRAME) &&
                 (coordFrame instanceof TimeFrame))
-                coordFrame = coordFrames.get (ii);
+                break;
+
             if ((utype == FitsKeywords.SEG_CS_SPACEFRAME) &&
                 (coordFrame instanceof SpaceFrame))
-                coordFrame = coordFrames.get (ii);
+                break;
+
             if ((utype == FitsKeywords.SEG_CS_REDFRAME) &&
                 (coordFrame instanceof RedshiftFrame))
-                coordFrame = coordFrames.get (ii);
-            if ((utype == FitsKeywords.SEG_CS_GENFRAME) &&
-                (coordFrame instanceof CoordFrame))
-                coordFrame = coordFrames.get (ii);
+                break;
 
-            if (coordFrame != null)
-               break;
-                 
-        }
+            if (utype == FitsKeywords.SEG_CS_GENFRAME)
+                break;
+
+            coordFrame = null;
+
+       }
 
         // the coord frame doesn't exist so create it
         if (coordFrame == null)
@@ -1130,11 +1361,20 @@ public class FitsMapper extends SedMapper
      *  length.  The elements of tableRow are arrays of primitives and it is the
      *  length of those arrays whose maximum is returned.
      */
-    int getMaxFieldDepth( Object[] tableRow ) throws SedParsingException
+    int getMaxFieldDepth( TableHDU table ) throws SedParsingException
     {
         int maxDepth = 0;
-        for ( int ii = 0; ii < tableRow.length; ii++ )
-            maxDepth = Math.max( maxDepth, this.getFieldDepth( tableRow[ ii ] ) );
+        for ( int ii = 0; ii < table.getNCols (); ii++ )
+        {
+        	try
+        	{
+                maxDepth = Math.max( maxDepth, this.getFieldDepth( table.getColumn(ii) ) );
+        	}
+        	catch (FitsException exp)
+        	{
+        		throw new SedParsingException ("Problem accessing fits column "+ii, exp);
+        	}
+        }
 
         return maxDepth;
     }
@@ -1144,18 +1384,46 @@ public class FitsMapper extends SedMapper
      *  Returns the depth of the specified cell in a table row.
      *  The cell is an array of primitives whose length is returned.
      */
-    private int getFieldDepth( Object binTableRowCell )
+    private int getFieldDepth( Object column )
     {
-        // get the class name so we know what we need to cast to.
-        String className = binTableRowCell.getClass().getName();
-        if ( className.equals( "[S" ) )
-            return ((short[])binTableRowCell).length;
-        else if ( className.equals( "[I" ) )
-            return ((int[])binTableRowCell).length;
-        else if ( className.equals( "[D" ) )
-            return ((double[])binTableRowCell).length;
-        else if ( className.equals( "[F" ) )
-            return ((float[])binTableRowCell).length;
+        // get the class name so we know what we need to cast to. 
+        String className;
+        
+        if (column == null)
+        	return 0;
+        
+        className = column.getClass().getName();
+        if ( className.equals( "[[S" ) )
+        {
+            short element[] = ((short[][])column)[0];
+            if (element != null)
+            	return element.length;
+        }
+        else if ( className.equals( "[[I" ) )
+        {
+            int element[] = ((int[][])column)[0];
+            if (element != null)
+            	return element.length;
+        }
+       	
+        else if ( className.equals( "[[D" ) )
+        {
+            double element[] = ((double[][])column)[0];
+            if (element != null)
+            	return element.length;
+        }
+        else if ( className.equals( "[[F" ) )
+        {
+            float element[] = ((float[][])column)[0];
+            if (element != null)
+            	return element.length;
+        }
+        else if ( className.equals( "[[L") )
+        {
+            String element[] = ((String[][])column)[0];
+            if (element != null)
+            	return element.length;
+        }
 
         return 0;
     }
@@ -1246,7 +1514,7 @@ public class FitsMapper extends SedMapper
         else
             pointList = ((ArrayOfPoint)data).createPoint ();
 
-        if (pointList.size () == 0)
+        if (pointList.isEmpty())
             return;
 
         // use the first point to get relevant information
@@ -1271,7 +1539,7 @@ public class FitsMapper extends SedMapper
 
                 // set CharSpectralAxis.unit
                 if (pointAxis.getValue ().isSetUnit ())
-                    charAxis.setUnit (pointAxis.getValue ().getUcd ());
+                    charAxis.setUnit (pointAxis.getValue ().getUnit ());
                 else if (charAxis.isSetUnit ())
                     pointAxis.getValue ().setUnit (charAxis.getUnit ());
 
@@ -1302,7 +1570,7 @@ public class FitsMapper extends SedMapper
 
                 // set CharSpectralAxis.unit
                 if (pointAxis.getValue ().isSetUnit ())
-                    charAxis.setUnit (pointAxis.getValue ().getUcd ());
+                    charAxis.setUnit (pointAxis.getValue ().getUnit ());
                 else if (charAxis.isSetUnit ())
                     pointAxis.getValue ().setUnit (charAxis.getUnit ());
             }
@@ -1321,6 +1589,19 @@ public class FitsMapper extends SedMapper
                segment.getChar ().getSpatialAxis ().setUnit ("deg");
         }
     }
+
+    public static int getObjectDim(Object obj)
+    {
+        int dim = 0;
+        Class objClass = obj.getClass();
+        while (objClass.isArray())
+        {
+            dim++;
+            objClass = objClass.getComponentType();
+        }
+        return dim;
+    }
+
 }
     
 

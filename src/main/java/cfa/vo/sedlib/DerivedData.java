@@ -13,6 +13,23 @@ public class DerivedData
     protected DoubleParam varAmpl;
     protected SedQuantity redshift;
 
+    @Override
+    public Object clone ()
+    {
+        DerivedData derivedData = (DerivedData) super.clone();
+        
+
+        if (this.isSetSNR ())
+            this.snr = (DoubleParam)this.snr.clone ();
+        if (this.isSetVarAmpl ())
+            this.varAmpl = (DoubleParam)this.varAmpl.clone ();
+        if (this.isSetRedshift ())
+            this.redshift = (SedQuantity)this.redshift.clone ();
+
+        return derivedData;
+    }
+
+
     /**
      * Gets the value of the snr property.
      * 

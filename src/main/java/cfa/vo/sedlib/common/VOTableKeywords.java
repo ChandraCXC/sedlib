@@ -116,7 +116,7 @@ public class VOTableKeywords extends Utypes{
             return INVALID_UTYPE;
 
         utypeName = utypeName.replaceFirst( IOConstants.NAMESPACE_PATTERN, "" );
-        utypeEnum = nameMap.get (utypeName);
+        utypeEnum = nameMap.get (utypeName.toLowerCase ());
         
         if (utypeEnum == null)
             utypeEnum = INVALID_UTYPE;

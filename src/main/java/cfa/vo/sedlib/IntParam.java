@@ -13,12 +13,6 @@ public class IntParam
 
     public IntParam () {};
 
-    public IntParam (IntParam param)
-    {
-        super (param);
-        this.header.setUnit (param.header.getUnit ());
-    }
-
     public IntParam (String value)
     {
         super (value);
@@ -134,11 +128,21 @@ public class IntParam
      *     {@link String }
      *
      */
+    @Override
     public Object getCastValue() {
         if (value != null)
             return Integer.valueOf(value);
         return null;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
 }

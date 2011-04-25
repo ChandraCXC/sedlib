@@ -13,7 +13,6 @@ package cfa.vo.sedlib.io;
 import java.io.OutputStream;
 
 import cfa.vo.sedlib.Sed;
-import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedWritingException;
 import java.io.IOException;

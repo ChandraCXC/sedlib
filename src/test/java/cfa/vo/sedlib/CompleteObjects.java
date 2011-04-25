@@ -251,7 +251,9 @@ public class CompleteObjects
 	result.getBounds().setRange( interval );
 
 	result.setLocation( new CoverageLocation() );
-	result.getLocation().createValue()[0] = new DoubleParam( 52148.3252, "TimeObs", "time.obs", null );
+        DoubleParam[] d = new DoubleParam[2];
+        d[0] = new DoubleParam( 52148.3252, "TimeObs", "time.obs", null );
+        result.getLocation().setValue(d);
 	result.getLocation().setResolution( new DoubleParam( 0.125, "TimeRes", "TBD", "s" ) );
 	result.getLocation().setAccuracy( createAccuracy() );
 
@@ -278,8 +280,10 @@ public class CompleteObjects
 	result.setBounds( new CoverageBounds() );
 	result.setLocation( new CoverageLocation() );
 	result.getLocation().setResolution( new DoubleParam( 3.88 ) );
-	result.getLocation().createValue()[0] = new DoubleParam( 3.61 );
-	result.getLocation().getValue()[1] =  new DoubleParam( 3.62 );
+        DoubleParam[] d = new DoubleParam[2];
+        d[0] = new DoubleParam( 3.61 );
+        d[1] = new DoubleParam( 3.62 );
+        result.getLocation().setValue(d);
 
 	result.setSupport( new CoverageSupport() );	
 	result.getSupport().setExtent( new DoubleParam( 3.8 ));
@@ -302,8 +306,10 @@ public class CompleteObjects
 	result.setBounds( new CoverageBounds() );
 
 	result.setLocation( new CoverageLocation() );
-	result.getLocation().createValue()[0] = new DoubleParam( 1.61 );
-	result.getLocation().getValue()[1] = new DoubleParam( 1.62 );
+        DoubleParam[] d = new DoubleParam[2];
+        d[0] = new DoubleParam( 1.61 );
+        d[1] = new DoubleParam( 1.62 );
+        result.getLocation().setValue(d);
 	result.getLocation().setResolution( new DoubleParam( 1.88 ) );
 	
 	result.setSupport( new CoverageSupport() );
@@ -327,8 +333,10 @@ public class CompleteObjects
 	result.setBounds( new CoverageBounds() );
 
 	result.setLocation( new CoverageLocation() );
-	result.getLocation().createValue()[0] = new DoubleParam( 4.61 );
-	result.getLocation().getValue()[1] = new DoubleParam( 4.62 );
+        DoubleParam[] d = new DoubleParam[2];
+        d[0] = new DoubleParam( 4.61 );
+        d[1] = new DoubleParam( 4.62 );
+        result.getLocation().setValue(d);
 	result.getLocation().setResolution( new DoubleParam( 4.88 ) );
 	
 	result.setSupport( new CoverageSupport() );
@@ -424,8 +432,10 @@ public class CompleteObjects
     {
 	List<Param> result = new Vector<Param>();
         PositionParam pos = new PositionParam ();
-        pos.createValue ()[0] = new DoubleParam (233.737917, "TargetPos", null, "deg");
-        pos.getValue ()[1] =  new DoubleParam (23.503330, "TargetPos", null, "deg");
+        DoubleParam[] d = new DoubleParam[2];
+        d[0] = new DoubleParam( 233.737917, "TargetPos", null, "deg" );
+        d[1] = new DoubleParam( 23.503330, "TargetPos", null, "deg" );
+        pos.setValue(d);
 
 	result.add( new DoubleParam( 3.14159, "pi", "TBD", "TBD") );
 	result.add( new IntParam( 7, "daysofweek", "TBD", "TBD") );

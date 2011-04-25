@@ -10,6 +10,7 @@
 
 package cfa.vo.sedlib.io;
 
+import cfa.vo.sedlib.common.SedNoDataException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,7 +37,7 @@ public class FitsDeserializer implements ISedDeserializer
      * @throws IOException
      */
     public Sed deserialize(String filename) 
-    	throws SedParsingException, SedInconsistentException, IOException
+    	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
         FitsReader reader = new FitsReader ();
         FitsMapper mapper = new FitsMapper ();
@@ -58,7 +59,7 @@ public class FitsDeserializer implements ISedDeserializer
      * @throws IOException
      */
     public Sed deserialize(InputStream iStream) 
-    	throws SedParsingException, SedInconsistentException, IOException
+    	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
 
         FitsReader reader = new FitsReader ();

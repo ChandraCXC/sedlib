@@ -11,6 +11,19 @@ public class SamplingPrecisionRefVal
 
     protected DoubleParam fillFactor;
 
+    @Override
+    public Object clone ()
+    {
+        SamplingPrecisionRefVal smp = (SamplingPrecisionRefVal) super.clone();
+        
+
+        if (this.isSetFillFactor ())
+            smp.fillFactor = (DoubleParam)this.fillFactor.clone ();
+
+        return smp;
+    }
+
+
     /**
      * Gets the value of the fillFactor property.
      * 

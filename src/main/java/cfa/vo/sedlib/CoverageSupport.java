@@ -17,6 +17,27 @@ public class CoverageSupport
     protected DoubleParam extent;
     protected List<Interval> range;
 
+    @Override
+    public Object clone ()
+    {
+        CoverageSupport coverageSupport = (CoverageSupport) super.clone();
+        
+        
+        if (this.isSetArea ())
+            coverageSupport.area = (SkyRegion)this.area.clone ();
+        if (this.isSetExtent ())
+            coverageSupport.extent = (DoubleParam)this.extent.clone ();
+        if (this.isSetRange ())
+        {
+            coverageSupport.range = new ArrayList<Interval>();
+            for (Interval interval : this.range)
+                coverageSupport.range.add ((Interval)interval.clone ());
+        }
+
+        return coverageSupport;
+    }
+
+
     /**
      * Gets the value of the area property.
      * 

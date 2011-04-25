@@ -12,6 +12,21 @@ public class SamplingPrecision
     protected SamplingPrecisionRefVal samplingPrecisionRefVal;
     protected DoubleParam sampleExtent;
 
+    @Override
+    public Object clone ()
+    {
+        SamplingPrecision smp = (SamplingPrecision) super.clone();
+        
+
+        if (this.isSetSamplingPrecisionRefVal ())
+            smp.samplingPrecisionRefVal = (SamplingPrecisionRefVal)this.samplingPrecisionRefVal.clone ();
+        if (this.isSetSampleExtent ())
+            smp.sampleExtent = (DoubleParam)this.sampleExtent.clone ();
+
+        return smp;
+    }
+
+
     /**
      * Gets the value of the samplingPrecisionRefVal property.
      * 

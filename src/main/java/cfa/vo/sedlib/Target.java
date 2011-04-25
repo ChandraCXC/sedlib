@@ -16,6 +16,30 @@ public class Target
     protected PositionParam pos;
     protected DoubleParam varAmpl;
 
+    @Override
+    public Object clone ()
+    {
+        Target target = (Target) super.clone();
+        
+        if (this.isSetName ())
+            target.name = (TextParam)this.name.clone ();
+        if (this.isSetDescription ())
+             target.description = (TextParam)this.description.clone ();
+        if (this.isSetTargetClass ())
+             target.targetClass = (TextParam)this.targetClass.clone ();
+        if (this.isSetSpectralClass ())
+             target.spectralClass = (TextParam)this.spectralClass.clone ();
+        if (this.isSetRedshift ())
+             target.redshift = (DoubleParam)this.redshift.clone ();
+        if (this.isSetPos ())
+             target.pos = (PositionParam)this.pos.clone ();
+        if (this.isSetVarAmpl ())
+             target.varAmpl = (DoubleParam)this.varAmpl.clone ();
+
+        return target;
+    }
+
+
     /**
      * Gets the value of the name property.
      * 

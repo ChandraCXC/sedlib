@@ -1,5 +1,6 @@
 package cfa.vo.sedlib;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,8 +11,13 @@ import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedNullException;
 import cfa.vo.sedlib.common.Utypes;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class describes a spectral segment. It provides accessors to
@@ -38,6 +44,39 @@ public class Segment
     protected TextParam spectralSI;
     protected TextParam fluxSI;
     protected ArrayOfGenPoint data;
+
+    @Override
+    public Object clone ()
+    {
+        Segment segment = (Segment) super.clone();
+
+
+        if (this.isSetTarget ())
+            segment.target = (Target)this.target.clone ();
+        if (this.isSetChar ())
+            segment._char = (Characterization)this._char.clone ();
+        if (this.isSetCoordSys ())
+            segment.coordSys = (CoordSys)this.coordSys.clone ();
+        if (this.isSetCuration ())
+            segment.curation = (Curation)this.curation.clone ();
+        if (this.isSetDataID ())
+            segment.dataID = (DataID)this.dataID.clone ();
+        if (this.isSetDerived ())
+            segment.derived = (DerivedData)this.derived.clone ();
+        if (this.isSetType ())
+            segment.type = (TextParam)this.type.clone ();
+        if (this.isSetTimeSI ())
+            segment.timeSI = (TextParam)this.timeSI.clone ();
+        if (this.isSetSpectralSI ())
+            segment.spectralSI = (TextParam)this.spectralSI.clone ();
+        if (this.isSetFluxSI ())
+            segment.fluxSI = (TextParam)this.fluxSI.clone ();
+        if (this.isSetData ())
+            segment.data = (ArrayOfGenPoint)this.data.clone ();
+
+        return segment;
+    }
+
 
 
     /**
@@ -741,6 +780,127 @@ public class Segment
         }
     }
 
+    /**
+     *
+     * <p>Check whether this segment is compatible with another one. This method is invoked each time a new segment is added to a Sed.</p>
+     *
+     * <p>Compatibility is assessed using the ucd string for the flux axis. The basic rule is that different units are allowed for the flux axis
+     * as long as they refer to the same quantity, i.e. as long as they can be converted one into the other. For the spectral axis both units and quantities may differ.</p>
+     *
+     * <p>More in detail, two flux axis quantities are assumed to be compatible if they have the same ucd, unless they have a "flux density per unit wavelength".
+     * In the latter case, the units string is checked to verify that both densities are expressed in either linear wavelengths or log wavelengths.</p>
+     *
+     * <p>The segments are assumed to be compatible if their flux axis differs only for the unit in which they are expressed, i.e. wavelength, frequency or energy.</p>
+     *
+     * <p>They are compatible if they have compatible pairs of flux axis quantities:</p>
+     * <ol>
+     * <li>phot.mag and phot.flux.density;em.*</li>
+     * <li>phot.mag.sb and phot.flux.density.sb;em.*</li>
+     * <li>phys.magAbs and phys.luminosity;em.*</li>
+     * <li>phot.fluence;em.* and phot.flux.density;em.*</li>
+     *
+     * @param other The segment to check compatibility with
+     * @return true if the segments are compatible, false otherwise.
+     * @throws SedNoDataException if the <code>other</code> segment contains no data.
+     * @throws SedInconsistentException if one of the segments is found to have no ucd for the flux axis.
+     */
+    public boolean isCompatibleWith(Segment other) throws SedNoDataException, SedInconsistentException {
+
+        // assume they are incompatible
+        boolean isCompatible = false;
+
+        String myUcdString = this.createChar().createFluxAxis().getUcd().toLowerCase();
+        String otherUcdString = other.createChar().createFluxAxis().getUcd().toLowerCase();
+
+        if(myUcdString.equals("") || otherUcdString.equals(""))
+            throw new SedInconsistentException("empty ucds");
+
+        String myUnitString = "";
+        String otherUnitString = "";
+
+        if(this.getFluxAxisUnits()!=null) {
+            myUnitString = this.getFluxAxisUnits();
+        } else {
+            if(this.createChar().createFluxAxis().isSetUnit())
+                myUnitString = this.getChar().getFluxAxis().getUnit();
+        }
+
+        if(other.getFluxAxisUnits()!=null) {
+            otherUnitString = other.getFluxAxisUnits();
+        } else {
+            otherUnitString = other.createChar().createFluxAxis().getUnit();
+        }
+
+        if(myUcdString.equals(otherUcdString)) {
+            // if the ucds are the same, assume they are compatible
+            isCompatible = true;
+
+            // however, they could still be incompatible
+
+            // check if they are flux densities with wl related units
+            if(myUcdString.equals("phot.flux.density;em.wl")) {
+
+                // if they don't have the same units check if one of them has log units
+                // and the other has not
+                if(!myUnitString.equals(otherUnitString)) {
+                    boolean oneIsLog = myUnitString.equals("Jy Hz") || otherUnitString.equals("Jy Hz");
+                    boolean oneIsLinear = myUnitString.equals("Jy") || otherUnitString.equals("Jy");
+                    if(oneIsLog && oneIsLinear)
+                        isCompatible = false; // if ucds are equal, are phot.flux.density;em.wl but one is log and one is linear
+                                        // then they are not compatible.
+                }
+            } // end check if they are flux densities
+
+            return isCompatible;
+        } // end check if their ucds are the same
+
+
+            
+        // Do they differ just for a ;em.*?
+        String myRegex = "(.*);em.(wl|freq|energy)";
+        Pattern pattern = Pattern.compile(myRegex);
+        Matcher matcher = pattern.matcher(myUcdString);
+
+        if(matcher.find()) { // My ucd matches the pattern
+
+            String otherRegex = matcher.group(1)+";em.(wl|freq|energy)";
+
+            if(otherUcdString.matches(otherRegex)) // Ok, they are compatible
+                return true;
+
+        }
+
+        // are they a compatible pair of magnitude and flux or luminosity?
+        HashMap<String, String> map = new HashMap();
+        map.put("phot.mag", "phot.flux.density;em.(wl|freq|energy)");
+        map.put("phot.mag.sb", "phot.flux.density.sb;em.(wl|freq|energy)");
+        map.put("phys.magAbs", "phys.luminosity;em.(wl|freq|energy)");
+
+        for(Entry<String, String> entry : map.entrySet()) {
+            String value = entry.getValue();
+            String key = entry.getKey();
+            boolean myUcdInMap = myUcdString.matches(key) || myUcdString.matches(value);
+            boolean otherUcdIsHere = otherUcdString.matches(key) || otherUcdString.matches(value);
+            if(myUcdInMap && otherUcdIsHere)
+                return true;
+        }
+
+
+        // Do they follow the pattern phot.fluence;em.* and phot.flux.density;em.*?
+        String regex1 = "phot.fluence;em.(wl|freq|energy)";
+        String regex2 = "phot.flux.density;em.(wl|freq|energy)";
+
+        boolean oneIsFluence = myUcdString.matches(regex1) || otherUcdString.matches(regex1);
+        boolean oneIsDensity = myUcdString.matches(regex2) || otherUcdString.matches(regex2);
+
+        if(oneIsFluence && oneIsDensity) {
+            return true;
+        }
+
+
+        return isCompatible;
+    }
+
 
     /**
      * Gets the values of the specified utype. If no data exists then
@@ -1142,12 +1302,12 @@ public class Segment
 
 
     /**
-     * Gets the parameter info of the specified utype. 
-     * @param utype
-     *   int
+     * Gets the parameter info of the specified id.
+     *
+     * @param id The custom id to be fetched.
      *
      * @return
-     *   either {@link Field}
+     *   {@link Field} a Field object representing the data required.
      *
      * @throws SedNoDataException, SedNullException
      *
@@ -1439,22 +1599,7 @@ public class Segment
 
         // copy the param 
         if (param != null)
-        {
-            if (param instanceof SkyRegion)
-                outParam = new SkyRegion ((SkyRegion)param);
-            else if (param instanceof TextParam)
-                outParam = new TextParam ((TextParam)param);
-            else if (param instanceof DateParam)
-                outParam = new DateParam ((DateParam)param);
-            else if (param instanceof TimeParam)
-                outParam = new TimeParam ((TimeParam)param);
-            else if (param instanceof DoubleParam)
-                outParam = new DoubleParam ((DoubleParam)param);
-            else if (param instanceof IntParam)
-                outParam = new IntParam ((IntParam)param);
-            else 
-                outParam = new Param (param);
-        }
+            outParam = (Param)param.clone ();
 
         return outParam;
     }
@@ -1525,7 +1670,7 @@ public class Segment
                     {
                         paramList.ensureCapacity(params.size ());
                         for (TextParam pp : params)
-                            paramList.add (new TextParam (pp));
+                            paramList.add ((TextParam)pp.clone ());
                     }
 
                     outParams = paramList;
@@ -1555,7 +1700,7 @@ public class Segment
                             for (DoubleParam pp : params)
                             {
                             	if (pp != null)
-                            		paramList.add (new DoubleParam (pp));
+                            		paramList.add ((DoubleParam)pp.clone ());
                             	else
                             		paramList.add (null);
                             }
@@ -1594,7 +1739,7 @@ public class Segment
                         for (DoubleParam pp : params)
                         {
                             if (pp != null)
-                                paramList.add (new DoubleParam (pp));
+                                paramList.add ((DoubleParam)pp.clone ());
                             else
                                 paramList.add (null);
                         }
@@ -1740,7 +1885,7 @@ public class Segment
                     paramList = this.createDataID ().createContributor ();
 
                 for (Param pp : params)
-                    paramList.add (new TextParam ((TextParam)pp));
+                    paramList.add ((TextParam)pp.clone ());
 
             }
             break;
@@ -1763,7 +1908,7 @@ public class Segment
 
                     DoubleParam pp = (DoubleParam)params.get(ii);
                     if (pp != null)
-                    	paramArray[ii] = new DoubleParam (pp);
+                    	paramArray[ii] = (DoubleParam)pp.clone ();
                     else
                     	paramArray[ii] = null;
                 }
@@ -1797,11 +1942,11 @@ public class Segment
                     DoubleParam pp = (DoubleParam)params.get(ii);
 
                     if (pp != null)
-                        paramArray[ii] = new DoubleParam (pp);
+                        paramArray[ii] = (DoubleParam)pp.clone ();
                     else
                         paramArray[ii] = null;
-                }
-            }
+                    }
+                    }
             break;
             default:
                 throw new SedInconsistentException ("Cannot find a parameter associated with the specified utype, "+Utypes.getName (utype)+".");
@@ -2783,5 +2928,55 @@ public class Segment
         return hash;
     }
 
+
+    /**
+     * Filter the segment based on the spectral axis value and the
+     * specificed list of sorted ranges . Spectral values which fall 
+     * outside  of the specified ranges will be removed. The input
+     * range list is expected to be sorted.
+     *
+     */
+    void filter (List<RangeParam> rangeParams)
+    {
+        List<Point> points = this.getPointsFromData ();
+        List<Point> newPoints = new ArrayList<Point>(points.size ());
+
+        for (Point point : points)
+        {
+            if (point.isSetSpectralAxis () &&
+                point.getSpectralAxis ().isSetValue () &&
+                point.getSpectralAxis ().getValue ().isSetValue ())
+            {
+                Double value = (Double)point.getSpectralAxis ().getValue ().getCastValue ();
+                String unit = point.getSpectralAxis ().getValue ().getUnit ();
+
+                for (RangeParam rangeParam : rangeParams)
+                {
+                    // verify the units are the same
+                    if ((point.getSpectralAxis ().getValue ().isSetUnit () &&
+                        rangeParam.isSetUnit () &&
+                        !unit.equals (rangeParam.getUnit ())) ||
+                        (point.getSpectralAxis ().getValue ().isSetUnit () ^ 
+                        		rangeParam.isSetUnit ()))
+                    	continue;
+                    	
+                    
+                    if (value <= rangeParam.getMax ())
+                    {
+                        if (value >= rangeParam.getMin ())
+                            newPoints.add(point);
+                        else
+                            break;  // point not included
+                    }
+                }
+            }
+        }
+
+        if (this.isSetData ())
+        {
+            ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+            pointData.setPoint (newPoints);
+        }
+    }
 }
 

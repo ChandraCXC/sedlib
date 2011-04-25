@@ -25,9 +25,4 @@ public class DateParam
       super (value);
    }
 
-   public DateParam (DateParam param)
-   {
-      super (param);
-   }
-
 }

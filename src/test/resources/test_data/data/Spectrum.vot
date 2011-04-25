@@ -318,7 +318,7 @@
       <PARAM datatype="int" name="daysofweek" ucd="TBD" unit="TBD" value="7"/>
       <PARAM arraysize="*" datatype="char" name="TargetType" ucd="TBD" value="Galaxy"/>
       <PARAM arraysize="*" datatype="char" name="camdate" ucd="TBD" value="2011-01-04T22:01:59"/>
-      <PARAM arraysize="*" datatype="char" name="age" ucd="TBD" value="1.8"/>
+      <PARAM arraysize="*" datatype="char" name="age" unit="Gyr" ucd="TBD" value="1.8"/>
       <PARAM datatype="double" name="TargetPos" unit="deg" value="233.737917"/>
       <PARAM datatype="double" name="TargetPos" unit="deg" value="23.50333"/>
       <GROUP utype="spec:Spectrum.Data">

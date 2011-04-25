@@ -12,6 +12,21 @@ public class Interval
     protected DoubleParam min;
     protected DoubleParam max;
 
+    @Override
+    public Object clone ()
+    {
+        Interval interval = (Interval) super.clone();
+        
+
+        if (this.isSetMin ())
+            interval.min = (DoubleParam)this.min.clone ();
+        if (this.isSetMax ())
+            interval.max = (DoubleParam)this.max.clone ();
+
+        return interval;
+    }
+
+
     /**
      * Gets the value of the min property.
      * 

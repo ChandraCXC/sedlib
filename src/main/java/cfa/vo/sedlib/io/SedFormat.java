@@ -29,6 +29,7 @@ public enum SedFormat
 
     /** Returns the "user friendly" name of this enum constant.
      */
+    @Override
     public String toString()
     {
 	String retval = "Unknown";

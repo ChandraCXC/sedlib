@@ -3,6 +3,8 @@ package cfa.vo.sedlib;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.logging.Logger;
+
 
 /**
  * <p>Java class for coordSys complex type.
@@ -12,10 +14,42 @@ public class CoordSys extends Group {
 
     protected List<CoordFrame> coordFrame;
     protected String id;
-    protected Object idref;
     protected String ucd;
     protected String type;
     protected String href;
+
+    @Override
+    public Object clone ()
+    {
+        CoordSys coordSys = (CoordSys) super.clone();
+
+        if (this.isSetCoordFrame ())
+        {
+            coordSys.coordFrame = new ArrayList<CoordFrame>();
+            for (CoordFrame cf : this.coordFrame)
+                coordSys.coordFrame.add ((CoordFrame)cf.clone ());
+        }
+
+        
+        if (this.isSetIdref ())
+        {
+        	coordSys.idref = null;
+        	Logger.getLogger(Sed.class.getName()).severe("IDRef from CoordFrame is not cloneable");
+/*            try
+            {
+                coordSys.idref = this.idref.clone ();
+            }
+            catch (CloneNotSupportedException e)
+            {
+                Logger.getLogger(Sed.class.getName()).log(Level.SEVERE, null, e);
+            }
+            */
+        }
+
+
+        return coordSys;
+    }
+
 
     /**
      * Gets the coordFrame list.
@@ -105,33 +139,7 @@ public class CoordSys extends Group {
         return (this.id!= null);
     }
 
-    /**
-     * Gets the value of the idref property.
-     * 
-     * @return
-     *     either null or
-     *     {@link Object }
-     *     
-     */
-    public Object getIdref() {
-        return idref;
-    }
 
-    /**
-     * Sets the value of the idref property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setIdref(Object value) {
-        this.idref = value;
-    }
-
-    public boolean isSetIdref() {
-        return (this.idref!= null);
-    }
 
     /**
      * Gets the value of the ucd property.

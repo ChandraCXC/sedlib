@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+  xmlns:spec="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.2  http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd
+                                 http://www.ivoa.net/xml/Spectrum/Spectrum-1.01 http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd"
+>
+<RESOURCE utype="spec:Sed">
+<TABLE name="Spectrum Data for NGC_4321" utype="spec:Spectrum">
+
+<FIELD name="DataSpectralValue" datatype="double" ucd="em.freq" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="Hz"/>
+<FIELD name="DataFluxValue" datatype="double" ucd="phot.flux.density.sb;em.wl" utype="spec:Spectrum.Data.FluxAxis.Value" unit="W/m^2/m"/>
+
+
+<PARAM datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.03" arraysize="*"/>
+
+<GROUP name="Curation" utype="spec:Spectrum.Curation">
+  <PARAM datatype="char" name="Publisher" ucd="meta.curation" utype="spec:Spectrum.Curation.Publisher" value="Database" arraysize="*"/>
+</GROUP>
+
+<GROUP name="Target" utype="spec:Spectrum.Target">
+  <PARAM datatype="char" name="TargetName" ucd="meta.id;src" utype="spec:Spectrum.Target.Name" value="NGC_4321" arraysize="*"/>
+</GROUP>
+
+<GROUP name="Spectrum.Char" utype="spec:Spectrum.Char">
+
+  <GROUP name="Char.FluxAxis" utype="spec:Spectrum.Char.FluxAxis">
+    <PARAM datatype="char" name="FluxAxisUcd" utype="spec:Spectrum.Char.FluxAxis.Ucd" value="phot.flux.density;em.wl" arraysize="*"/>
+    <PARAM datatype="char" name="FluxAxisUnit" utype="spec:Spectrum.Char.FluxAxis.Unit" value="W/m^2/m" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.SpectralAxis" utype="spec:Spectrum.Char.SpectralAxis">
+    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.freq" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="Hz" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageLocation" ucd="instr.bandpass" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Value" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsExtent" ucd="instr.bandwidth" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsStart" ucd="em.freq;stat.min" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Start" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsStop" ucd="em.freq;stat.max" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Stop" value="" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.SpatialAxis" utype="spec:Spectrum.Char.SpatialAxis">
+    <PARAM ID="SpatialAxisCoverageLocation" datatype="char" name="SpatialAxisCoverageLocation"  ucd="pos.eq" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Value" value="185.72488 15.82287" arraysize="*"/>
+    <PARAM ID="SpatialAxisCoverageBoundsExtent" datatype="char" name="SpatialAxisCoverageBoundsExtent" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.TimeAxis" utype="spec:Spectrum.Char.TimeAxis">
+    <PARAM ID="TimeAxisCoverageLocation" datatype="char" name="TimeAxisCoverageLocation" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Value" value="" arraysize="*"/>
+    <PARAM ID="TimeAxisCoverageBoundsExtent" datatype="char" name="TimeAxisCoverageBoundsExtent"  ucd="time.duration" utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+  </GROUP>
+
+</GROUP>
+
+
+<GROUP name="Data.FluxAxis" utype="spec:Spectrum.Data.FluxAxis">
+  <FIELDref ref="DataFluxValue"/>
+</GROUP>
+<GROUP name="Data.SpectralAxis" utype="spec:Spectrum.Data.SpectralAxis">
+  <FIELDref ref="DataSpectralValue"/>
+</GROUP>
+
+
+<DATA>
+<TABLEDATA>
+   <TR>
+     <TD>4.35890572e+14</TD>
+     <TD>1.51209166e-29</TD>
+   </TR>
+   <TR>
+     <TD>4.35716354e+14</TD>
+     <TD>1.70935735e-29</TD>
+   </TR>
+   <TR>
+     <TD>4.35542275e+14</TD>
+     <TD>1.61898327e-29</TD>
+   </TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+<TABLE name="Spectrum Data for NGC_4321" utype="spec:Spectrum">
+
+<FIELD name="DataSpectralValue" datatype="double" ucd="em.wl" utype="spec:Spectrum.Data.SpectralAxis.Value" unit="m"/>
+<FIELD name="DataFluxValue" datatype="double" ucd="phot.flux.density;em.freq" utype="spec:Spectrum.Data.FluxAxis.Value" unit="W/m^2/Hz"/>
+
+
+<PARAM datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.03" arraysize="*"/>
+
+<GROUP name="Curation" utype="spec:Spectrum.Curation">
+  <PARAM datatype="char" name="Publisher" ucd="meta.curation" utype="spec:Spectrum.Curation.Publisher" value="Database" arraysize="*"/>
+</GROUP>
+
+<GROUP name="Target" utype="spec:Spectrum.Target">
+  <PARAM datatype="char" name="TargetName" ucd="meta.id;src" utype="spec:Spectrum.Target.Name" value="NGC_4321" arraysize="*"/>
+</GROUP>
+
+<GROUP name="Spectrum.Char" utype="spec:Spectrum.Char">
+
+  <GROUP name="Char.FluxAxis" utype="spec:Spectrum.Char.FluxAxis">
+    <PARAM datatype="char" name="FluxAxisUcd" utype="spec:Spectrum.Char.FluxAxis.Ucd" value="phot.flux.density;em.freq" arraysize="*"/>
+    <PARAM datatype="char" name="FluxAxisUnit" utype="spec:Spectrum.Char.FluxAxis.Unit" value="W/m^2/Hz" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.SpectralAxis" utype="spec:Spectrum.Char.SpectralAxis">
+    <PARAM datatype="char" name="SpectralAxisUcd" utype="spec:Spectrum.Char.SpectralAxis.Ucd" value="em.wl" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisUnit" utype="spec:Spectrum.Char.SpectralAxis.Unit" value="m" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageLocation" ucd="instr.bandpass" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Location.Value" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsExtent" ucd="instr.bandwidth" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsStart" ucd="em.freq;stat.min" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Start" value="" arraysize="*"/>
+    <PARAM datatype="char" name="SpectralAxisCoverageBoundsStop" ucd="em.freq;stat.max" utype="spec:Spectrum.Char.SpectralAxis.Coverage.Bounds.Stop" value="" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.SpatialAxis" utype="spec:Spectrum.Char.SpatialAxis">
+    <PARAM datatype="char" name="SpatialAxisCoverageLocation"  ucd="pos.eq" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Location.Value" value="185.72488 15.82287" arraysize="*"/>
+    <PARAM datatype="char" name="SpatialAxisCoverageBoundsExtent" utype="spec:Spectrum.Char.SpatialAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+  </GROUP>
+  
+  <GROUP name="Char.TimeAxis" utype="spec:Spectrum.Char.TimeAxis">
+    <PARAM datatype="char" name="TimeAxisCoverageLocation" utype="spec:Spectrum.Char.TimeAxis.Coverage.Location.Value" value="" arraysize="*"/>
+    <PARAM datatype="char" name="TimeAxisCoverageBoundsExtent"  ucd="time.duration" utype="spec:Spectrum.Char.TimeAxis.Coverage.Bounds.Extent" value="" arraysize="*"/>
+  </GROUP>
+
+</GROUP>
+
+
+<GROUP name="Data.FluxAxis" utype="spec:Spectrum.Data.FluxAxis">
+  <FIELDref ref="DataFluxValue"/>
+</GROUP>
+<GROUP name="Data.SpectralAxis" utype="spec:Spectrum.Data.SpectralAxis">
+  <FIELDref ref="DataSpectralValue"/>
+</GROUP>
+
+
+<DATA>
+<TABLEDATA>
+   <TR>
+     <TD>7.29209134e+14</TD>
+     <TD>5.77291623e-30</TD>
+   </TR>
+   <TR>
+     <TD>7.28721688e+14</TD>
+     <TD>5.76613310e-30</TD>
+   </TR>
+   <TR>
+     <TD>7.28234894e+14</TD>
+     <TD>5.88481258e-30</TD>
+   </TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

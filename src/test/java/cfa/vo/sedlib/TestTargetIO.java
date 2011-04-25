@@ -30,7 +30,7 @@ public class TestTargetIO extends SedTestBase
     String m_fname = null;
     int rc = 1;
 
-    boolean keep = false;
+    boolean keep = true;
 
     public TestTargetIO( String name )
     {

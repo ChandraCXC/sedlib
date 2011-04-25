@@ -12,6 +12,20 @@ public class Contact
     protected TextParam name;
     protected TextParam email;
 
+    @Override
+    public Object clone ()
+    {
+        Contact contact = (Contact) super.clone();
+        
+        if (this.isSetName ())
+            contact.name = (TextParam)this.name.clone ();
+        if (this.isSetEmail ())
+            contact.email = (TextParam)this.email.clone ();
+
+        return contact;
+    }
+
+
     /**
      * Gets the value of the name property.
      * 

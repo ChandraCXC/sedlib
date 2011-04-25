@@ -22,6 +22,7 @@ public abstract class AbstractWriter<T>
     {
 
         FileOutputStream fos = new FileOutputStream( filename );
+        
         this.write( fos, data );
 
     }//end write()

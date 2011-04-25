@@ -14,11 +14,25 @@ import cfa.vo.sedlib.common.SedConstants;
  * 
  * 
  */
-public class ArrayOfPoint
-    extends ArrayOfGenPoint
+public class ArrayOfPoint extends ArrayOfGenPoint implements Cloneable
 {
 
     protected List<Point> point;
+
+    @Override
+    public Object clone ()
+    {
+        ArrayOfPoint arrayOfPoint = (ArrayOfPoint) super.clone();
+        
+
+        if (this.isSetPoint ())
+        {
+            arrayOfPoint.point = new ArrayList<Point>();
+            for (Point pnt : this.point)
+                arrayOfPoint.point.add ((Point)pnt.clone ());
+        }
+        return arrayOfPoint;
+    }
 
 
     /**
@@ -267,6 +281,8 @@ public class ArrayOfPoint
             	param.setValue (Double.toString (dValues[ii]));
             else
             	param.setValue (sValues[ii]);
+
+
         }
     }
 

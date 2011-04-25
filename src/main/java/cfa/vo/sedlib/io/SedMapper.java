@@ -3,7 +3,9 @@ package cfa.vo.sedlib.io;
 import java.io.IOException;
 
 import cfa.vo.sedlib.Sed;
+import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
+import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
 
 /**
@@ -25,7 +27,7 @@ public abstract class SedMapper {
      * @throws  IOException
      */
     abstract public Sed populateSed(Object data, Sed sed) 
-    	throws SedParsingException, SedInconsistentException, IOException;
+    	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException;
 
     /**
      * Converts data in some format to a Sed object
@@ -35,7 +37,7 @@ public abstract class SedMapper {
      * @throws  IOException
      */
     public Sed populateSed(Object data) 
-    	throws SedParsingException, SedInconsistentException, IOException
+    	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
         return this.populateSed (data, new Sed ());
     }

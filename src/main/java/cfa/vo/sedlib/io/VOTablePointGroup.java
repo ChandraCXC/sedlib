@@ -39,7 +39,7 @@ class VOTablePointGroup
     protected String groupId;
     protected int id;
     
-    static Logger logger = Logger.getLogger ("cfa.vo.sedlib");
+    static final Logger logger = Logger.getLogger ("cfa.vo.sedlib");
 
     // keep the insert order of the subgroups while
     // being able to search for them by utype 

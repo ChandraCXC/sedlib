@@ -19,6 +19,7 @@ import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
 import cfa.vo.sedlib.common.SedWritingException;
 import cfa.vo.testtools.SedLibTestUtils;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,12 +27,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import cfa.vo.sedlib.io.SedFormat;
+import cfa.vo.testtools.Oracle;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Tests Sedlib ability to read Sed Data (Requirement 4.2)
@@ -59,13 +60,13 @@ public class TestCase4_2 extends SedTestBase
 	return suite;
     }
 
-    private void testMethod(String filename, SedFormat format, Map oracle) {
+    private void testMethod(String filename, SedFormat format, Oracle oracle) {
         List oracleList = new ArrayList();
         oracleList.add(oracle);
         testMethod(filename, format, oracleList);
     }
 
-    private void testMethod(String filename, SedFormat format, List<Map> oracleList)
+    private void testMethod(String filename, SedFormat format, List<Oracle> oracleList)
     {
 
         String inputFilename = SedLibTestUtils.mkInFileName( filename );
@@ -84,6 +85,9 @@ public class TestCase4_2 extends SedTestBase
         } catch (IOException ex) {
             Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
             fail("IO problems reading document: "+inputFilename);
+        }  catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
         }
 
 
@@ -115,6 +119,9 @@ public class TestCase4_2 extends SedTestBase
         } catch (IOException ex) {
             Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
             fail("I/O error accessing" + outputFilename);
+        }  catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
         }
 
         checkSeds(inputSed, outputSed);
@@ -122,7 +129,12 @@ public class TestCase4_2 extends SedTestBase
         for(int i=0; i<outputSed.getNumberOfSegments(); i++)
         {
             Segment s = outputSed.getSegment(i);
-            checkSegment(s, oracleList.get(i));
+            Oracle oracle = oracleList.get(i);
+            try {
+                oracle.test(s);
+            } catch (Exception ex) {
+                fail(ex.getMessage());
+            }
         }
 
 	if ( !keep )
@@ -130,95 +142,59 @@ public class TestCase4_2 extends SedTestBase
     }
 
     /**
-     * TestCase 4.2.2.1:
-     * Read a votable spectrum (one segment) and check it has been correctly read.
+     * TestCase 4.2.1:
+     * Read a votable/fits spectrum (one segment) and check it has been correctly read.
      */
-    public void testCase4_2_2_1()
+    public void testCase4_2_1()
     {
 
-	SedFormat format = SedFormat.VOT;
-	String inputName = "BasicSpectrum." + format.exten();
+        
+        
 
-        HashMap oracle = new HashMap();
+        for(SedFormat format : formats)
+        {
+            String inputName = "BasicSpectrum." + format.exten();
 
-        oracle.put("targetName", "NGC_4321");
-        oracle.put("fluxUnits", "W/m^2/Hz");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
+            Oracle oracle = new Oracle();
 
-        testMethod(inputName, format, oracle);
+            oracle.put("target.name.value", "NGC_4321");
+            oracle.put("char.fluxAxis.unit", "W/m^2/Hz");
+            oracle.put("char.spectralAxis.unit", "Hz");
+            oracle.put("curation.publisher.value", "Database");
+
+            testMethod(inputName, format, oracle);
+        }
 
     }
 
 
     /**
-     * TestCase 4.2.2.2
-     * Read a votable photometry point (one segment) and check it has been correctly read.
+     * TestCase 4.2.2
+     * Read a votable/fits photometry point (one segment) and check it has been correctly read.
      */
-    public void testCase4_2_2_2()
+    public void testCase4_2_2() throws SedParsingException, SedInconsistentException, IOException, SedWritingException, InterruptedException
     {
 
-	SedFormat format = SedFormat.VOT;
-	String inputName = "BasicPhotom." + format.exten();
+	for(SedFormat format : formats)
+        {
 
-        HashMap oracle = new HashMap();
+            String inputName = "BasicPhotom." + format.exten();
 
-        oracle.put("targetName", "3C 279");
-        oracle.put("fluxUnits", "Jy");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
+            Oracle oracle = new Oracle();
 
-        testMethod(inputName, format, oracle);
+            oracle.put("target.name.value", "3C 279");
+            oracle.put("fluxAxisUnits", "Jy");
+            oracle.put("spectralAxisUnits", "Hz");
+            oracle.put("curation.publisher.value", "Database");
 
-    }
-
-    /**
-     * TestCase 4.2.2.3
-     * Read a votable theoretical spectrum and check it has benn correctly read.
-     * This test case refers to a year 2 requirement
-     */
-    public void testCase4_2_2_3()
-    {
-        //This test case refers to a year 2 requirement
-    }
-
-    /**
-     * TestCase 4.2.2.4
-     * Read a votable aggregated sed (2 segments, 1 spectrum + 1 photom) and check that it has been correctly read.
-     */
-    public void testCase4_2_2_4()
-    {
-
-	SedFormat format = SedFormat.VOT;
-	String inputName = "BasicSpectrum+Photom." + format.exten();
-
-        List oracleList = new ArrayList();
-
-        HashMap oracle = new HashMap();
-
-        oracle.put("targetName", "NGC_4321");
-        oracle.put("fluxUnits", "W/m^2/Hz");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
-
-        oracleList.add(oracle);
-
-        oracle = new HashMap();
-
-        oracle.put("targetName", "3C 279");
-        oracle.put("fluxUnits", "Jy");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
-
-        oracleList.add(oracle);
-
-        testMethod(inputName, format, oracleList);
+            testMethod(inputName, format, oracle);
+        }
 
     }
 
     /**
      * TestCase 4.2.3
-     * Read file from an external URL
+     * Read a votable/fits theoretical spectrum and check it has been correctly read.
      * This test case refers to a year 2 requirement
      */
     public void testCase4_2_3()
@@ -228,10 +204,56 @@ public class TestCase4_2 extends SedTestBase
 
     /**
      * TestCase 4.2.4
+     * Read a votable/fits aggregated sed (2 segments, 1 spectrum + 1 photom) and check that it has been correctly read.
+     */
+    public void testCase4_2_4()
+    {
+
+	for(SedFormat format : formats)
+        {
+            String inputName = "BasicSpectrum+Photom." + format.exten();
+
+            List oracleList = new ArrayList();
+
+            Oracle oracle = new Oracle();
+
+            oracle.put("target.name.value", "NGC_4321");
+            oracle.put("fluxAxisUnits", "W/m^2/Hz");
+            oracle.put("spectralAxisUnits", "Hz");
+            oracle.put("curation.publisher.value", "Database");
+
+            oracleList.add(oracle);
+
+            oracle = new Oracle();
+
+            oracle.put("target.name.value", "3C 279");
+            oracle.put("fluxAxisUnits", "Jy");
+            oracle.put("spectralAxisUnits", "Hz");
+            oracle.put("curation.publisher.value", "Database");
+
+            oracleList.add(oracle);
+
+            testMethod(inputName, format, oracleList);
+        }
+
+    }
+
+    /**
+     * TestCase 4.2.3
+     * Read file from an external URL
+     * This test case refers to a year 2 requirement
+     */
+    public void testCase4_2_6()
+    {
+        //This test case refers to a year 2 requirement
+    }
+
+    /**
+     * TestCase 4.2.4
      * Read files from Input Stream.
      * This test case is just a stub, since this implementation always reads data from an InputStream.
      */
-    public void testCase4_2_4()
+    public void testCase4_2_7()
     {
         //This test case is always passed, since this implementation always reads data from an InputStream 
     }
@@ -277,13 +299,38 @@ public class TestCase4_2 extends SedTestBase
             return;
         } catch (SedInconsistentException ex) {
             Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
-            fail("the wrong exception (SedInconsistentException) has been thrown while reading the file "+inputFilename+" with format FITS");
+            fail("the wrong exception (SedInconsistentException) has been thrown while reading the file "+inputFilename+" with format "+format);
         } catch (IOException ex) {
             Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
-            fail("the wrong exception (IOException) has been thrown while reading the file "+inputFilename+" with format FITS");
+            fail("the wrong exception (IOException) has been thrown while reading the file "+inputFilename+" with format "+format);
+        } catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
         }
 
-        fail("strange, no exception was thrown while reading the file "+inputFilename+" with format FITS");
+        fail("strange, no exception was thrown while reading the file "+inputFilename+" with format "+format);
+
+        format = SedFormat.VOT;
+	inputName = "BasicSpectrum+Photom.fits";
+
+        inputFilename = SedLibTestUtils.mkInFileName( inputName );
+        try {
+            Sed sed = Sed.read(inputFilename, format);
+        } catch (SedParsingException ex) {
+            // Ok, right exception
+            return;
+        } catch (SedInconsistentException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("the wrong exception (SedInconsistentException) has been thrown while reading the file "+inputFilename+" with format "+format);
+        } catch (IOException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("the wrong exception (IOException) has been thrown while reading the file "+inputFilename+" with format "+format);
+        } catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
+        }
+
+        fail("strange, no exception was thrown while reading the file "+inputFilename+" with format "+format);
 
     }
 
@@ -295,7 +342,7 @@ public class TestCase4_2 extends SedTestBase
     public void testCase4_2_5_3()
     {
         SedFormat format = SedFormat.VOT;
-	String inputName = "BasicSpectrum+Photom.fits";
+	String inputName = "BasicSpectrum+Photom.fake.fits";
 
         String inputFilename = SedLibTestUtils.mkInFileName( inputName );
         try {
@@ -307,21 +354,52 @@ public class TestCase4_2 extends SedTestBase
 
         List oracleList = new ArrayList();
 
-        HashMap oracle = new HashMap();
+        Oracle oracle = new Oracle();
 
-        oracle.put("targetName", "NGC_4321");
-        oracle.put("fluxUnits", "W/m^2/Hz");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
+        oracle.put("target.name.value", "NGC_4321");
+        oracle.put("fluxAxisUnits", "W/m^2/Hz");
+        oracle.put("spectralAxisUnits", "Hz");
+        oracle.put("curation.publisher.value", "Database");
 
         oracleList.add(oracle);
 
-        oracle = new HashMap();
+        oracle = new Oracle();
 
-        oracle.put("targetName", "3C 279");
+        oracle.put("target.name.value", "3C 279");
+        oracle.put("fluxAxisUnits", "Jy");
+        oracle.put("spectralAxisUnits", "Hz");
+        oracle.put("curation.publisher.value", "Database");
+
+        oracleList.add(oracle);
+
+        format = SedFormat.FITS;
+	inputName = "BasicSpectrum+Photom.fake.vot";
+
+        inputFilename = SedLibTestUtils.mkInFileName( inputName );
+        try {
+            Sed sed = Sed.read(inputFilename, format);
+        } catch (Exception ex) {
+            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+            fail("reading a file with a 'wrong' extension but the correct format should be allowed");
+        }
+
+        oracleList = new ArrayList();
+
+        oracle = new Oracle();
+
+        oracle.put("target.name.value", "NGC_4321");
+        oracle.put("fluxUnits", "W/m^2/Hz");
+        oracle.put("spectralAxisUnits", "Hz");
+        oracle.put("curation.publisher.value", "Database");
+
+        oracleList.add(oracle);
+
+        oracle = new Oracle();
+
+        oracle.put("target.name.value", "3C 279");
         oracle.put("fluxUnits", "Jy");
-        oracle.put("spectralUnits", "Hz");
-        oracle.put("publisherName", "Database");
+        oracle.put("spectralAxisUnits", "Hz");
+        oracle.put("curation.publisher.value", "Database");
 
         oracleList.add(oracle);
 
@@ -371,7 +449,7 @@ public class TestCase4_2 extends SedTestBase
 	String inputName = "empty_file.foo";
         String inputFilename = SedLibTestUtils.mkInFileName( inputName );
 
-        for(SedFormat format : SedFormat.values()) {
+        for(SedFormat format : formats) {
 
             try {
                 Sed sed = Sed.read(inputFilename, format);
@@ -387,6 +465,9 @@ public class TestCase4_2 extends SedTestBase
             } catch (UnsupportedOperationException ex) {
                 //Ok, we hit an unsupported format, continuing...
                 continue;
+            } catch (SedNoDataException ex) {
+                Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+                fail("No data found in segment: "+inputFilename);
             }
 
             fail("strange, no exception was thrown while reading the file "+inputFilename+" with format "+format.name());
@@ -405,14 +486,12 @@ public class TestCase4_2 extends SedTestBase
 	String inputName = "Unaccessible.vot";
         String inputFilename = SedLibTestUtils.mkInFileName( inputName );
 
-        File f = new File(inputFilename);
-        f.setReadable(false);//FIXME doesn't work with JDK1.5
-//        File f = new File (inputName);
-
-        for(SedFormat format : SedFormat.values()) {
+        for(SedFormat format : formats) {
 
             try {
-                FileInputStream fis = new FileInputStream(f);
+
+                InputStream fis = new FakeInputStream(new File(inputFilename));
+
                 Sed sed = Sed.read(fis, format);
             } catch (SedParsingException ex) {
                 Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
@@ -423,6 +502,9 @@ public class TestCase4_2 extends SedTestBase
             } catch (IOException ex) {
                 // Ok, right exception
                 continue;
+            } catch (SedNoDataException ex) {
+                Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+                fail("No data found in segment: "+inputFilename);
             }
 
             fail("strange, no exception was thrown while reading the file "+inputFilename+" with format "+format.name());
@@ -441,7 +523,7 @@ public class TestCase4_2 extends SedTestBase
 	String inputName = "DoesntExist";
         String inputFilename = SedLibTestUtils.mkInFileName( inputName );
 
-        for(SedFormat format : SedFormat.values()) {
+        for(SedFormat format : formats) {
 
             try {
                 Sed sed = Sed.read(inputFilename, format);
@@ -454,43 +536,15 @@ public class TestCase4_2 extends SedTestBase
             } catch (IOException ex) {
                 // Ok, right exception
                 continue;
+            } catch (SedNoDataException ex) {
+                Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
+                fail("No data found in segment: "+inputFilename);
             }
 
             fail("strange, no exception was thrown while reading the file "+inputFilename+" with format "+format.name());
 
         }
 
-    }
-
-
-    protected static void checkSegment(Segment segment, Map<String, String> oracle)
-    {
-        assertEquals( "wrong publisher name", oracle.get("publisherName"), segment.getCuration().getPublisher().getValue());
-
-        /* metadata check */
-        /* target name */
-        String outputTargetName = segment.getTarget().getName().getValue();
-        assertEquals( "wrong target name", oracle.get("targetName"), outputTargetName);
-
-        /* flux axis unit */
-        String outputFluxAxisUnit;
-        try {
-            outputFluxAxisUnit = segment.getFluxAxisUnits();
-            assertEquals( "wrong flux axis units", oracle.get("fluxUnits"), outputFluxAxisUnit);
-        } catch (SedNoDataException ex) {
-            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
-            fail(ex.getMessage());
-        }
-
-        /* spectral axis unit */
-        String outputSpectralAxisUnit;
-        try {
-            outputSpectralAxisUnit = segment.getSpectralAxisUnits();
-            assertEquals( "wrong spectral axis units", oracle.get("spectralUnits"), outputSpectralAxisUnit);
-        } catch (SedNoDataException ex) {
-            Logger.getLogger(TestCase4_2.class.getName()).log(Level.SEVERE, null, ex);
-            fail(ex.getMessage());
-        }
     }
 
 
@@ -503,6 +557,25 @@ public class TestCase4_2 extends SedTestBase
     {
         /* be sure the seds are considered equal by the library (data check) */
         assertTrue("input and output seds are different", outputSed.equals(inputSed));
+    }
+
+    private class FakeInputStream extends FileInputStream{
+        public FakeInputStream(File f) throws FileNotFoundException {
+            super(f);
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            throw new IOException();
+        }
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            throw new IOException();
+        }
+        @Override
+        public int read() throws IOException {
+            throw new IOException();
+        }
     }
 
 }

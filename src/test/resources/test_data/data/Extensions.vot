@@ -6,6 +6,23 @@
   xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.2  http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd
                                  http://www.ivoa.net/xml/Spectrum/Spectrum-1.01 http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd">
 <RESOURCE utype="spec:Sed">
+
+    <PARAM ID="p2" datatype="char" name="p2" utype="spec:Spectrum.Model.FluxAxis.Method" value="blah" arraysize="*">
+    <DESCRIPTION> unknown, referenced in unknown group.</DESCRIPTION>
+    </PARAM>
+    <PARAM ID="p3" datatype="double" name="p3" utype="spec:Spectrum.Model.FluxAxisConfidence" value="0.102">
+    <DESCRIPTION> unknown, referenced in known group.</DESCRIPTION>
+    </PARAM>
+    <PARAM ID="p4" datatype="char" name="TargetName" utype="spec:Spectrum.Target.Name" value="3C 279" arraysize="*">
+    <DESCRIPTION>known param referenced in known group.</DESCRIPTION>
+    </PARAM>
+    <PARAM ID="p5" datatype="int" name="p5" utype="spec:Spectrum.Data.FluxAxis.Quality" value="1">
+    <DESCRIPTION> unknown param referenced in known data group.</DESCRIPTION>
+    </PARAM>
+    <PARAM ID="p6" datatype="char" name="p6" value="test2" arraysize="*">
+    <DESCRIPTION> unknown param referenced in multiple group.</DESCRIPTION>
+    </PARAM>
+
   <TABLE ID="PhotometricData" name="Photometric Data for 3C 279" utype="spec:Spectrum">
 
     <FIELD  name="DBref" datatype="char" arraysize="*">
@@ -27,22 +44,6 @@
     <PARAM datatype="char" name="p1" value="blah" arraysize="*">
     <DESCRIPTION> unknown, unreferenced parameter.</DESCRIPTION>
     </PARAM>
-    <PARAM ID="p2" datatype="char" name="p2" utype="spec:Spectrum.Model.FluxAxis.Method" value="blah" arraysize="*">
-    <DESCRIPTION> unknown, referenced in unknown group.</DESCRIPTION>
-    </PARAM>
-    <PARAM ID="p3" datatype="double" name="p3" utype="spec:Spectrum.Model.FluxAxisConfidence" value="0.102">
-    <DESCRIPTION> unknown, referenced in known group.</DESCRIPTION>
-    </PARAM>
-    <PARAM ID="p4" datatype="char" name="TargetName" utype="spec:Spectrum.Target.Name" value="3C 279" arraysize="*">
-    <DESCRIPTION>known param referenced in known group.</DESCRIPTION>
-    </PARAM>
-    <PARAM ID="p5" datatype="int" name="p5" utype="spec:Spectrum.Data.FluxAxis.Quality" value="1">
-    <DESCRIPTION> unknown param referenced in known data group.</DESCRIPTION>
-    </PARAM>
-    <PARAM ID="p6" datatype="char" name="p6" value="test2" arraysize="*">
-    <DESCRIPTION> unknown param referenced in multiple group.</DESCRIPTION>
-    </PARAM>
-
 
 
     <PARAM datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.03" arraysize="*">

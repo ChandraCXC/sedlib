@@ -20,9 +20,6 @@ import uk.ac.starlink.table.StarTable;
 import uk.ac.starlink.votable.DataFormat;
 import uk.ac.starlink.votable.VOElement;
 import uk.ac.starlink.votable.VOSerializer;
-import cfa.vo.sedlib.ArrayOfField;
-import cfa.vo.sedlib.common.SedException;
-import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedWritingException;
 import cfa.vo.sedlib.common.VOTableKeywords;
 
@@ -34,7 +31,6 @@ class VOTableWriter extends AbstractWriter<VOTableObject>
 {
     static final String INDENT_UNIT = "    ";
 
-    ArrayOfField fieldInfo = null;
     VOTableObject tableData = null;
     int currentStarTable = 0;
 

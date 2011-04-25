@@ -13,12 +13,6 @@ public class DoubleParam
 
     public DoubleParam () {};
 
-    public DoubleParam (DoubleParam param)
-    {
-        super (param);
-        this.header.setUnit (param.header.getUnit ());
-    }
-
     public DoubleParam (String value, String name, String ucd, String unit)
     {
         super(value, name, ucd);
@@ -129,11 +123,21 @@ public class DoubleParam
      *     {@link Double }
      *
      */
+    @Override
     public Object getCastValue() {
         if (this.value != null)
             return new Double(this.value);
         return null;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+    
 }

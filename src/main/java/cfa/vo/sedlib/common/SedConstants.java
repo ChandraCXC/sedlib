@@ -11,13 +11,37 @@
 
 package cfa.vo.sedlib.common;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
    Defines constant values used throughout the library.
 */    
 public class SedConstants
 {
+
+    static final public Properties props = new Properties();
+
+    static {
+        InputStream resource = SedConstants.class.getResourceAsStream("/sedlib.properties");
+        try {
+            props.load(resource);
+        } catch (IOException ex) {
+            Logger.getLogger(SedConstants.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                resource.close();
+            } catch (IOException ex) {
+                Logger.getLogger(SedConstants.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     static final public String    VOTABLE_VERSION  = "1.1";
-    static final public String    SEDLIB_VERSION   = "1.2";
+    static final public String    SEDLIB_VERSION   = props.getProperty("version");
 
     static final public String SPECTRUM_SCHEMA_VERSION = "Spectrum-1.01";
 

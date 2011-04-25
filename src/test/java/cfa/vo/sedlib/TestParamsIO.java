@@ -27,7 +27,7 @@ public class TestParamsIO extends SedTestBase
 {
     Sed m_sed = null;
     String m_fname = null;
-    boolean keep = false;
+    boolean keep = true;
     int rc = 1;
 
     public TestParamsIO( String name )
@@ -120,9 +120,10 @@ if (format == SedFormat.XML)
     public void testParams_copyVOT()
     {
 	String testName = "testParams_copyVOT";
-	System.out.println("   run "+testName+"()");
+		System.out.println("   run "+testName+"()");
 
 	SedFormat format = SedFormat.VOT;
+	String outFileName = "Params2."+format.exten ();
 	m_fname = "Params." + format.exten();
 
 	/* Read input file */
@@ -130,14 +131,14 @@ if (format == SedFormat.XML)
 	assertNotNull( testName + ": Document load failed - " + m_fname, m_sed );
 	
 	/* Write back out.. same format */
-	rc = writeSED( format , tu.mkOutFileName( m_fname ), m_sed );
-	assertEquals( testName + ": Failed to write " + m_fname, 0, rc );
+	rc = writeSED( format , tu.mkOutFileName( outFileName ), m_sed );
+	assertEquals( testName + ": Failed to write " + outFileName, 0, rc );
 
-	rc = tu.DIFFIT( m_fname );
-	assertEquals( testName + ": Diff failed - " + m_fname, 0, rc );
+	rc = tu.DIFFIT( outFileName );
+	assertEquals( testName + ": Diff failed - " + outFileName, 0, rc );
 
 	if ( (rc == 0 ) && (!keep) )
-	    tu.cleanupFiles( m_fname );
+	    tu.cleanupFiles( outFileName );
     }
 
     /**
@@ -161,6 +162,7 @@ if (format == SedFormat.XML)
 	assertNotNull( testName + ": Document load failed - " + m_fname, m_sed );
 
 	/* Write back out.. same format */
+	m_fname = "Params_copy." + format.exten();
 	rc = writeSED( format , tu.mkOutFileName( m_fname ), m_sed );
 	assertEquals( testName + ": Failed to write " + m_fname, 0, rc );
 

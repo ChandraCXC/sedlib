@@ -25,9 +25,4 @@ public class TextParam
       super (value);
    }
 
-   public TextParam (TextParam param)
-   {
-      super (param);
-   }
-
 }

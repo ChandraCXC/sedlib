@@ -7,129 +7,41 @@ package cfa.vo.sedlib;
  * 
  */
 public class CoverageLocation
-    extends SedBaseCoord
+    extends AbstractSedCoord<DoubleParam[], DoubleParam>
 {
 
-    protected DoubleParam[] value;
-    protected Accuracy accuracy;
-    protected DoubleParam resolution;
-
-    /**
-     * Gets the value property.
-     *
-     * @return
-     *     either null or
-     *     {@link DoubleParam }
-     *
-     */
-    public DoubleParam[] getValue() {
-        return this.value;
-    }
-
-    /**
-     * Creates value property if one does not exist.
-     *
-     * @return
-     *     {@link DoubleParam }
-     *
-     */
+    @Override
     public DoubleParam[] createValue() {
-        if (this.value == null)
-           this.setValue (new DoubleParam[2]);
-
-        return this.value;
+        if(!isSetValue()) {
+            setValue(new DoubleParam[2]);
+        }
+        
+        return getValue();
     }
 
-    public boolean isSetValue() {
-        return this.value!= null;
-    }
-
-    public void setValue(DoubleParam[] value) {
-        this.value = value;
-    }
-
-    /**
-     * Gets the value of the accuracy property.
-     * 
-     * @return
-     *     either null or
-     *     {@link Accuracy }
-     *     
-     */
-    public Accuracy getAccuracy() {
-        return accuracy;
-    }
-
-    /**
-     * Creates accuracy property if one does not exist.
-     *
-     * @return
-     *     {@link Accuracy }
-     *
-     */
-    public Accuracy createAccuracy() {
-        if (this.accuracy == null)
-           this.setAccuracy (new Accuracy ());
-        return this.accuracy;
-    }
-
-
-    /**
-     * Sets the value of the accuracy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Accuracy }
-     *     
-     */
-    public void setAccuracy(Accuracy value) {
-        this.accuracy = value;
-    }
-
-    public boolean isSetAccuracy() {
-        return (this.accuracy!= null);
-    }
-
-    /**
-     * Gets the value of the resolution property.
-     * 
-     * @return
-     *     either null or
-     *     {@link DoubleParam }
-     *     
-     */
-    public DoubleParam getResolution() {
-        return resolution;
-    }
-
-    /**
-     * Creates resolution property if one does not exist.
-     *
-     * @return
-     *     {@link DoubleParam }
-     *
-     */
+    @Override
     public DoubleParam createResolution() {
-        if (this.resolution == null)
-           this.setResolution (new DoubleParam ());
-        return this.resolution;
+        if(isSetResolution()) {
+            return getResolution();
+        }
+
+        setResolution(new DoubleParam());
+
+        return getResolution();
     }
 
+    @Override
+    public Object clone() {
+        CoverageLocation location = (CoverageLocation) super.clone();
 
-    /**
-     * Sets the value of the resolution property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DoubleParam }
-     *     
-     */
-    public void setResolution(DoubleParam value) {
-        this.resolution = value;
+        if(isSetResolution())
+            location.setResolution((DoubleParam)getResolution().clone());
+        
+        if(isSetValue())
+            location.setValue((DoubleParam[])getValue().clone());
+
+        return location;
     }
 
-    public boolean isSetResolution() {
-        return (this.resolution!= null);
-    }
 
 }

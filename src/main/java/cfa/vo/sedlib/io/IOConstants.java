@@ -26,12 +26,14 @@ public class IOConstants
     // for double precision,float
     public static final int FITS_BYTES_PER_DOUBLE_PRECISION = 8;
     public static final int FITS_BYTES_PER_INTEGER32 = 4;
+    public static final int FITS_BYTES_PER_CHAR = 1;
 
     // code for double precision float from Fits standard specification.
     public static final char FITS_FORMAT_CODE_SINGLE_PRECISION = 'E';
     public static final char FITS_FORMAT_CODE_DOUBLE_PRECISION = 'D';
     public static final char FITS_FORMAT_CODE_INTEGER16 = 'I';
     public static final char FITS_FORMAT_CODE_INTEGER32 = 'J';
+    public static final char FITS_FORMAT_CODE_STRING = 'A';
 
 
     // VOTable Constants

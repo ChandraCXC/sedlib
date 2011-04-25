@@ -113,12 +113,51 @@ use Getopt::Std;
 
 		# look for TFORM and get data size
 		#  *= \"\[0-9]+\)[A-Z]/ )
-		if ( $input =~ m/TFORM([0-9]+) *= '([0-9]+)([A-Z])/  )
+		if ( $input =~ m/TFORM([0-9]+) *= '([0-9]*)([A-Z])([0-9]*)/  )
 		{
-			$dataArrangement{ $1 } = [ $2, $3 ];
+                        if (exists $dataArrangement{$1})
+                        {
+                            $dataArrangement{ $1 }[1] = $3;
+                        }
+                        else
+                        {
+                            $dataArrangement{ $1 } = [ $2, $3, 0 ];
+                        }
+
+                        if ( !defined($2))
+                        {
+                            $dataArrangement{ $1 } = [ 1, $3, 0 ];
+                        }
+                        if ( defined($4) and not($4 eq ""))
+                        {
+                            $dataArrangement{ $1 } = [ int($2)/int($4), $3, $4 ];
+                        }
+
 			#print "TFOMR!! $bytesRead   1:$1,    2:$2,   3:$3  "
 			#.length(keys(%dataArrangement )) . " \n";
 		}
+                elsif ( $input =~ m/TDIM(\d+) *= '\((\d+)([,\d+]*)\)/ )
+                {
+
+
+                        if (not exists $dataArrangement{$1})
+                        {
+                            $dataArrangement{ $1 } = [0, "", 0];
+                        }
+                        if (defined ($3) and not ($3 eq ""))
+                        {
+                            $dataArrangement{ $1 }[0] = $3;
+                            $dataArrangement{ $1 }[2] = $2;
+                            $dataArrangement{ $1 }[0] =~ s/,//;
+
+                        }
+                        else
+                        {
+                            $dataArrangement{ $1 }[0] = $2;
+                        }
+
+                }
+
 	}
 	eatRestOfBlock();
 
@@ -137,8 +176,10 @@ my @kys = keys( %dataSet );
 	my $variableCount = $#kys+1;
 	for ( my $key = 1; $key < $variableCount +1; $key += 1 )
 	{
-		my $dataCount = $dataSet{ $key }[ 0 ];
+		my $dataCount = int ($dataSet{ $key }[ 0 ]);
 		my $dataType  = $dataSet{ $key }[ 1 ];
+                my $dataSize  = int ($dataSet{ $key }[ 2 ]);
+
 		if ( $dataType eq "E" )
 		{
 			for ( my $i = 0; $i < $dataCount; $i++ )
@@ -191,6 +232,18 @@ my @kys = keys( %dataSet );
 			}
 			print "\n";
 		}
+                elsif ( $dataType eq "A" )
+                {
+                        for ( my $i = 0; $i < $dataCount; $i++ )
+                        {
+                                my $nBytesRead = read ( IN, $input, $dataSize );
+                                die "Failed to read $dataSize bytes\n" if ( $nBytesRead != $dataSize);
+
+                                my $value =  unpack( "a$dataSize", $input);
+                                print "$value  ";
+                        }
+                        print "\n";
+                }
 		else
 		{
 			print "UNSUPPORTED DATA TYPE: $dataType\n";
@@ -251,3 +304,18 @@ sub unpack8( $ )
 	# 'd' ==> double precision float
 	return unpack( "d", $in );
 }
+
+sub unpack1( $ )
+{
+        my ( $in ) = @_;
+
+        # split, reverse, join back together to get 'other-endian'
+        # ordering of the bytes.
+        my @x = split( //, $in );
+        @x = reverse( @x );
+        $in = join( "", @x );
+
+        # 'd' ==> double precision float
+        return unpack( "a", $in );
+}
+

@@ -27,7 +27,7 @@ public class TestDerivedIO extends SedTestBase
 {
     Sed m_sed = null;
     String m_fname = null;
-    boolean keep = false;
+    boolean keep = true;
     int rc = 1;
 
     public TestDerivedIO( String name )

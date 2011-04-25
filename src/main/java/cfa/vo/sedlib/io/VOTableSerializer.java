@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
@@ -58,6 +59,7 @@ import cfa.vo.sedlib.SpectralFrame;
 import cfa.vo.sedlib.Target;
 import cfa.vo.sedlib.TextParam;
 import cfa.vo.sedlib.TimeFrame;
+import cfa.vo.sedlib.TimeParam;
 import cfa.vo.sedlib.Group;
 import cfa.vo.sedlib.common.SedConstants;
 import cfa.vo.sedlib.common.SedInconsistentException;
@@ -262,17 +264,17 @@ public class VOTableSerializer implements ISedSerializer
        
         if (firstValue.isSetValue() )
         {
-            String valueString = "";
+            StringBuilder sbuf = new StringBuilder();
             for ( int ii = 0; ii <  valueList.length; ii++ )
             {
                 if (valueList[ii] == null)
                     break;
                 if ( ii > 0)
-                    valueString = valueString + " ";
-                valueString = valueString + valueList[ii].getValue();
+                     sbuf.append(" ");
+                sbuf.append(valueList[ii].getValue());
                 arraySize += 1;
             }
-            param.setAttribute (VOTableKeywords._VALUE, valueString);
+            param.setAttribute (VOTableKeywords._VALUE, sbuf.toString());
         }
 
         if ((arraySize > 1) && !(firstValue instanceof TextParam))
@@ -338,9 +340,17 @@ public class VOTableSerializer implements ISedSerializer
                 param.setAttribute (VOTableKeywords._UNIT, ivalue.getUnit());
             param.setAttribute(  VOTableKeywords._DATATYPE, "int" );
         }
+        else if (sedParam instanceof TimeParam)
+        {
+            TimeParam tvalue = (TimeParam)sedParam;
+            if (tvalue.isSetUnit ())
+                param.setAttribute (VOTableKeywords._UNIT, tvalue.getUnit());
+            param.setAttribute(  VOTableKeywords._DATATYPE, "char" );
+            param.setAttribute(VOTableKeywords._ARRAYSIZE, "*");
+        }
         else
         {
-            // this should cover TextParam, DateParam, TimeParam, SkyRegion
+            // this should cover TextParam, DateParam, SkyRegion
             param.setAttribute(  VOTableKeywords._DATATYPE, "char" );
             param.setAttribute(VOTableKeywords._ARRAYSIZE, "*");
         }
@@ -670,7 +680,7 @@ public class VOTableSerializer implements ISedSerializer
             }
             if (bounds.isSetRange ())
             {
-                int rngUtype = this.mergeUtypes (newUtype, VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN, functionName);
+                int rngUtype = this.mergeUtypes (newUtype, VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN, functionName);     
                 this.addSedParam (bounds.getRange ().getMin (), group, rngUtype );
                 rngUtype = this.mergeUtypes (newUtype, VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX, functionName);
                 this.addSedParam (bounds.getRange ().getMax (), group, rngUtype );
@@ -701,24 +711,23 @@ public class VOTableSerializer implements ISedSerializer
                 List<Interval> rangeList = support.getRange ();
                 for (Interval range : rangeList)
                 {
-                    DoubleParam minMaxList[] = { range.getMin (),
-                                                 range.getMax () };
-                    String name = null;
-
+                	DoubleParam minMaxList[] = { range.getMin (), range.getMax () };
+                	String name = null;
                     // JBM -- this is a workaround because the name is not
-                    // part of the interval. We don't want the name to be
-                    // the value of the min element. So we default it to "range"
-                    if (minMaxList[0] != null)
-                    {
-                        name = minMaxList[0].getName ();
-                        minMaxList[0].setName ("Range");
-                    }
+                	// part of the interval. We don't want the name to be
+                	// the value of the min element. So we default it to "range"
+                	if (minMaxList[0] != null)
+                	{
+                	    name = minMaxList[0].getName ();
+                	    minMaxList[0].setName ("Range");
+                	}
+                	
+                	this.addSedParamArray (minMaxList, group, rngUtype );
+                	
+                	// JBM -- set the name back
+                	if (name != null)
+                	    minMaxList[0].setName (name);
 
-                    this.addSedParamArray (minMaxList, group, rngUtype );
-
-                    // JBM -- set the name back
-                    if (name != null)
-                        minMaxList[0].setName (name);
                 }
             }
             this.addCustomInfoToTable (support, group);
@@ -803,7 +812,7 @@ public class VOTableSerializer implements ISedSerializer
                 utypeTable.put ("confidence", VOTableKeywords.SEG_DATA_BGM_ACC_CONFIDENCE);
                 break;
             default:
-                logger.warning ("The utype, "+VOTableKeywords.getName (utype)+", cannot be included as part of the Accuracy.");
+                logger.log (Level.WARNING, "The utype, {0}, cannot be included as part of the Accuracy.", VOTableKeywords.getName(utype));
         }
 
         if (accuracy.isSetBinLow ())
@@ -873,7 +882,7 @@ public class VOTableSerializer implements ISedSerializer
             case VOTableKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC:
                 break;
             default:
-                logger.warning ("The utype, "+VOTableKeywords.getName (utype)+", cannot be included as part of the SamplingPrecision.");
+                logger.log (Level.WARNING, "The utype, {0}, cannot be included as part of the SamplingPrecision.", VOTableKeywords.getName(utype));
         }
 
         if (samplingPrecision.isSetSampleExtent ())
@@ -1325,7 +1334,7 @@ public class VOTableSerializer implements ISedSerializer
         SedStarTable starTable = null;
         List<Field> fields = new ArrayList<Field> ();
         Field fieldArray[] = {};
-        String fieldIdArray[] = {};
+        String fieldIdArray[];
 
         // write the group information
         pointsGroup.addToVOTable (voTable, this.namespace);
@@ -1363,8 +1372,7 @@ public class VOTableSerializer implements ISedSerializer
 
         if (axis.isSetValue ())
         {
-            param = axis.getValue ();
-            param = new DoubleParam (axis.getValue ());
+            param = (DoubleParam)axis.getValue ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_TIMEAXIS_VALUE, functionName);
             if (!param.isSetInternalId ())
@@ -1381,7 +1389,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (axis.isSetResolution ())
         {
-            param = new DoubleParam (axis.getResolution ());
+            param = (DoubleParam)axis.getResolution ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_TIMEAXIS_RESOLUTION, functionName);
             if (!param.isSetInternalId ())
@@ -1425,7 +1433,7 @@ public class VOTableSerializer implements ISedSerializer
 
         if (axis.isSetValue ())
         {
-            param = new DoubleParam (axis.getValue ());
+            param = (DoubleParam)axis.getValue ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_VALUE, functionName);
             if (!param.isSetInternalId ())
@@ -1442,7 +1450,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (axis.isSetResolution ())
         {
-            param = new DoubleParam (axis.getResolution ());
+            param = (DoubleParam)axis.getResolution ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_RESOLUTION, functionName);
             if (!param.isSetInternalId ())
@@ -1459,7 +1467,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (axis.isSetQuality ())
         {
-            param = new IntParam (axis.getQuality ());
+            param = (IntParam)axis.getQuality ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_QUALITY, functionName);
             if (!param.isSetInternalId ())
@@ -1500,7 +1508,7 @@ public class VOTableSerializer implements ISedSerializer
 
         if (accuracy.isSetBinLow ())
         {
-            param = new DoubleParam (accuracy.getBinLow ());
+            param = (DoubleParam)accuracy.getBinLow ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINLOW, functionName);
             if (!param.isSetInternalId ())
@@ -1516,7 +1524,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetBinHigh ())
         {
-            param = new DoubleParam (accuracy.getBinHigh ());
+            param = (DoubleParam)accuracy.getBinHigh ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINHIGH, functionName);
             if (!param.isSetInternalId ())
@@ -1536,7 +1544,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetBinSize ())
         {
-            param = new DoubleParam (accuracy.getBinSize ());
+            param = (DoubleParam)accuracy.getBinSize ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINSIZE, functionName);
             if (!param.isSetInternalId ())
@@ -1553,7 +1561,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetStatError ())
         {
-            param = new DoubleParam (accuracy.getStatError ());
+            param = (DoubleParam)accuracy.getStatError ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERR, functionName);
             if (!param.isSetInternalId ())
@@ -1570,7 +1578,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetStatErrLow ())
         {
-            param = new DoubleParam (accuracy.getStatErrLow ());
+            param = (DoubleParam)accuracy.getStatErrLow ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRLOW, functionName);
             if (!param.isSetInternalId ())
@@ -1587,7 +1595,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetStatErrHigh ())
         {
-            param = new DoubleParam (accuracy.getStatErrHigh ());
+            param = (DoubleParam)accuracy.getStatErrHigh ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRHIGH, functionName);
             if (!param.isSetInternalId ())
@@ -1604,7 +1612,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetSysError ())
         {
-            param = new DoubleParam (accuracy.getSysError ());
+            param = (DoubleParam)accuracy.getSysError ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_SYSERR, functionName);
             if (!param.isSetInternalId ())
@@ -1621,7 +1629,7 @@ public class VOTableSerializer implements ISedSerializer
         }
         if (accuracy.isSetConfidence ())
         {
-            param = new DoubleParam (accuracy.getConfidence ());
+            param = (DoubleParam)accuracy.getConfidence ().clone ();
             param.setUcd (this.getParamUcd (param, utype));
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_CONFIDENCE, functionName);
             if (!param.isSetInternalId ())

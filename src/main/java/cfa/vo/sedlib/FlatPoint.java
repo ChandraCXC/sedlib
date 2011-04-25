@@ -28,6 +28,23 @@ public class FlatPoint {
     protected Double bgSys;
     protected Integer bgQual;
 
+    @Override
+    public Object clone ()
+    {
+        FlatPoint flatPoint = null;
+        try
+        {
+            flatPoint = (FlatPoint) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }
+        return flatPoint;
+    }
+
+
     /**
      * Gets the value of the t property.
      * 

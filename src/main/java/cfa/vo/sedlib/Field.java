@@ -5,7 +5,7 @@ package cfa.vo.sedlib;
  * 
  * 
  */
-public class Field {
+public class Field implements Cloneable {
 
     protected String name;
     protected String unit;
@@ -40,6 +40,23 @@ public class Field {
         this.id = id;
         this.altId = id;
     }
+
+    @Override
+    public Object clone ()
+    {
+        Field field = null;
+        try
+        {
+            field = (Field) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }
+        return field;
+    }
+
 
     /**
      * Gets the value of the name property.
@@ -218,8 +235,17 @@ public class Field {
      * Overloaded equals operator to compare two Fields
      *
      */
-    public boolean equals (Field field)
+    @Override
+    public boolean equals (Object other)
     {
+        if (other == null) {
+            return false;
+        }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        final Field field = (Field) other;
+
         boolean compValue = true;
 
         if (this.isSetName () && field.isSetName ())
@@ -263,6 +289,17 @@ public class Field {
         //the use of this compare function with external programs
 
         return compValue;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 29 * hash + (this.unit != null ? this.unit.hashCode() : 0);
+        hash = 29 * hash + (this.ucd != null ? this.ucd.hashCode() : 0);
+        hash = 29 * hash + (this.utype != null ? this.utype.hashCode() : 0);
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 
 

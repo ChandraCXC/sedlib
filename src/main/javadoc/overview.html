@@ -9,6 +9,7 @@ and open the template in the editor.
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
+      <h3>Introduction</h3>
       <p>The SED Library allows serialization and deserialization of Spectral Energy Distribution files according to the
         <a href="http://ivoa.net/Documents/cover/SpectrumDM-20071029.html">IVOA Spectrum Data Model v1.03.</a></p>
 
@@ -22,38 +23,60 @@ and open the template in the editor.
       <p>A Spectral Energy Distribution is represented by the {@link cfa.vo.sedlib.Sed} class. In the current implementation, this class provides methods to access
         and manipulate a list of {@link cfa.vo.sedlib.Segment} objects, each segment being the representation of a Spectrum or a collection of Photometry points.</p>
 
-      <p>A {@link cfa.vo.sedlib.Sed} object can be read from a file using the {@link cfa.vo.sedlib.io.SedIOFactory}. For example, the following code
-          reads the <code>sample.vot</code> VOTable from disk:</p>
+      <h3>Seds Input/Output</h3>
+      <p>A {@link cfa.vo.sedlib.Sed} object can be read from a file using the Sed class itself. For example, the following code
+          reads the <code>sample.vot</code> VOTable from disk and performs very basic error handling:</p>
 
       <pre><code>
-      Sed doc;
+      Sed sed;
 
 	try
 	{
-	    ISedDeserializer deserializer = SedIOFactory.createDeserializer( SedFormat.VOT );
-	    doc = deserializer.deserialize( "sample.vot" );
+	    sed = Sed.read("sample.vot", SedFormat.VOT);
 	}
-	catch ( Exception exp )
-	{
-	   /* ... handle exception ... */
-	}
+	catch (SedParsingException ex)
+        {
+            System.err.println("Parsing Error: "+ex.getMessage());
+        }
+        catch (SedInconsistentException ex)
+        {
+            System.err.println("Inconsistency Error: "+ex.getMessage());
+        }
+        catch (IOException ex)
+        {
+            System.err.println("I/O Error: "+ex.getMessage());
+        }
       </code></pre>
 
-      On the other hand, to write the {@link cfa.vo.sedlib.Sed} object <code>sed</code> to disk in a given {@link cfa.vo.sedlib.io.SedFormat}, e.g. VOTable:
+      On the other hand, to write the {@link cfa.vo.sedlib.Sed} object <code>sed</code> to disk in a given {@link cfa.vo.sedlib.io.SedFormat}, e.g. FITS:
 
       <pre><code>
       try
 	{
-	    ISedSerializer serializer = SedIOFactory.createSerializer( SedFormat.VOT );
-	    serializer.serialize( "sample.vot", sed );
+	    sed.write("sed.fits", SedFormat.FITS);
 	}
-	catch ( Exception exp )
-	{
-	    /* ... handle exception ... */
-	}
+	catch (SedWritingException ex) {
+            System.err.println("Error writing sed: "+ex.getMessage());
+        }
       </code></pre>
 
+      <h3>Exceptions and error handling</h3>
+      <p>
+          Note that all the Sed*Exceptions have a common ancestor: SedException. If you don't want to catch all the specific exceptions on a one-by-one basis, you can
+          safely catch the SedException once.
+      </p>
 
+      <p>
+          However, Sed*Exceptions provide a finer grained semantics to the underlying errors, allowing a better error handling, especially when building
+          user interfaces.
+      </p>
+
+      <p>
+          For example, when trying to add a segment to a SED, the client might want to inform the user that the segment is not compatible with the other ones in the SED, asking
+          the user what action to take (ignore the segment, add it to a different SED, visually inspect it, etc.).
+      </p>
+
+      <h3>API description</h3>
       <p>The library also provides a collection of Java classes that map to the
         datatypes defined in the schema.</p>
 
@@ -76,6 +99,12 @@ and open the template in the editor.
         The API also provides access to the spectral data in a document. This
         permits, for example, plotting of the data, statistical analysis of
         multiple spectra, or fitting theoretical models to the data.
+        </p>
+        
+        <h3>Compatibility among Segments</h3>
+        <p>
+            When a {@link cfa.vo.sedlib.Segment segment} is added to an SED, a compatibility check is performed in order to have a consistent SED. For more information,
+            please refer to the {@link cfa.vo.sedlib.Segment#isCompatibleWith(cfa.vo.sedlib.Segment other) isCompatibleWith} method documentation.
         </p>
   </body>
 </html>

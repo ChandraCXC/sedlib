@@ -13,7 +13,7 @@ import cfa.vo.sedlib.Field;
 import cfa.vo.sedlib.IntParam;
 import cfa.vo.sedlib.Param;
 
-class SedStarTable extends RandomStarTable
+final class SedStarTable extends RandomStarTable
 {
     private final List<ColumnInfo> columnInfos = new ArrayList<ColumnInfo>();
     Param[][] dataMatrix = null;
@@ -107,6 +107,7 @@ class SedStarTable extends RandomStarTable
 	return columnInfo;
     }
 
+    @Override
     public Object getCell( long irow, int icol )
     {
         if (this.dataMatrix == null)

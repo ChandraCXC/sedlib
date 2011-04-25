@@ -42,6 +42,7 @@ class PrettifyingOutputStreamWriter extends OutputStreamWriter
     int m_indentCount = 0;
     String m_partial = "";
 
+    @Override
     public void write( char[] cbuf, int off, int len ) throws IOException
     {
 	String allLines = new String( cbuf, off, len );

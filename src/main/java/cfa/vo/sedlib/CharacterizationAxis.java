@@ -19,6 +19,28 @@ public class CharacterizationAxis
     protected String ucd;
     protected String unit;
 
+    @Override
+    public Object clone ()
+    {
+        CharacterizationAxis charAxis = (CharacterizationAxis) super.clone();
+
+        if (this.isSetCoordSystem ())
+            charAxis.coordSystem = (CoordSys)this.coordSystem.clone ();
+        if (this.isSetCoverage ())
+            charAxis.coverage = (Coverage)this.coverage.clone ();
+        if (this.isSetResolution ())
+            charAxis.resolution = (DoubleParam)this.resolution.clone ();
+        if (this.isSetAccuracy ())
+            charAxis.accuracy = (Accuracy)this.accuracy.clone ();
+        if (this.isSetSamplingPrecision ())
+            charAxis.samplingPrecision = (SamplingPrecision)this.samplingPrecision.clone ();
+        if (this.isSetCalibration ())
+            charAxis.calibration = (TextParam)this.calibration.clone ();
+
+        return charAxis;
+    }
+
+
     /**
      * Gets the value of the coordSystem property.
      * 

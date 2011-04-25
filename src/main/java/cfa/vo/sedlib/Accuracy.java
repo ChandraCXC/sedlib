@@ -19,6 +19,35 @@ public class Accuracy
     protected DoubleParam sysError;
     protected DoubleParam confidence;
 
+    public Accuracy () {}
+
+    @Override
+    public Object clone ()
+    {
+        Accuracy accuracy = (Accuracy) super.clone();
+
+        if (this.isSetBinLow ())
+            accuracy.binLow = (DoubleParam)this.binLow.clone ();
+        if (this.isSetBinHigh ())
+            accuracy.binHigh = (DoubleParam)this.binHigh.clone ();
+        if (this.isSetBinSize ())
+            accuracy.binSize = (DoubleParam)this.binSize.clone ();
+        if (this.isSetStatError ())
+            accuracy.statError = (DoubleParam)this.statError.clone ();
+        if (this.isSetStatErrLow ())
+            accuracy.statErrLow = (DoubleParam)this.statErrLow.clone ();
+        if (this.isSetStatErrHigh ())
+            accuracy.statErrHigh = (DoubleParam)this.statErrHigh.clone ();
+        if (this.isSetSysError ())
+            accuracy.sysError = (DoubleParam)this.sysError.clone ();
+        if (this.isSetConfidence ())
+            accuracy.confidence = (DoubleParam)this.confidence.clone ();
+
+        return accuracy;
+    }
+
+
+     
     /**
      * Gets the value of the binLow property.
      * 

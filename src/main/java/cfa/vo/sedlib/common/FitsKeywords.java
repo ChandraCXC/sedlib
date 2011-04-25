@@ -13,17 +13,17 @@ public class FitsKeywords extends Utypes{
     static public final int   TARGET_RA = max_enum;
     static public final int   TARGET_DECL = max_enum + 1;
 
-    static protected String[] fitsname = {
+    static final String[] fitsname = {
         "Spectrum.Target.Pos",
         "Spectrum.Target.Pos",
     };
 
-    static String[] keywords = new String[max_enum+2];
+    static final String[] keywords = new String[max_enum+2];
 
-    static HashMap <Integer,String>columnNames = new HashMap<Integer, String> ();
+    static final HashMap <Integer,String>columnNames = new HashMap<Integer, String> ();
 
 
-    static HashMap<String,Integer[]> fitsMap;
+    static final HashMap<String,Integer[]> fitsMap;
     
     static
     {
@@ -224,6 +224,9 @@ public class FitsKeywords extends Utypes{
         Integer utypeEnum[] = {INVALID_UTYPE};
         if ((compName == null) || (compName.length () == 0))
             return utypeEnum;
+
+        // all keywords should be upper case
+        compName = compName.toUpperCase ();
 
         utypeEnum = fitsMap.get (compName);
 

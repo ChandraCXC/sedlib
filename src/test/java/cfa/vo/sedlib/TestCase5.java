@@ -18,15 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cfa.vo.sedlib.common.SedException;
+import cfa.vo.sedlib.common.SedParsingException;
+import cfa.vo.sedlib.common.SedWritingException;
+import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedConstants;
+import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.testtools.SedLibTestUtils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import cfa.vo.sedlib.io.SedFormat;
 
 /**
-   Tests Sedlib ability to create, read and write the Spectrum objects
+   Test Exensibility (Requirement 8.2)
 */	
 
 public class TestCase5 extends SedTestBase
@@ -47,7 +53,123 @@ public class TestCase5 extends SedTestBase
 
 
     /**
-     *  See TestPlan, TestCase 5.1 - 5.10
+     *  5.1 The table has an unknown and unreferenced Field
+     *
+     * <pre>
+     *   &lt;FIELD  name="DBref" datatype="char" arraysize="*"&gt;
+     *    &lt;DESCRIPTION&gt; unknown, unreferenced column&lt;/DESCRIPTION&gt;
+     *   &lt;/FIELD&gt;
+     * </pre>
+     *
+     * 5.2 The table has an unknown field referenced in an unknown group
+     *
+     * <pre>
+     * &lt;FIELD ID="col2" name="col2" datatype="double" utype="spec:Spectrum.Model.FluxAxis.Value" unit="Jy"&gt;
+     *   &lt;DESCRIPTION&gt; unknown column referenced in unknown group.&lt;/DESCRIPTION&gt;
+     * &lt;/FIELD&gt;
+     *
+     * &lt;GROUP utype="spec:Spectrum.Model.FluxAxis"&gt;
+     *    &lt;DESCRIPTION&gt; unknown group &lt;/DESCRIPTION&gt;
+     *    &lt;FIELDRef ref="col2"/&gt;
+     * &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.3 The table has an unknown field reference in a known group outside of Data
+     *
+     * <pre>
+     *   &lt;FIELD ID="col3" name="col3" datatype="double"&gt;
+     *       &lt;DESCRIPTION&gt; unknown column referenced in known group outside Data.&lt;/DESCRIPTION&gt;
+     *   &lt;/FIELD&gt;
+     *
+     *   &lt;GROUP ID="DataID" name="DataID" utype="spec:Spectrum.DataID"&gt;
+     *        &lt;FIELDref ref="col3" utype="spec:Spectrum.DataID.Code"/&gt;
+     *    &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.4 The table has an unknown field referenced in a known group inside of Data
+     *
+     * <pre>
+     *   &lt;FIELD ID="col4" name="col4" datatype="double" utype="spec:Spectrum.Data.FluxAxis.Fluff" unit="Jy"&gt;
+     *       &lt;DESCRIPTION&gt; unknown column referenced in known group inside Data.&lt;/DESCRIPTION&gt;
+     *   &lt;/FIELD&gt;
+     *
+     *   &lt;GROUP ID="Data.FluxAxis" name="Data.FluxAxis" utype="spec:Spectrum.Data.FluxAxis"&gt;
+     *       &lt;FIELDref ref="col4"/&gt;
+     *   &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.5 The table has an unknown, unreferenced parameter not in the data
+     *
+     * <pre>
+     *   &lt;PARAM datatype="char" name="p1" value="blah" arraysize="*"&gt;
+     *       &lt;DESCRIPTION&gt; unknown, unreferenced parameter.&lt;/DESCRIPTION&gt;
+     *   &lt;/PARAM&gt;
+     * </pre>
+     *
+     * 5.6 The table has an unknown, referenced parameter in unknown group
+     *
+     * <pre>
+     *   &lt;PARAM ID="p2" datatype="char" name="p2" utype="spec:Spectrum.Model.FluxAxis.Method" value="blah" arraysize="*"&gt;
+     *       &lt;DESCRIPTION&gt; unknown, referenced in unknown group.&lt;/DESCRIPTION&gt;
+     *   &lt;/PARAM&gt;
+     *
+     *   &lt;GROUP ID="Model.FluxAxis" name="Model.FluxAxis" utype="spec:Spectrum.Model.FluxAxis"&gt;
+     *       &lt;PARAMref ref="p2"/&gt;
+     *    &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.7 The table has an unknown, referenced parameter in a known group
+     *
+     * <pre>
+     *   &lt;PARAM ID="p3" datatype="double" name="p3"
+     *           utype="spec:Spectrum.Model.FluxAxisConfidence" value="0.102"&gt;
+     *       &lt;DESCRIPTION&gt; unknown, referenced in known group.&lt;/DESCRIPTION&gt;
+     *   &lt;/PARAM&gt;
+     *
+     *   &lt;GROUP ID="DataID" name="DataID" utype="spec:Spectrum.DataID"&gt;
+     *       &lt;PARAMref ref="p3"/&gt;
+     *   &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.8 The table has an unknown parameter in a data group
+     *
+     * <pre>
+     *   &lt;PARAM ID="p5" datatype="char" name="p5" utype="spec:Spectrum.Data.FluxAxis.test" value="test" arraysize="*"&gt;
+     *       &lt;DESCRIPTION&gt; unknown param referenced in known data group.&lt;/DESCRIPTION&gt;
+     *   &lt;/PARAM&gt;
+     *
+     *   &lt;GROUP ID="Data.FluxAxis" name="Data.FluxAxis" utype="spec:Spectrum.Data.FluxAxis"&gt;
+     *      &lt;PARAMref ref="p5"&gt;
+     *   &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.9 The table has a parameter referenced in multiple groups.
+     *
+     * <pre>
+     *   &lt;PARAM ID="p6" datatype="char" name="p6" value="test2" arraysize="*"&gt;
+     *       &lt;DESCRIPTION&gt; unknown param referenced in multiple group.&lt;/DESCRIPTION&gt;
+     *   &lt;/PARAM&gt;
+     *
+     *   &lt;GROUP ID="DataID" name="DataID" utype="spec:Spectrum.DataID"&gt;
+     *     &lt;PARAMref ref="p6" utype="my.utype"/&gt;
+     *   &lt;/GROUP&gt;
+     *
+     *   &lt;GROUP ID="Model" name="Model" utype="spec:Spectrum.Model"&gt;
+     *     &lt;DESCRIPTION&gt;Model Data&lt;/DESCRIPTION&gt;
+     *     &lt;PARAMref ref="p6" utype="my.other.utype"/&gt;
+     *   &lt;/GROUP&gt;
+     * </pre>
+     *
+     * 5.10 The table has an unknown group with a subgroup
+     *
+     * <pre>
+     *   &lt;GROUP ID="Model" name="Model" utype="spec:Spectrum.Model"&gt;
+     *     &lt;DESCRIPTION&gt;Model Data&lt;/DESCRIPTION&gt;
+     *     &lt;GROUP ID="Model.FluxAxis" name="Model.FluxAxis" utype="spec:Spectrum.Model.FluxAxis"&gt;
+     *     &lt;/GROUP&gt;
+     *   &lt;/GROUP&gt;
+     * </pre>
+     * 
      */
     public void testCase5_1_to_5_10()
     {
@@ -56,24 +178,21 @@ public class TestCase5 extends SedTestBase
         String testName = "testCase5_1_to_5_10";
         System.out.println("   run "+testName+"()");
 
-	    SedFormat format = SedFormat.VOT;
-	    String filename = "Extensions." + format.exten();
-	    int rc;
+	    String votFilename = "Extensions." + SedFormat.VOT.exten();
+        String fitsFilename = "Extensions." + SedFormat.FITS.exten();
+        String fits2Filename = "Extensions2." + SedFormat.FITS.exten();
 
-
-        String inputFilename = SedLibTestUtils.mkInFileName( filename );
-        String outputFilename = SedLibTestUtils.mkOutFileName( filename );
 
         /* Read input file */
-        sed= readSED( format , inputFilename );
-        assertNotNull( testName + ": Document load failed - " + filename, sed );
+        sed = this.readSed (votFilename, SedFormat.VOT );
 
         /* Write output file */
-        rc = writeSED( format , outputFilename, sed );
-        assertEquals( testName + ": Failed to write " + filename, 0, rc );
-
-        rc = SedLibTestUtils.DIFFIT( filename );
-        assertEquals( testName + ": Diff failed - " + filename, 0, rc );
+        this.writeSed (votFilename, SedFormat.VOT, sed);
+        this.writeSed (fitsFilename, SedFormat.FITS, sed);  
+        
+        /* Read and write fits file */
+        sed = this.readSed (fits2Filename, SedFormat.FITS );
+        this.writeSed (fits2Filename, SedFormat.FITS, sed);  
 
     }
 
@@ -101,7 +220,7 @@ public class TestCase5 extends SedTestBase
             assertTrue (testName + ": Custom parameters differed.", constParams.get(ii).equals(params.get(ii)));
 
             // set the parameter id
-            param = new Param (params.get(ii));
+            param = (Param)params.get(ii).clone ();
             param.setId ("ID"+ii);
             try
             {
@@ -139,7 +258,7 @@ public class TestCase5 extends SedTestBase
                 fail (testName + ": "+exp.getMessage ());
             }
             
-            tmpParam = new Param (constParams.get(ii));
+            tmpParam = (Param)constParams.get(ii).clone ();
             tmpParam.setId ("ID"+ii);
             assertTrue (testName + ": Custom parameters differed.", tmpParam.equals(param));
 
@@ -241,8 +360,6 @@ public class TestCase5 extends SedTestBase
         String filename1 = "testCase5_13_1." + format.exten();
         String filename2 = "testCase5_13_2." + format.exten();
         
-        int rc = 0;
-
         double dvalues[] = {1.1, 2.2, 3.3};
         int ivalues[] = {1,2,3};
         String svalues[] = {"ABC", "DEF", "GHI"};
@@ -391,30 +508,97 @@ public class TestCase5 extends SedTestBase
         {
             fail (exp.getMessage ());
         }
-
-        String outputFilename = SedLibTestUtils.mkOutFileName( filename1 );
         
         /* Write the created sed */
-        rc = writeSED( format , outputFilename, sed );
-        assertEquals( testName + ": Failed to write " + filename1, 0, rc );
+        this.writeSed (filename1, SedFormat.VOT, sed);
         
-        rc = SedLibTestUtils.DIFFIT( filename1 );
-        assertEquals( testName + ": Diff failed - " + filename1, 0, rc );
-        
-        /* Read the sed from the output */
-        sed= readSED( format , outputFilename );
-        assertNotNull( testName + ": Document load failed - " + filename1, sed );
-        
+        /* Read the sed from the output */        
+        String inputFilename = SedLibTestUtils.mkOutFileName( filename1 );
+
+        try
+        {
+            sed = Sed.read( inputFilename, SedFormat.VOT );
+        } catch (SedParsingException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("error while parsing the document: " +inputFilename);
+        } catch (SedInconsistentException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("inconsistency detected in document: "+inputFilename);
+        } catch (IOException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("IO problems reading document: "+inputFilename);
+        } catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
+        }
+
         /* Write it back out */
-        outputFilename = SedLibTestUtils.mkOutFileName( filename2 );
-        rc = writeSED( format , outputFilename, sed );
-        assertEquals( testName + ": Failed to write " + filename2, 0, rc );
-        
-        rc = SedLibTestUtils.DIFFIT( filename2 );
-        assertEquals( testName + ": Diff failed - " + filename2, 0, rc );
-      
+        this.writeSed (filename2, SedFormat.VOT, sed);
 
         
+    }
+
+    Sed readSed (String filename, SedFormat format)
+    {
+        String inputFilename = SedLibTestUtils.mkInFileName( filename );
+        Sed sed = null;
+
+        try
+        {
+            sed = Sed.read( inputFilename, format );
+        } catch (SedParsingException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("error while parsing the document: " +inputFilename);
+        } catch (SedInconsistentException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("inconsistency detected in document: "+inputFilename);
+        } catch (IOException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex)
+;
+            fail("IO problems reading document: "+inputFilename);
+        } catch (SedNoDataException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex);
+            fail("No data found in segment: "+inputFilename);
+        }
+
+        return sed;
+
+    }
+
+    void writeSed (String filename, SedFormat format, Sed sed)
+    {
+        String outputFilename = SedLibTestUtils.mkOutFileName( filename );
+
+        try
+        {
+            sed.write( outputFilename, format );
+        } catch (SedWritingException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex);
+            fail("error while parsing the document: " +outputFilename);
+        } catch (SedInconsistentException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex);
+            fail("inconsistency detected in document: "+outputFilename);
+        } catch (IOException ex) {
+            Logger.getLogger(TestCase5.class.getName()).log(Level.SEVERE, null, ex);
+            fail("IO problems writing document: "+outputFilename);
+        }
+
+        // verify the output file name
+        int rc = 0;
+        
+        if (format == SedFormat.FITS)
+        	rc = SedLibTestUtils.diffFits(filename);
+        else
+        	rc = SedLibTestUtils.DIFFIT( filename );
+        
+        	
+        assertEquals( TestCase5.class.getName () + ": Diff failed - " + filename, 0, rc );       
+
     }
 
 }

@@ -33,8 +33,8 @@ import cfa.vo.sedlib.*;
 import cfa.vo.sedlib.common.SedConstants;
 import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
-import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedNullException;
+import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
 import cfa.vo.sedlib.common.VOTableKeywords;
 
@@ -60,7 +60,7 @@ public class VOTableMapper extends SedMapper
       * @throws IOException
       */
     public Sed populateSed (Object data, Sed sed) 
-    	throws SedParsingException, SedInconsistentException, IOException
+    	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
 
         if (sed == null)
@@ -1131,7 +1131,7 @@ public class VOTableMapper extends SedMapper
                     
 
                     for (SedQuantity pnt : data)
-                        pnt.setValue(new DoubleParam(param) );
+                        pnt.setValue((DoubleParam)param.clone () );
                     break;
                 }
 
@@ -1147,7 +1147,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (SedQuantity pnt : data)
-                        pnt.setQuality(new IntParam(param) );
+                        pnt.setQuality((IntParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_FLUXAXIS_RESOLUTION:
@@ -1162,7 +1162,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (SedQuantity pnt : data)
-                        pnt.setResolution(new DoubleParam(param) );
+                        pnt.setResolution((DoubleParam)param.clone ());
                     break;
                 }
                 default:
@@ -1216,7 +1216,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (SedCoord pnt : data)
-                        pnt.setValue(new DoubleParam(param) );
+                        pnt.setValue((DoubleParam)param.clone () );
                     break;
                 }
 
@@ -1232,7 +1232,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (SedCoord pnt : data)
-                        pnt.setResolution(new DoubleParam(param) );
+                        pnt.setResolution((DoubleParam)param.clone ());
                     break;
                 }
 
@@ -1290,7 +1290,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setStatErrLow(new DoubleParam(param) );
+                        pnt.setStatErrLow((DoubleParam)param.clone () );
                     break;
                 }
 
@@ -1308,7 +1308,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setStatErrHigh(new DoubleParam(param) );
+                        pnt.setStatErrHigh((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_SYSERR:
@@ -1325,7 +1325,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setSysError(new DoubleParam(param) );
+                        pnt.setSysError((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_BINLOW:
@@ -1342,7 +1342,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setBinLow(new DoubleParam(param) );
+                        pnt.setBinLow((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_BINHIGH:
@@ -1359,7 +1359,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setBinHigh(new DoubleParam(param) );
+                        pnt.setBinHigh((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_BINSIZE:
@@ -1376,7 +1376,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setBinSize(new DoubleParam(param) );
+                        pnt.setBinSize((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_STATERR:
@@ -1393,7 +1393,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setStatError(new DoubleParam(param) );
+                        pnt.setStatError((DoubleParam)param.clone () );
                     break;
                 }
                 case VOTableKeywords.SEG_DATA_BGM_ACC_CONFIDENCE:
@@ -1410,7 +1410,7 @@ public class VOTableMapper extends SedMapper
                     }
 
                     for (Accuracy pnt : data)
-                        pnt.setConfidence(new DoubleParam(param) );
+                        pnt.setConfidence((DoubleParam)param.clone () );
                     break;
                 }
                 default:
@@ -1909,6 +1909,8 @@ public class VOTableMapper extends SedMapper
                                                        params[pii].getUnit (),
                                                        params[pii].getID ());
                          }
+
+                         charAxis.getCoverage().getLocation().setValue(valueList);
                     }
                     break;
 
@@ -2755,6 +2757,8 @@ public class VOTableMapper extends SedMapper
 
         for ( int ii = 0; ii < values.length; ii++ )
             posValues[ii] = new DoubleParam( values[ii], name, ucd, unit, id );
+
+        newPos.setValue(posValues);
 
         return newPos;
     }

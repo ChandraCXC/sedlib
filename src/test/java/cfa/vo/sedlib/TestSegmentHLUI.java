@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
+import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.Utypes;
 import cfa.vo.sedlib.io.SedFormat;
 import cfa.vo.testtools.SedLibTestUtils;
@@ -86,7 +87,7 @@ public class TestSegmentHLUI extends SedTestBase
         {
             m_sed.addSegment(segment);
         }
-        catch (SedInconsistentException exp)
+        catch (Exception exp)
         {
             throw new RuntimeException (exp.getMessage (), exp);
         }
@@ -193,6 +194,9 @@ public class TestSegmentHLUI extends SedTestBase
         catch (SedInconsistentException exp)
         {
             throw new RuntimeException (exp.getMessage (), exp);
+        }
+        catch (SedNoDataException ex) {
+            // don't do anything, we still have to add the data
         }
 
 
@@ -312,7 +316,7 @@ public class TestSegmentHLUI extends SedTestBase
             m_sed.addSegment(segment);
 
         }
-        catch (SedInconsistentException exp)
+        catch (Exception exp)
         {
             throw new RuntimeException (exp.getMessage (), exp);
         }
@@ -417,7 +421,7 @@ public class TestSegmentHLUI extends SedTestBase
             m_sed.addSegment(segment);
 
         }
-        catch (SedInconsistentException exp)
+        catch (Exception exp)
         {
             throw new RuntimeException (exp.getMessage (), exp);
         }

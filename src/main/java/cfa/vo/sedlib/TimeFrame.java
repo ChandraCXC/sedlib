@@ -11,6 +11,19 @@ public class TimeFrame
 
     protected DoubleParam zero;
 
+    @Override
+    public Object clone ()
+    {
+        TimeFrame timeFrame = (TimeFrame) super.clone();
+        
+
+        if (this.isSetZero ())
+            timeFrame.zero = (DoubleParam)this.zero.clone ();
+
+        return timeFrame;
+    }
+
+
     /**
      * Gets the value of the zero property.
      * 

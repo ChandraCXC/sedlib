@@ -14,6 +14,21 @@ public class ArrayOfFlatPoint
 
     protected List<FlatPoint> point;
 
+    @Override
+    public Object clone ()
+    {
+        ArrayOfFlatPoint arrayOfFlatPoint = (ArrayOfFlatPoint) super.clone();
+        
+
+        if (this.isSetPoint ())
+        {
+            arrayOfFlatPoint.point = new ArrayList<FlatPoint>();
+            for (FlatPoint pnt : this.point)
+                arrayOfFlatPoint.point.add ((FlatPoint)pnt.clone ());
+        }
+        return arrayOfFlatPoint;
+    }
+
 
     /**
      * Gets the point list.

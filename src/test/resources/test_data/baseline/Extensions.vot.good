@@ -24,11 +24,6 @@
         <PARAM arraysize="*" datatype="char" name="p6" value="test2"/>
       </GROUP>
       <PARAM arraysize="*" datatype="char" name="p1" value="blah"/>
-      <PARAM arraysize="*" datatype="char" name="p2" value="blah"/>
-      <PARAM datatype="double" name="p3" value="0.102"/>
-      <PARAM arraysize="*" datatype="char" name="TargetName" value="3C 279"/>
-      <PARAM datatype="int" name="p5" value="1"/>
-      <PARAM arraysize="*" datatype="char" name="p6" value="test2"/>
       <GROUP utype="spec:Spectrum.Data">
         <FIELDref ref="ID_0"/>
         <GROUP utype="spec:Spectrum.Data.FluxAxis">

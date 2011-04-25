@@ -26,6 +26,51 @@ public class DataID
     protected TextParam logo;
     protected TextParam dataSource;
 
+    @Override
+    public Object clone ()
+    {
+        DataID dataID = (DataID) super.clone();
+
+        if (this.isSetTitle ())
+            dataID.title = (TextParam)this.title.clone ();
+        if (this.isSetCreator ())
+            dataID.creator = (TextParam)this.creator.clone ();
+        if (this.isSetCollection ())
+        {
+            dataID.collection = new ArrayList<TextParam>();
+            for (TextParam cc : this.collection)
+                dataID.collection.add ((TextParam)cc.clone ());
+        }
+        if (this.isSetDatasetID ())
+            dataID.datasetID = (TextParam)this.datasetID.clone ();
+        if (this.isSetDate ())
+            dataID.date = (DateParam)this.date.clone ();
+        if (this.isSetVersion ())
+            dataID.version = (TextParam)this.version.clone ();
+        if (this.isSetInstrument ())
+            dataID.instrument = (TextParam)this.instrument.clone ();
+        if (this.isSetCreationType ())
+            dataID.creationType = (TextParam)this.creationType.clone ();
+        if (this.isSetBandpass ())
+            dataID.bandpass = (TextParam)this.bandpass.clone ();
+        if (this.isSetCreatorDID ())
+            dataID.creatorDID = (TextParam)this.creatorDID.clone ();
+        if (this.isSetContributor ())
+        {
+            dataID.contributor = new ArrayList<TextParam>();
+            for (TextParam cc : this.contributor)
+                dataID.contributor.add ((TextParam)cc.clone ());
+        }
+
+        if (this.isSetLogo ())
+            dataID.logo = (TextParam)this.logo.clone ();
+        if (this.isSetDataSource ())
+            dataID.dataSource = (TextParam)this.dataSource.clone ();
+
+        return dataID;
+    }
+
+
     /**
      * Gets the value of the title property.
      * 

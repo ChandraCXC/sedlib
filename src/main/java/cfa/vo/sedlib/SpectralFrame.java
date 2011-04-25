@@ -11,6 +11,19 @@ public class SpectralFrame
 
     protected DoubleParam redshift;
 
+    @Override
+    public Object clone ()
+    {
+        SpectralFrame spectralFrame = (SpectralFrame) super.clone();
+        
+
+        if (this.isSetRedshift ())
+            spectralFrame.redshift = (DoubleParam)this.redshift.clone ();
+
+        return spectralFrame;
+    }
+
+
     /**
      * Gets the value of the redshift property.
      * 

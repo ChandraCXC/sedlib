@@ -12,6 +12,20 @@ public class CoverageBounds
     protected DoubleParam extent;
     protected Interval range;
 
+    @Override
+    public Object clone ()
+    {
+        CoverageBounds coverageBounds = (CoverageBounds) super.clone();
+        
+
+        if (this.isSetExtent ())
+            coverageBounds.extent = (DoubleParam)this.extent.clone ();
+        if (this.isSetRange ())
+            coverageBounds.range = (Interval)this.range.clone ();
+        return coverageBounds;
+    }
+
+
     /**
      * Gets the value of the extent property.
      * 

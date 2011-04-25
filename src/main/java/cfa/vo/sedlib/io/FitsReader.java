@@ -5,8 +5,6 @@ import java.io.InputStream;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import cfa.vo.sedlib.common.SedParsingException;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  *  Reads Fits files; loads the contents of a file into a Fits object.

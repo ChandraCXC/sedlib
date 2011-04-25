@@ -12,6 +12,23 @@ public class Point extends Group {
     protected SedQuantity fluxAxis;
     protected SedQuantity backgroundModel;
 
+    @Override
+    public Object clone ()
+    {
+        Point point = (Point) super.clone();
+        
+        if (this.isSetTimeAxis ())
+            point.timeAxis = (SedCoord)this.timeAxis.clone ();
+        if (this.isSetSpectralAxis ())
+            point.spectralAxis = (SedCoord)this.spectralAxis.clone ();
+        if (this.isSetFluxAxis ())
+            point.fluxAxis = (SedQuantity)this.fluxAxis.clone ();
+        if (this.isSetBackgroundModel ())
+            point.backgroundModel = (SedQuantity)this.backgroundModel.clone ();
+        return point;
+    }
+
+
     /**
      * Gets the value of the timeAxis property.
      * 

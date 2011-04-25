@@ -11,6 +11,19 @@ public class SpaceFrame
 
     protected DoubleParam equinox;
 
+    @Override
+    public Object clone ()
+    {
+        SpaceFrame spaceFrame = (SpaceFrame) super.clone();
+        
+
+        if (this.isSetEquinox ())
+            spaceFrame.equinox = (DoubleParam)this.equinox.clone ();
+
+        return spaceFrame;
+    }
+
+
     /**
      * Gets the value of the equinox property.
      * 

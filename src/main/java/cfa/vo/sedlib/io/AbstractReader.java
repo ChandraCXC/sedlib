@@ -23,7 +23,9 @@ abstract class AbstractReader<T>
     public T read(String file) throws SedParsingException, IOException
     {
         FileInputStream fis = new FileInputStream(file);
-        return read(fis);
+
+        T result = read(fis);
+        return result;
     }
 
     /**

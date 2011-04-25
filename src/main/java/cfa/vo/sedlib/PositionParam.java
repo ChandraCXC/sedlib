@@ -1,14 +1,40 @@
 package cfa.vo.sedlib;
 
+import java.util.Arrays;
+
 
 /**
  * <p>Java class for positionParam complex type.
  * 
  * 
  */
-public class PositionParam {
+public class PositionParam implements Cloneable {
 
     protected DoubleParam value[] = null;
+
+    @Override
+    public Object clone ()
+    {
+        PositionParam positionParam = null;
+        try
+        {
+            positionParam = (PositionParam) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }
+
+        if (this.isSetValue ())
+        {
+            positionParam.setValue (new DoubleParam[2]);
+            for (int ii=0; ii<this.value.length; ii++)
+                positionParam.value[ii] = this.value[ii];
+        }
+        return positionParam;
+    }
+
 
     /**
      * Gets the value property.
@@ -19,7 +45,8 @@ public class PositionParam {
      *
      */
     public DoubleParam[] getValue() {
-        return this.value;
+//        return Arrays.copyOf(value, value.length);
+        return value;
     }
 
     /**
@@ -32,7 +59,8 @@ public class PositionParam {
     public DoubleParam[] createValue() {
         if (this.value == null)
            this.setValue (new DoubleParam[2]);
-        return this.value;
+//        return Arrays.copyOf(value, value.length);
+        return value;
     }
 
 
@@ -41,6 +69,7 @@ public class PositionParam {
     }
 
     public void setValue(DoubleParam[] value) {
+//        this.value = Arrays.copyOf(value, value.length);
         this.value = value;
     }
 
