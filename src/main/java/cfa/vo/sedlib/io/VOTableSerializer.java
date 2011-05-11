@@ -25,8 +25,6 @@ import uk.ac.starlink.votable.TableElement;
 import uk.ac.starlink.votable.VODocument;
 import uk.ac.starlink.votable.VOElement;
 import cfa.vo.sedlib.Accuracy;
-import cfa.vo.sedlib.ArrayOfFlatPoint;
-import cfa.vo.sedlib.ArrayOfGenPoint;
 import cfa.vo.sedlib.ArrayOfPoint;
 import cfa.vo.sedlib.Characterization;
 import cfa.vo.sedlib.CharacterizationAxis;
@@ -1262,17 +1260,11 @@ public class VOTableSerializer implements ISedSerializer
      * hierarchy.
      * 
      */
-    private VOTablePointGroup extractData (ArrayOfGenPoint data, TableElement voTable) throws SedInconsistentException
+    private VOTablePointGroup extractData (ArrayOfPoint pointData, TableElement voTable) throws SedInconsistentException
 
     {
-        ArrayOfPoint pointData;
         VOTablePointGroup pointsGroup;
 
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are currently not supported.");
-        else
-            pointData = (ArrayOfPoint)data;
-        
         pointsGroup = new VOTablePointGroup(VOTableKeywords.SEG_DATA);
         pointsGroup.utype = VOTableKeywords.SEG_DATA;
 
@@ -1740,7 +1732,7 @@ public class VOTableSerializer implements ISedSerializer
      */
     private void overrideParamInfo (Segment segment)
     {
-        ArrayOfGenPoint data;
+        ArrayOfPoint data;
         List<Point> pointList;
         String spectralAxisName = null;
 
@@ -1749,10 +1741,7 @@ public class VOTableSerializer implements ISedSerializer
 
         data = segment.getData();
 
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are currently not supported.");
-        else
-            pointList = ((ArrayOfPoint)data).getPoint ();
+        pointList = data.getPoint ();
 
         if ((pointList == null) || pointList.isEmpty ())
 

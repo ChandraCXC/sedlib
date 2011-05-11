@@ -231,7 +231,7 @@ public class TestCase4_4 extends SedTestBase
         Sed sed2;
         Segment segment = CompleteObjects.createSpectrum();
         ArrayList<Oracle> oracleList = new ArrayList<Oracle>(1);
-        List<Point> pointList = ((ArrayOfPoint)segment.getData ()).getPoint ();
+        List<Point> pointList = segment.getData ().getPoint ();
         List<Point> pointListCopy = new ArrayList <Point> (pointList);
         List<RangeParam> rangeParamList = new ArrayList<RangeParam> ();
 
@@ -265,24 +265,24 @@ public class TestCase4_4 extends SedTestBase
 
         //filter two elements
         pointList.remove (0);
-        ((ArrayOfPoint)segment.getData ()).setPoint (pointList);
+        segment.getData ().setPoint (pointList);
         oracle = OracleBuilder.buildFromSegment (segment);
         oracleList.clear ();
         oracleList.add (oracle);
        
-        ((ArrayOfPoint)segment.getData ()).setPoint (pointListCopy);
+        segment.getData ().setPoint (pointListCopy);
         sed2 = sed.filterSed (1,3, "TBD");
         this.testSed (sed2, oracleList);
 
         //filter the first and last element
         pointList = new ArrayList<Point> (pointListCopy);
         pointList.remove (1);
-        ((ArrayOfPoint)segment.getData ()).setPoint (pointList);
+        segment.getData ().setPoint (pointList);
         oracle = OracleBuilder.buildFromSegment (segment);
         oracleList.clear ();
         oracleList.add (oracle);
 
-        ((ArrayOfPoint)segment.getData ()).setPoint (pointListCopy);
+        segment.getData ().setPoint (pointListCopy);
         rangeParamList.clear ();
         rangeParamList.add (new RangeParam (2.,3.,"TBD"));
         rangeParamList.add (new RangeParam (0.,1.,"TBD"));
@@ -319,8 +319,8 @@ public class TestCase4_4 extends SedTestBase
         Segment segment2 = CompleteObjects.createSpectrum ();
         ArrayList<Oracle> oracleList = new ArrayList<Oracle>(1);
         List<Point> pointList;
-        List<Point> pointListCopy1 = ((ArrayOfPoint)segment1.getData ()).getPoint ();
-        List<Point> pointListCopy2 = ((ArrayOfPoint)segment2.getData ()).getPoint ();
+        List<Point> pointListCopy1 = segment1.getData ().getPoint ();
+        List<Point> pointListCopy2 = segment2.getData ().getPoint ();
 
         List<RangeParam> rangeParamList = new ArrayList<RangeParam> ();
 
@@ -353,14 +353,14 @@ public class TestCase4_4 extends SedTestBase
         pointList = new ArrayList<Point> (pointListCopy1);
         pointList.remove (1);
         pointList.remove (1);
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointList);
+        segment1.getData ().setPoint (pointList);
         
         oracleList.clear ();
         oracle = OracleBuilder.buildFromSegment (segment1);
         oracleList.add (oracle);
         
 
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointListCopy1);
+        segment1.getData ().setPoint (pointListCopy1);
         sed2 = sed.filterSed (0.0, 0.5, "xyz");
         this.testSed (sed2, oracleList);
        
@@ -370,13 +370,13 @@ public class TestCase4_4 extends SedTestBase
         pointList.remove (0);
         pointList.remove (0);
         pointList.remove (1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointList);
+        segment2.getData ().setPoint (pointList);
 
         oracleList.clear ();
         oracle = OracleBuilder.buildFromSegment (segment2);
         oracleList.add (oracle);
 
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointListCopy2);
+        segment2.getData ().setPoint (pointListCopy2);
         sed2 = sed.filterSed (3.0, 4.0, "xyz");
         System.out.println(sed.getNumberOfSegments());
         this.testSed (sed2, oracleList);
@@ -385,12 +385,12 @@ public class TestCase4_4 extends SedTestBase
         pointList = new ArrayList<Point> (pointListCopy1);
         pointList.remove (0);
         pointList.remove (1);
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointList);
+        segment1.getData ().setPoint (pointList);
         pointList = new ArrayList<Point> (pointListCopy2);
         pointList.remove (1);
         pointList.remove (1);
         pointList.remove (1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointList);
+        segment2.getData ().setPoint (pointList);
 
         oracleList.clear ();
         oracle = OracleBuilder.buildFromSegment (segment1);
@@ -398,8 +398,8 @@ public class TestCase4_4 extends SedTestBase
         oracle = OracleBuilder.buildFromSegment (segment2);
         oracleList.add (oracle);
 
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointListCopy1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointListCopy2);
+        segment1.getData ().setPoint (pointListCopy1);
+        segment2.getData ().setPoint (pointListCopy2);
         sed2 = sed.filterSed (1.0, 2.0, "xyz");
         this.testSed (sed2, oracleList);
 
@@ -408,11 +408,11 @@ public class TestCase4_4 extends SedTestBase
         pointList = new ArrayList<Point> (pointListCopy1);
         pointList.remove (0);
         pointList.remove (1);
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointList);
+        segment1.getData ().setPoint (pointList);
         pointList = new ArrayList<Point> (pointListCopy2);
         pointList.remove (1);
         pointList.remove (1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointList);
+        segment2.getData ().setPoint (pointList);
 
         oracleList.clear ();
         oracle = OracleBuilder.buildFromSegment (segment1);
@@ -420,8 +420,8 @@ public class TestCase4_4 extends SedTestBase
         oracle = OracleBuilder.buildFromSegment (segment2);
         oracleList.add (oracle);
 
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointListCopy1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointListCopy2);
+        segment1.getData ().setPoint (pointListCopy1);
+        segment2.getData ().setPoint (pointListCopy2);
         rangeParamList.clear ();
         rangeParamList.add (new RangeParam (1.0,2.0,"xyz"));
         rangeParamList.add (new RangeParam (1.0,2.0,"abc"));
@@ -432,11 +432,11 @@ public class TestCase4_4 extends SedTestBase
         // filter on order (1 point first segment 2 pionts second segment)
         pointList = new ArrayList<Point> (pointListCopy1);
         pointList.remove (2);
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointList);
+        segment1.getData ().setPoint (pointList);
         pointList = new ArrayList<Point> (pointListCopy2);
         pointList.remove (0);
         pointList.remove (2);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointList);
+        segment2.getData ().setPoint (pointList);
 
         oracleList.clear ();
         oracle = OracleBuilder.buildFromSegment (segment1);
@@ -444,8 +444,8 @@ public class TestCase4_4 extends SedTestBase
         oracle = OracleBuilder.buildFromSegment (segment2);
         oracleList.add (oracle);
 
-        ((ArrayOfPoint)segment1.getData ()).setPoint (pointListCopy1);
-        ((ArrayOfPoint)segment2.getData ()).setPoint (pointListCopy2);
+        segment1.getData ().setPoint (pointListCopy1);
+        segment2.getData ().setPoint (pointListCopy2);
         rangeParamList.clear ();
         rangeParamList.add (new RangeParam (0.5,1.8,"xyz"));
         rangeParamList.add (new RangeParam (0.0,0.75,"xyz"));

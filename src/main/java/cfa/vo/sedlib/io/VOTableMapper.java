@@ -36,6 +36,8 @@ import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedNullException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
+import cfa.vo.sedlib.common.ValidationError;
 import cfa.vo.sedlib.common.VOTableKeywords;
 
 /**
@@ -62,6 +64,8 @@ public class VOTableMapper extends SedMapper
     public Sed populateSed (Object data, Sed sed) 
     	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
+        List<ValidationError> validationErrors = new ArrayList <ValidationError> ();
+        String utype;
 
         if (sed == null)
            sed = new Sed ();
@@ -80,19 +84,76 @@ public class VOTableMapper extends SedMapper
         VOElement[] tables = resource.getChildrenByName (VOTableKeywords._TABLE);
         TableElement te;
         Segment segment;
+
+        this.namespace = this.extractNamespace (root);
+        sed.setNamespace (this.namespace);
+
+        // check the utype is valid
+        utype = resource.getAttribute(VOTableKeywords._UTYPE);
+        if ((utype != null) && (utype.length () > 0))
+        {
+            // if the namespace of the resource doesn't match the namespace of
+            // the spectrum return
+            if ((namespace != null) && 
+            		!namespace.equalsIgnoreCase (VOTableKeywords.getNamespace (utype)))
+                return sed;
+
+            if (!VOTableKeywords.compare (utype, VOTableKeywords.SED))
+            {
+                // if it doesn't compare try adding a "spectrum." to
+                // the front
+                utype = "spectrum."+VOTableKeywords.removeNamespace(utype);
+                if (!VOTableKeywords.compare (utype, VOTableKeywords.SED))
+                {
+                    ValidationError error = new ValidationError (ValidationErrorEnum.INVALID_RESOURCE_UTYPE);
+                    error.addNote ("Value found "+utype);
+                    validationErrors.add (error);
+                }
+            }
+        }
         
 /*        // clear the sed before populating it
         sed.clear ();
 */
-        this.namespace = this.extractNamespace (root);
-        sed.setNamespace (this.namespace);
         // Creates a Segment from each TABLE and adds it to the sed
         for (int tblIdx = 0; tblIdx < tables.length; tblIdx++)
         {
             te = (TableElement)tables[tblIdx];
+
+            // check the utype is valid
+            utype = te.getAttribute(VOTableKeywords._UTYPE);
+            if ((utype != null) && (utype.length () > 0))
+            {  
+            	// if the namespace of the table does not match the namespace
+                // of the spectrum skip the table
+                if ((namespace != null) && 
+                		!namespace.equalsIgnoreCase (VOTableKeywords.getNamespace (utype)))
+                    continue;
+                
+                if (!VOTableKeywords.compare (utype, VOTableKeywords.SEG))
+                {
+
+                    // if it doesn't compare try comparing "spectrum" 
+                    if (!VOTableKeywords.compare (utype, VOTableKeywords.SPEC))
+                    {
+                        ValidationError error = new ValidationError (ValidationErrorEnum.INVALID_TABLE_UTYPE);
+                        validationErrors.add (error);
+                        error.addNote ("Value found "+utype);
+                    }
+                }
+            }
+
             segment =  this.extractSegmentFromTable (te);
             sed.addSegment (segment);
         }
+
+        if ((!sed.validate (validationErrors)) || (validationErrors.size () > 0))
+        {
+            logger.warning("Invalid Sed read.");
+            for (ValidationError error : validationErrors)
+                logger.warning(error.getErrorMessage ());
+        }
+
 
         return sed;
     }
@@ -176,14 +237,14 @@ public class VOTableMapper extends SedMapper
     private void  processSegmentCustomData (Segment segment)
     {
         List<Point> points;
-        ArrayOfGenPoint dataPoints;
+        ArrayOfPoint dataPoints;
         dataPoints = segment.getData();
         List<Param> data;
         
         if (!segment.isSetData ())
         	return;
 
-        points = ((ArrayOfPoint)dataPoints).getPoint ();
+        points = dataPoints.getPoint ();
 
         // write the rest of the custom data to the points
         for (String id : this.customData.keySet ())
@@ -635,11 +696,9 @@ public class VOTableMapper extends SedMapper
 
                 if (parent instanceof Segment )
                 {
-                    ArrayOfGenPoint points;
                     segment = (Segment)parent;
-                    points = segment.getData();
-                    if (points instanceof ArrayOfPoint)
-                        data = ((ArrayOfPoint)points).createPoint ();
+                    ArrayOfPoint points = segment.getData();
+                    data = points.createPoint ();
                 }
                 else
                 {
@@ -678,11 +737,9 @@ public class VOTableMapper extends SedMapper
 
                 if (parent instanceof Segment )
                 {
-                    ArrayOfGenPoint points;
                     segment = (Segment)parent;
-                    points = segment.getData();
-                    if (points instanceof ArrayOfPoint)
-                        data = ((ArrayOfPoint)points).createPoint ();
+                    ArrayOfPoint points = segment.getData();
+                    data = points.createPoint ();
                 }
                 else
                 {
@@ -716,11 +773,9 @@ public class VOTableMapper extends SedMapper
 
                 if (parent instanceof Segment )
                 {
-                    ArrayOfGenPoint points;
                     segment = (Segment)parent;
-                    points = segment.getData();
-                    if (points instanceof ArrayOfPoint)
-                        data = ((ArrayOfPoint)points).createPoint ();
+                    ArrayOfPoint points = segment.getData();
+                    data = points.createPoint ();
                 }
                 else
                 {
@@ -754,11 +809,9 @@ public class VOTableMapper extends SedMapper
 
                 if (parent instanceof Segment )
                 {
-                    ArrayOfGenPoint points;
                     segment = (Segment)parent;
-                    points = segment.getData();
-                    if (points instanceof ArrayOfPoint)
-                        data = ((ArrayOfPoint)points).createPoint ();
+                    ArrayOfPoint points = segment.getData();
+                    data = points.createPoint ();
                 }
                 else
                 {
@@ -807,11 +860,10 @@ public class VOTableMapper extends SedMapper
 
                     if (dataParent == null)
                     {
-                        ArrayOfGenPoint points;
+                        ArrayOfPoint points;
                         segment = (Segment)parent;
                         points = segment.createData();
-                        if (points instanceof ArrayOfPoint)
-                            dataParent = ((ArrayOfPoint)points).createPoint ();
+                        dataParent = points.createPoint ();
                     }
                     else
                     {

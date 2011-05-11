@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class Utypes
 {
-    static protected final int max_enum = 361; // an easy way to let sub classes extend the enumerations
+    static protected final int max_enum = 362; // an easy way to let sub classes extend the enumerations
 
 
     //Enumerations
@@ -373,6 +373,7 @@ public class Utypes
     static public final int   SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION = 358;
     static public final int   SEG_CHAR_CHARAXIS_COV_LOC_ACC=359;
     static public final int   SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE=360;
+    static public final int   SPEC=361;
 
 
     static final String[] name = new String[max_enum];
@@ -717,7 +718,8 @@ public class Utypes
         name[SEG_DATA_BGM_ACC_BINSIZE] = "Spectrum.Data.BackgroundModel.Accuracy.BinSize";
         name[SEG_DATA_BGM_ACC_CONFIDENCE] = "Spectrum.Data.BackgroundModel.Accuracy.Confidence";
         name[CUSTOM] = "Spectrum.Custom";
-        name[SEG] = "Spectrum.Segment";
+        name[SEG] = "Segment";
+        name[SPEC] = "Spectrum";
         name[SEG_CHAR_CHARAXIS_ACC_BINLOW] = "Spectrum.Char.CharAxis.Accuracy.BinLow";
         name[SEG_CHAR_CHARAXIS_ACC_BINHIGH] = "Spectrum.Char.CharAxis.Accuracy.BinHigh";
         name[SEG_CHAR_CHARAXIS_ACC_STATERRLOW] = "Spectrum.Char.CharAxis.Accuracy.StatErrLow";

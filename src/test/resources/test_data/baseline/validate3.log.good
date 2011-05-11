@@ -1,0 +1,10 @@
+WARNING: Invalid Sed read.
+WARNING: Invalid Resource utype found. Expected the value to be Sed. (Value found spectrum.BadUtype)
+WARNING: Invalid Table utype found. Expected the value to be Spectrum. (Value found spec:BadUtype)
+WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Start (Missing entire range)
+WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Stop (Missing entire range)
+WARNING: Missing required Char.SpatialAxis.Coverage.Bounds.Extent (Missing entire bounds)
+WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Extent (Missing entire bounds)
+WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Start (Missing entire bounds)
+WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Stop (Missing entire bounds)
+WARNING: Missing required Char.SpatialAxis.Coverage.Bounds.Extent (Missing entire bounds)

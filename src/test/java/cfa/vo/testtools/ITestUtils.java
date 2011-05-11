@@ -31,6 +31,9 @@ public abstract class ITestUtils
 
 	static public String STDERR_DIR = OUT_DIR;
 	static public final String STDERR_EXT = ".stderr";
+	
+	static public String LOG_DIR = OUT_DIR;
+	static public final String LOG_EXT = ".log";
 
 	// These are to be used to catch the stdout and stderr of the
 	// application code running in the JUnit test; they should be used conjunction with

@@ -82,7 +82,7 @@ NOTE: Currently doesn't work because no getSegments needed by the oracle
         OracleBuilder.populateWithCuration (prefix+"curation.", segment.getCuration (), oracle);
         OracleBuilder.populateWithDataID (prefix+"dataID.", segment.getDataID (), oracle);
         OracleBuilder.populateWithDerived (prefix+"derived.", segment.getDerived (), oracle);
-        OracleBuilder.populateWithArrayOfPoint (prefix+"data.", (ArrayOfPoint)segment.getData (), oracle);
+        OracleBuilder.populateWithArrayOfPoint (prefix+"data.", segment.getData (), oracle);
 
     }
 

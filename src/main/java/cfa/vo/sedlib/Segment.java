@@ -1,6 +1,5 @@
 package cfa.vo.sedlib;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,7 +10,8 @@ import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedNullException;
 import cfa.vo.sedlib.common.Utypes;
-import java.lang.reflect.Method;
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
  * components of the segments. It also contains methods to access
  * and manipulate the data directly.
  *
-* Notice that this implementation doesn't support FlatPoints. If FlatPoints are detected
- * an (unchecked) UnsupportedOperationException will be thrown.
  * 
  */
 public class Segment
@@ -43,7 +41,7 @@ public class Segment
     protected TextParam timeSI;
     protected TextParam spectralSI;
     protected TextParam fluxSI;
-    protected ArrayOfGenPoint data;
+    protected ArrayOfPoint data;
 
     @Override
     public Object clone ()
@@ -72,7 +70,7 @@ public class Segment
         if (this.isSetFluxSI ())
             segment.fluxSI = (TextParam)this.fluxSI.clone ();
         if (this.isSetData ())
-            segment.data = (ArrayOfGenPoint)this.data.clone ();
+            segment.data = (ArrayOfPoint)this.data.clone ();
 
         return segment;
     }
@@ -512,23 +510,22 @@ public class Segment
      * Gets the value of the data property.
      * 
      * @return
-     *     {@link ArrayOfGenPoint }
+     *     {@link ArrayOfPoint }
      *     
      */
-    public ArrayOfGenPoint getData() {
+    public ArrayOfPoint getData() {
         return this.data;
     }
 
     /**
      * Creates data property if one does not exist.
-     * The data property will be an ArrayOfPoint. Use
-     * setData to set the list to ArrayOfFlatPoint
+     * The data property will be an ArrayOfPoint.
      *
      * @return
      *     {@link ArrayOfPoint }
      *
      */
-    public ArrayOfGenPoint createData() {
+    public ArrayOfPoint createData() {
         if (this.data == null)
            this.setData (new ArrayOfPoint ());
         return this.data;
@@ -547,10 +544,9 @@ public class Segment
      * @param value
      *     allowed object is
      *     {@link ArrayOfPoint }
-     *     {@link ArrayOfFlatPoint }
      *     
      */
-    public void setData(ArrayOfGenPoint value) {
+    public void setData(ArrayOfPoint value) {
         this.data = value;
     }
 
@@ -681,8 +677,6 @@ public class Segment
             field.setUnit (units);
             this.setDataInfo (field, Utypes.SEG_DATA_SPECTRALAXIS_VALUE);
 
-            if (data instanceof ArrayOfFlatPoint)
-                throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
         } catch(SedInconsistentException ex) {
             Logger.getLogger(Segment.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -704,10 +698,6 @@ public class Segment
             Field field = null;
 
             field = this.getDataInfo (Utypes.SEG_DATA_SPECTRALAXIS_VALUE);
-        
-            if (data instanceof ArrayOfFlatPoint)
-                throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
             field = this.getDataInfo (Utypes.SEG_DATA_SPECTRALAXIS_VALUE);
 
             if (field == null)
@@ -743,9 +733,6 @@ public class Segment
             field.setUnit (units);
             this.setDataInfo (field, Utypes.SEG_DATA_FLUXAXIS_VALUE);
 
-            if (data instanceof ArrayOfFlatPoint)
-                throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
         } catch (SedInconsistentException ex) {
             Logger.getLogger(Segment.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -768,9 +755,6 @@ public class Segment
             Field field = null;
 
             field = this.getDataInfo (Utypes.SEG_DATA_FLUXAXIS_VALUE);
-
-            if (data instanceof ArrayOfFlatPoint)
-                throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
 
             return field.getUnit ();
 
@@ -871,7 +855,7 @@ public class Segment
         }
 
         // are they a compatible pair of magnitude and flux or luminosity?
-        HashMap<String, String> map = new HashMap();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put("phot.mag", "phot.flux.density;em.(wl|freq|energy)");
         map.put("phot.mag.sb", "phot.flux.density.sb;em.(wl|freq|energy)");
         map.put("phys.magAbs", "phys.luminosity;em.(wl|freq|energy)");
@@ -929,13 +913,7 @@ public class Segment
     public Object getDataValues (String utype) throws SedNoDataException, SedInconsistentException
     {
 
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (pointData == null)
             throw new SedNoDataException("no data were found");
@@ -969,12 +947,7 @@ public class Segment
         int length = 0;
 
 
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (!this.isSetData () || !pointData.isSetPoint ())
             throw new SedNoDataException("no data were found");
@@ -1073,12 +1046,7 @@ public class Segment
      */
     public void setCustomDataInfo (Field field) throws SedNoDataException, SedNullException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
         List<Point> points;
         String id = field.getId ();
 
@@ -1123,12 +1091,7 @@ public class Segment
     public void addCustomData (Field field, Object values) 
         throws SedException, SedNoDataException, SedNullException, SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
         List<Point> points;
         int castType;  // type of the object
 
@@ -1209,12 +1172,7 @@ public class Segment
         double dvalues[];
 
 
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (!this.isSetData () || !pointData.isSetPoint ())
             throw new SedNoDataException("no data were found");
@@ -1317,12 +1275,7 @@ public class Segment
 
         Field dataInfo = null;
 
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
         List<Point> points;
 
         if (!this.isSetData () || !pointData.isSetPoint ())
@@ -1377,10 +1330,7 @@ public class Segment
      */
     public Object getDataValues (int utype) throws SedNoDataException, SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (pointData == null)
             throw new SedNoDataException("no data were found");
@@ -1405,10 +1355,7 @@ public class Segment
      */
     public void setDataValues (Object values, String utype) throws SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.createData ();
+        ArrayOfPoint pointData = this.createData ();
 
         pointData.setDataValues (values, utype);
     }
@@ -1430,12 +1377,7 @@ public class Segment
      */
     public void setDataValues (Object values, int utype) throws SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-        {
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-        }
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.createData ();
+        ArrayOfPoint pointData = this.createData ();
 
         pointData.setDataValues(values, utype);
     }
@@ -1455,10 +1397,7 @@ public class Segment
      */
     public Field getDataInfo (String utype) throws SedNoDataException, SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (pointData == null)
             throw new SedNoDataException("No pointData found.");
@@ -1481,9 +1420,6 @@ public class Segment
      */
     public Field getDataInfo (int utype) throws SedInconsistentException, SedNoDataException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
         ArrayOfPoint pointData = (ArrayOfPoint)this.data;
 
         if (pointData == null)
@@ -1512,10 +1448,7 @@ public class Segment
      */
     public void setDataInfo (Field field, String utype) throws SedInconsistentException, SedNoDataException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (pointData == null)
             throw new SedNoDataException ("There is currently no data to set. Try createData () to create the PointArray.");
@@ -1543,10 +1476,7 @@ public class Segment
      */
     public void setDataInfo (Field field, int utype) throws SedNoDataException, SedInconsistentException
     {
-        if (this.data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported by this version.");
-
-        ArrayOfPoint pointData = (ArrayOfPoint)this.data;
+        ArrayOfPoint pointData = this.data;
 
         if (pointData == null)
             throw new SedNoDataException ("There is currently no data to set. Try createData () to create the PointArray.");
@@ -2590,10 +2520,7 @@ public class Segment
         if (data == null)
             return new ArrayList<Point>();
 
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException("FlatPoints are not supported in this version");
-
-        return ((ArrayOfPoint)data).getPoint ();
+        return data.getPoint ();
     }
 
     protected Param getParamFromCharAxis (CharacterizationAxis axis, int utype, boolean create)
@@ -2978,5 +2905,146 @@ public class Segment
             pointData.setPoint (newPoints);
         }
     }
+
+    /**
+     * Validate the Segment. The method returns true or false depending
+     * on whether the Segment validates. 
+     *
+     * @return boolean; whether or not the Segment is valid
+     */
+    public boolean validate ()
+    {
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
+
+
+    /**
+     * Validate the Segment. The method returns true or false depending
+     * on whether the Segment validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors 
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        boolean valid = true;
+        ValidationError error;
+
+        if (this.isSetCuration ())
+            valid &= this.curation.validate (errors);
+        else 
+        {
+            valid = false;
+            error = new ValidationError (ValidationErrorEnum.MISSING_CURATION_PUB);
+            error.addNote ("Missing entire curation");
+            errors.add (error);
+        }
+
+        if (this.isSetTarget ())
+            valid &= this.target.validate (errors);
+        else
+        {
+            valid = false;
+            error = new ValidationError (ValidationErrorEnum.MISSING_TARGET_NAME);
+            error.addNote ("Missing entire target");
+            errors.add (error);
+        }
+
+        if (this.isSetChar ())
+            valid &= this._char.validate (errors);
+        else
+        {
+            valid = false;
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UCD);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UNIT);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UCD);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UNIT);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_LOCATION_VALUE);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_LOCATION_VALUE);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_LOCATION_VALUE);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP);
+            error.addNote ("Missing entire characterization");
+            errors.add (error);
+
+        }
+
+        if (this.isSetData ())
+            valid &= this.data.validate (errors);
+        else
+        {
+            valid = false;
+            error = new ValidationError (ValidationErrorEnum.MISSING_DATA_FLUXAXIS_VALUE);
+            error.addNote ("Missing data");
+            errors.add (error);
+
+            error = new ValidationError (ValidationErrorEnum.MISSING_DATA_SPECTRALAXIS_VALUE);
+            error.addNote ("Missing data");
+            errors.add (error);
+
+        }
+
+        if (this.isSetType ())
+        {
+            if (this.type.isSetValue ())
+            {
+                String val = type.getValue ().toLowerCase ();
+                if (!val.startsWith ("photometry") &&
+                    !val.startsWith ("spectrum") &&
+                    !val.startsWith ("timeseries"))
+                {
+                    valid = false;
+                    error = new ValidationError (ValidationErrorEnum.INVALID_SEGMENT_TYPE);
+                    error.addNote ("Value found "+val);
+                    errors.add (error);
+                }
+            }
+        }
+
+       
+
+        return valid;
+    }
+
 }
 

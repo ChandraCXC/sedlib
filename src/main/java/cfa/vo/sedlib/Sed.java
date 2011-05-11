@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import cfa.vo.sedlib.common.ValidationError;
 
 
 
@@ -602,5 +603,37 @@ rmat.FITS are supported.
 
         return true;
     }
+
+    /**
+     * Validate the Sed. The method returns true or false depending
+     * on whether the Sed validates. 
+     *
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate ()
+    {
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
+
+    /**
+     * Validate the Sed. The method returns true or false depending
+     * on whether the Sed validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        boolean valid = true;
+        for (Segment segment : this.segmentList)
+            valid &= segment.validate (errors);
+
+        return valid;
+    }
+
 
 }

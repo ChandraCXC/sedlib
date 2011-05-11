@@ -22,8 +22,6 @@ import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.TableHDU;
 import nom.tam.util.Cursor;
-import cfa.vo.sedlib.ArrayOfFlatPoint;
-import cfa.vo.sedlib.ArrayOfGenPoint;
 import cfa.vo.sedlib.ArrayOfPoint;
 import cfa.vo.sedlib.CharacterizationAxis;
 import cfa.vo.sedlib.CoordFrame;
@@ -48,6 +46,7 @@ import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
+import cfa.vo.sedlib.common.ValidationError;
 import java.io.IOException;
 
 /**
@@ -100,6 +99,7 @@ public class FitsMapper extends SedMapper
     {
         Segment segment;
         BasicHDU[] hdus;
+        List<ValidationError> validationErrors = new ArrayList <ValidationError> ();
 
         if (sed == null)
            sed = new Sed ();
@@ -129,6 +129,13 @@ public class FitsMapper extends SedMapper
                         throw new IOException(exp.getMessage ());
 
             throw new SedParsingException (exp.getMessage(), exp);
+        }
+
+        if (!sed.validate (validationErrors))
+        {
+            logger.warning("Invalid Sed read.");
+            for (ValidationError error : validationErrors)
+                logger.warning(error.getErrorMessage ());
         }
 
         return sed;
@@ -1500,7 +1507,7 @@ public class FitsMapper extends SedMapper
     private void matchMetaDataWithData (Segment segment)
     {
 
-        ArrayOfGenPoint data;
+        ArrayOfPoint data;
         List<Point> pointList;
         Point point;
 
@@ -1508,11 +1515,7 @@ public class FitsMapper extends SedMapper
             return;
 
         data = segment.getData();
-
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are currently not supported.");
-        else
-            pointList = ((ArrayOfPoint)data).createPoint ();
+        pointList = data.createPoint ();
 
         if (pointList.isEmpty())
             return;

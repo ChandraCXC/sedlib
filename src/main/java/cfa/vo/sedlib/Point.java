@@ -1,5 +1,11 @@
 package cfa.vo.sedlib;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
+
 /**
  * <p>Java class for point complex type.
  * 
@@ -197,82 +203,62 @@ public class Point extends Group {
         return (this.backgroundModel!= null);
     }
 
-/*
-    public FlatPoint createFlatPoint ()
+    /**
+     * Validate the Point. The method returns true or false depending
+     * on whether the Point validates.
+     *
+     * @return boolean; whether or not the Point is valid
+     */
+    public boolean validate ()
     {
-        FlatPoint flatPoint = new FlatPoint ();
-        Accuracy accuracy;
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
 
-        if (this.isSetTimeAxis ())
-        {
-            if (this.timeAxis.isSetValue ())
-                flatPoint.setT ((Double)this.timeAxis.getValue ().getCastValue ());
-            if (this.timeAxis.isSetResolution ())
-                flatPoint.setTRes ((Double)this.timeAxis.getResolution ().getCastValue ());
-            if (this.timeAxis.isSetAccuracy ())
-            {
-                accuracy = this.timeAxis.getAccuracy ();
-                if (accuracy.isSetBinLow ())
-                   flatPoint.setTBinL ((Double)accuracy.getBinLow().getCastValue ());
-                if (accuracy.isSetBinHigh ())
-                   flatPoint.setTBinH ((Double)accuracy.getBinHigh().getCastValue ());
-                if (accuracy.isSetBinSize ())
-                   flatPoint.setTSize ((Double)accuracy.getBinSize().getCastValue ());
-            }
-        }
-        if (this.isSetSpectralAxis ())
-        {
-            if (this.spectralAxis.isSetValue ())
-                flatPoint.setSP ((Double)this.spectralAxis.getValue ().getCastValue ());
-            if (this.spectralAxis.isSetResolution ())
-                flatPoint.setSPRes ((Double)this.spectralAxis.getResolution ().getCastValue ());
-            if (this.spectralAxis.isSetAccuracy ())
-            {
-                accuracy = this.spectralAxis.getAccuracy ();
-                if (accuracy.isSetBinLow ())
-                   flatPoint.setSPBinL ((Double)accuracy.getBinLow().getCastValue ());
-                if (accuracy.isSetBinHigh ())
-                   flatPoint.setSPBinH ((Double)accuracy.getBinHigh().getCastValue ());
-                if (accuracy.isSetBinSize ())
-                   flatPoint.setSPSize ((Double)accuracy.getBinSize().getCastValue ());
-            }
-        }
+
+    /**
+     * Validate the Point. The method returns true or false depending
+     * on whether the Point validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        boolean valid = true;
+
         if (this.isSetFluxAxis ())
         {
-            if (this.fluxAxis.isSetQuality ())
-                flatPoint.setFQual ((Integer)this.fluxAxis.getQuality ().getCastValue ());
-            if (this.fluxAxis.isSetAccuracy ())
+            if (!this.fluxAxis.isSetValue ())
             {
-                accuracy = this.fluxAxis.getAccuracy ();
-                if (accuracy.isSetStatErrLow ())
-                   flatPoint.setFErrL ((Double)accuracy.getStatErrLow().getCastValue ());
-                if (accuracy.isSetStatErrHigh ())
-                   flatPoint.setFErrH ((Double)accuracy.getStatErrHigh().getCastValue ());
-                if (accuracy.isSetSysError ())
-                   flatPoint.setFSys ((Double)accuracy.getSysError().getCastValue ());
+            	valid = false;
+                errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_FLUXAXIS_VALUE));
             }
-        }
-
-        if (this.isSetBackgroundModel ())
+        }      
+        else
         {
-            if (this.backgroundModel.isSetQuality ())
-                flatPoint.setBGQual ((Integer)this.backgroundModel.getQuality ().getCastValue ())
-;
-            if (this.backgroundModel.isSetAccuracy ())
-            {
-                accuracy = this.backgroundModel.getAccuracy ();
-                if (accuracy.isSetStatErrLow ())
-                   flatPoint.setBGErrL ((Double)accuracy.getStatErrLow().getCastValue ());
-                if (accuracy.isSetStatErrHigh ())
-                   flatPoint.setBGErrH ((Double)accuracy.getStatErrHigh().getCastValue ());
-                if (accuracy.isSetSysError ())
-                   flatPoint.setBGSys ((Double)accuracy.getSysError().getCastValue ());
-            }
+            valid = false;
+            errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_FLUXAXIS_VALUE, "Missing flux axis"));
         }
 
-        return flatPoint;
+        if (this.isSetSpectralAxis ())
+        {
+            if (!this.spectralAxis.isSetValue ())
+            {
+            	valid = false;
+                errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_SPECTRALAXIS_VALUE));
+            }
+        }
+        else
+        {
+            valid = false;
+            errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_SPECTRALAXIS_VALUE, "Missing spectral axis"));
+        }
+        
+        return valid;
+
     }
-*/
-
-
 }

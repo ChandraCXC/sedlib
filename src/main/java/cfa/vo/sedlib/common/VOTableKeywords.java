@@ -72,9 +72,12 @@ public class VOTableKeywords extends Utypes{
      */
     static public String getNamespace (String utypeName)
     {
+    	if (utypeName == null)
+    		return "";
+    	
         String[] utypeSplit = utypeName.split (":");
         if (utypeSplit.length == 1)
-            return null;
+            return "";
 
         return utypeSplit[0];
     }
@@ -168,7 +171,26 @@ public class VOTableKeywords extends Utypes{
     }
 
     /**
+     *  Retrieve the utype without the namespace if one exists.
+     */
+    static public String removeNamespace( String utype )
+    {
+        if ( utype == null )
+        {
+            return null;
+        }
+
+        // remove the namespace
+        utype = utype.replaceFirst( IOConstants.NAMESPACE_PATTERN, "" );
+
+        return utype;
+    }
+
+
+
+    /**
      * Compare the string name of the utype with its enumerated counter part.
+     * Namespace is ignored and case is ignored.
      *
      */
      static public boolean compare (String utypeName, int utype)

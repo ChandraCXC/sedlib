@@ -39,11 +39,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 
 
 public class SedTestBase extends TestCase
 {
 	static final Logger logger = Logger.getLogger( SedTestBase.class.getName() );
+	static final Logger sedLogger = Logger.getLogger("cfa.vo.sedlib");
 
 	static SedLibTestUtils  tu = SedLibTestUtils.getTestUtils();
 
@@ -62,6 +64,7 @@ public class SedTestBase extends TestCase
 
 	static
 	{
+
 //                m_testRoot = System.getProperty( "TEST_ROOT" );
                 URL testDataUrl = SedTestBase.class.getResource("/test_data");
 
@@ -72,7 +75,6 @@ public class SedTestBase extends TestCase
                 SedLibTestUtils.GOOD_DIR = m_testRoot+"/baseline/";
                 SedLibTestUtils.DATA_DIR = m_dataRoot;
 	}
-
 
     /** 
      *  Read file of the specified format to populate SED object 
@@ -380,8 +382,21 @@ public class SedTestBase extends TestCase
 	{
 		super(name);
 
-                formats.add(SedFormat.VOT);
-                formats.add(SedFormat.FITS);
+        formats.add(SedFormat.VOT);
+        formats.add(SedFormat.FITS);
+                
+        try
+        {
+        	FileHandler handler = new FileHandler(SedLibTestUtils.mkLogFileName (name));
+
+            sedLogger.addHandler(handler);
+            sedLogger.setUseParentHandlers (false);
+        }
+        catch (IOException e)
+        {
+            sedLogger.setUseParentHandlers (true);
+        }
+
 	}
 
     static void handleException( Throwable exp )

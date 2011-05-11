@@ -6,7 +6,7 @@
   xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
   >
   <RESOURCE utype="spec:Spectrum.Sed">
-    <TABLE utype="spec:Spectrum.Segment">
+    <TABLE utype="spec:Segment">
       <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
       <PARAM datatype="double" name="pi" ucd="TBD" unit="TBD" value="3.14159"/>
       <PARAM datatype="int" name="daysofweek" ucd="TBD" unit="TBD" value="7"/>

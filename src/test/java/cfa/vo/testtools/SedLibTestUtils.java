@@ -61,6 +61,9 @@ public class SedLibTestUtils extends ITestUtils
 
     static public String mkStderrFileName( String name )
     { return OUT_DIR + File.separator + name + STDERR_EXT; }
+    
+    static public String mkLogFileName( String name )
+    { return OUT_DIR + File.separator + name + LOG_EXT; }
 
     static public String mkAppStdoutFileName( String name )
     { return OUT_DIR + File.separator + name + APPOUT_EXT; }

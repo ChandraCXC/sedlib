@@ -3,6 +3,9 @@ package cfa.vo.sedlib;
 import java.util.ArrayList;
 import java.util.List;
 
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
+
 
 /**
  * <p>Java class for characterization complex type.
@@ -255,6 +258,202 @@ public class Characterization
      */
     public void setCharacterizationAxis(List <CharacterizationAxis> characterizationAxis) {
         this.characterizationAxis = characterizationAxis;
+    }
+
+    /**
+     * Validate the Characterization. The method returns true or false depending
+     * on whether the Characterization validates.
+     *
+     * @return boolean; whether or not the Characterization is valid
+     */
+    public boolean validate ()
+    {
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
+
+
+    /**
+     * Validate the Characterization. The method returns true or false depending
+     * on whether the Characterization validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        List<ValidationError> errorList = new ArrayList<ValidationError> ();
+        ValidationError error;
+        String message;
+
+        if (this.isSetFluxAxis ())
+        {
+            if (!this.fluxAxis.isSetUcd ())
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UCD));
+            if (!this.fluxAxis.isSetUnit ())
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UNIT));
+        }
+        else
+        {
+           message = "Missing entire flux axis";
+           errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UCD, message));
+           errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_FLUXAXIS_UNIT, message));
+
+        }
+
+        if (this.isSetSpectralAxis ())
+        {
+            if (!this.spectralAxis.isSetUcd ())
+                errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UCD));
+            if (!this.spectralAxis.isSetUnit ())
+                errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UNIT));
+            if (this.spectralAxis.isSetCoverage ())
+            {
+                Coverage coverage = this.spectralAxis.getCoverage ();
+                if (coverage.isSetLocation ())
+                {
+                    if (!coverage.getLocation ().isSetValue ())
+                        errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_LOCATION_VALUE));
+
+                }
+                else
+                {
+                    message = "Missing entire location";
+                    errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_LOCATION_VALUE, message));
+                }
+
+                if (coverage.isSetBounds ())
+                {
+                    if (!coverage.getBounds ().isSetExtent ())
+                        errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT));
+                    if (coverage.getBounds ().isSetRange ())
+                    {
+                        if (!coverage.getBounds ().getRange ().isSetMin ())
+                            errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START));
+                        if (!coverage.getBounds ().getRange ().isSetMin ())
+                            errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP));
+                    }
+                    else
+                    {
+                        message = "Missing entire range";
+                        errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START, message));
+                        errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP, message)); 
+                    }
+                }
+                else
+                {
+                    message = "Missing entire bounds";
+                    errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT, message));
+                    errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START, message));
+                    errorList.add (new ValidationError(ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP, message));
+                }
+
+            }
+            else
+            {
+                message = "Missing entire coverage";
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_LOCATION_VALUE, message));
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT, message));
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START, message));
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP, message));
+            }
+        }
+        else
+        {
+            message = "Missing entire spectral axis";
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UCD, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_UNIT, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_LOCATION_VALUE, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_START, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP, message));
+        }
+
+        if (this.isSetSpatialAxis ())
+        {
+            if (this.spatialAxis.isSetCoverage ())
+            {
+                Coverage coverage = this.spatialAxis.getCoverage ();
+                if (coverage.isSetLocation ())
+                {
+                    if (!coverage.getLocation ().isSetValue ())
+                        errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_LOCATION_VALUE));
+                }
+                else
+                {
+                    errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_LOCATION_VALUE, "Missing entire location"));
+                }
+
+                if (coverage.isSetBounds ())
+                {
+                    if (!coverage.getBounds ().isSetExtent ())
+                        errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT));
+                }
+                else
+                {
+                    errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT, "Missing entire bounds"));
+                }
+            }
+            else
+            {
+                message = "Missing entire coverage";
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_LOCATION_VALUE, message));
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT, message));
+            }
+        }
+        else
+        {
+            message = "Missing entire spatial axis";
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_LOCATION_VALUE, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT, message));
+        }
+
+        if (this.isSetTimeAxis ())
+        {
+            if (this.timeAxis.isSetCoverage ())
+            {
+                Coverage coverage = this.timeAxis.getCoverage ();
+                if (coverage.isSetLocation ())
+                {
+                    if (!coverage.getLocation ().isSetValue ())
+                        errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_LOCATION_VALUE));
+                }
+                else
+                {
+                    errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_LOCATION_VALUE,"Missing entire location"));
+                }
+
+                if (coverage.isSetBounds ())
+                {
+                    if (!coverage.getBounds ().isSetExtent ())
+                        errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT));
+                }
+                else
+                {
+                    errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT,"Missing entire bounds"));
+                }
+            }
+            else
+            {
+                message = "Missing entire coverage";
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_LOCATION_VALUE, message));
+                errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT, message));
+            }
+        }
+        else
+        {
+            message = "Missing entire time axis";
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_LOCATION_VALUE, message));
+            errorList.add (new ValidationError (ValidationErrorEnum.MISSING_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT, message));
+        }
+
+
+        errors.addAll (errorList);
+
+        return errorList.isEmpty ();
     }
 
 }

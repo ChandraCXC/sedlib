@@ -6,7 +6,7 @@
   xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.1"
   >
   <RESOURCE utype="spec:Spectrum.Sed">
-    <TABLE utype="spec:Spectrum.Segment">
+    <TABLE utype="spec:Segment">
       <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
       <GROUP utype="spec:Spectrum.Curation">
         <PARAM arraysize="*" datatype="char" name="Publisher" ucd="meta.organization;meta.curation" utype="spec:Spectrum.Curation.Publisher" value="SAO"/>

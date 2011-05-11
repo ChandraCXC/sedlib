@@ -148,7 +148,7 @@ public class TestSegmentHLUI extends SedTestBase
         // Go through all the points and verify that the units are in fact the same
         // All units are not written out to file just one.
 
-        points = ((ArrayOfPoint)(segment.getData ())).getPoint ();
+        points = segment.getData ().getPoint ();
         for (int ii=0; ii<points.size (); ii++)
         {
             String fluxUnits = points.get(ii).getFluxAxis ().getValue ().getUnit ();
@@ -268,7 +268,7 @@ public class TestSegmentHLUI extends SedTestBase
 
 
             // Remove points values and reset the units
-            points = ((ArrayOfPoint)(segment.getData ())).getPoint ();
+            points = segment.getData ().getPoint ();
             points.get(2).getFluxAxis ().setValue (null);
             points.get(0).getSpectralAxis ().setValue (null);
 
@@ -583,6 +583,7 @@ public class TestSegmentHLUI extends SedTestBase
         unusedUtypes.add (Utypes.SEG_DATA_BGM_ACC);
         unusedUtypes.add (Utypes.CUSTOM);
         unusedUtypes.add (Utypes.SEG);
+        unusedUtypes.add (Utypes.SPEC);
 
  
 

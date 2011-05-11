@@ -1,5 +1,10 @@
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * <p>Java class for curation complex type.
  * 
@@ -381,5 +386,42 @@ public class Curation
     public boolean isSetPublisherDID() {
         return (this.publisherDID!= null);
     }
+
+    /**
+     * Validate the Curation. The method returns true or false depending
+     * on whether the Curation validates. 
+     *
+     * @return boolean; whether or not the Curation is valid
+     */
+    public boolean validate ()
+    {
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
+
+    /**
+     * Validate the Curation. The method returns true or false depending
+     * on whether the Curation validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the Sed is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        boolean valid = true;
+
+        if (!this.isSetPublisher ())
+        {
+           valid = false;
+           errors.add (new ValidationError (ValidationErrorEnum.MISSING_CURATION_PUB));
+        }
+
+        return valid;
+    }
+
+
 
 }

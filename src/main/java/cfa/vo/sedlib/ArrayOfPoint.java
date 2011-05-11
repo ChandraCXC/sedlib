@@ -7,6 +7,8 @@ import cfa.vo.sedlib.common.SedInconsistentException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.Utypes;
 import cfa.vo.sedlib.common.SedConstants;
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
 
 
 /**
@@ -14,7 +16,7 @@ import cfa.vo.sedlib.common.SedConstants;
  * 
  * 
  */
-public class ArrayOfPoint extends ArrayOfGenPoint implements Cloneable
+public class ArrayOfPoint implements Cloneable
 {
 
     protected List<Point> point;
@@ -22,8 +24,16 @@ public class ArrayOfPoint extends ArrayOfGenPoint implements Cloneable
     @Override
     public Object clone ()
     {
-        ArrayOfPoint arrayOfPoint = (ArrayOfPoint) super.clone();
-        
+    	ArrayOfPoint arrayOfPoint;
+        try
+        {
+        	arrayOfPoint = (ArrayOfPoint) super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            // this should never happen
+            throw new InternalError(e.toString());
+        }        
 
         if (this.isSetPoint ())
         {
@@ -701,6 +711,48 @@ public class ArrayOfPoint extends ArrayOfGenPoint implements Cloneable
         }
 
         return param;
+    }
+
+    /**
+     * Validate the ArrayOfPoint. The method returns true or false depending
+     * on whether the ArrayOfPoint validates.
+     *
+     * @return boolean; whether or not the ArrayOfPoint is valid
+     */
+    public boolean validate ()
+    {
+        List<ValidationError> errors = new ArrayList<ValidationError> ();
+        return this.validate (errors);
+    }
+
+    /**
+     * Validate the ArrayOfPoint. The method returns true or false depending
+     * on whether the ArrayOfPoint validates. It also fills in the a list
+     * of errors that occurred when validating
+     *
+     * @param errors
+     *    List<ValidationError>
+     *    {@link ValidationError}
+     * @return boolean; whether or not the ArrayOfPoint is valid
+     */
+    public boolean validate (List<ValidationError> errors)
+    {
+        boolean valid = true;
+
+        if (this.isSetPoint ())
+        {
+            for (Point pnt : this.point)
+                valid &= pnt.validate (errors);
+        }
+        else
+        {
+            String message = "There are no points";
+            valid = false;
+            errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_FLUXAXIS_VALUE, message));
+            errors.add (new ValidationError (ValidationErrorEnum.MISSING_DATA_SPECTRALAXIS_VALUE, message));
+        }
+
+        return valid;
     }
 
 }

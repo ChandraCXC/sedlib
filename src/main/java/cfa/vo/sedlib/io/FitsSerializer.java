@@ -29,8 +29,6 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.util.Cursor;
 import nom.tam.fits.HeaderCardException;
 import cfa.vo.sedlib.Accuracy;
-import cfa.vo.sedlib.ArrayOfFlatPoint;
-import cfa.vo.sedlib.ArrayOfGenPoint;
 import cfa.vo.sedlib.ArrayOfPoint;
 import cfa.vo.sedlib.Characterization;
 import cfa.vo.sedlib.CharacterizationAxis;
@@ -978,7 +976,7 @@ public class FitsSerializer implements ISedSerializer
      *  SpectrumDM document in utype table (Table 1) whose fits keywords are
      *  define as "(as Data)"
      */
-    private void overrideKeywords( ArrayOfGenPoint data, Header header ) throws SedInconsistentException, SedWritingException
+    private void overrideKeywords( ArrayOfPoint data, Header header ) throws SedInconsistentException, SedWritingException
     {
 
     	List<Point> pointData;
@@ -986,10 +984,7 @@ public class FitsSerializer implements ISedSerializer
         if (data == null)
             return;
 
-    	if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are current not supported.");
-        else
-            pointData = ((ArrayOfPoint)data).getPoint ();
+        pointData = data.getPoint ();
         
         // Iterate over all the data and if we find any of the fields of 
         // interest to be set, add the value to the header (overwriting any
@@ -1082,16 +1077,13 @@ public class FitsSerializer implements ISedSerializer
      * Extract all data and column metadata into a generic table. Also
      * calculates the number of columns which are going to be used.
      */
-    private void extractDataTable (ArrayOfGenPoint data) throws SedInconsistentException
+    private void extractDataTable (ArrayOfPoint data) throws SedInconsistentException
     {
 
         List<Point> pointList;
         Point point;
 
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are currently not supported.");
-        else
-            pointList = ((ArrayOfPoint)data).getPoint ();
+        pointList = data.getPoint ();
 
         if ((pointList == null) || (pointList.isEmpty()))
             return;
@@ -1682,7 +1674,7 @@ public class FitsSerializer implements ISedSerializer
      */
     private void overrideDataColumnInfo (Segment segment)
     {
-        ArrayOfGenPoint data;
+        ArrayOfPoint data;
         List<Point> pointList;
         String spectralAxisName = null;
 
@@ -1690,11 +1682,7 @@ public class FitsSerializer implements ISedSerializer
             return;
 
         data = segment.getData();
-
-        if (data instanceof ArrayOfFlatPoint)
-            throw new UnsupportedOperationException ("Flat points are currently not supported.");
-        else
-            pointList = ((ArrayOfPoint)data).getPoint ();
+        pointList = data.getPoint ();
 
         if(pointList==null)
             return;
