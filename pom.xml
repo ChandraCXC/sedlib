@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cfa.vao.sed</groupId>
   <artifactId>sedlib</artifactId>
-  <version>beta2-0.1</version>
+  <version>beta2-0.2</version>
   <packaging>jar</packaging>
   <name>VAO SED Library</name>
 
@@ -103,6 +103,14 @@
           </configuration>
       </plugin>
 
+
+      <plugin>
+          <groupId>com.mycila.maven-license-plugin</groupId>
+          <artifactId>maven-license-plugin</artifactId>
+          <configuration>
+              <header>src/etc/header.txt</header>
+          </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
