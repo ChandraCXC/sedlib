@@ -66,20 +66,26 @@ class PrettifyingOutputStreamWriter extends OutputStreamWriter
 	// This separates contiguous elements with a newline.
 	allLines = allLines.replaceAll( ">\\s*<", ">\n<" );
 
+	// NOTE: 20110721 MCD
+        //   The expecation here is that at this point all new tags have 
+	//   '\n' putting them on a new line.. if the input file was generated
+	//   on a Windows platform, there may be a mixture of '\r' and '\n'.
+	//   NEED TO REVIEW/REVISE for Windows support.
+
 	// Split the input into separate line and write each out prettily.
 	String[] lines = allLines.split( "\\n" );
 
-        // A buffer not starting on a tag should be the remainder of
-        // a partial line.. put them together.
-        if ( ! lines[0].startsWith("<") )
-        {
-            if ( ! m_partial.equals("") )
-            {
-                lines[0] = m_partial + lines[0];
-                m_partial = "";
-            }
-        }
-
+	// EDIT: 20110721 MCD 
+	//   was only adding to partial if first line of new buffer did not
+	//   start with a '<'.  This restriction seems unnecessary and is 
+	//   a problem if the new buffer starts with an end tag '</TD>'
+	// 
+        // If partial line is stored, combine with first line of new buffer.
+	if ( ! m_partial.equals("") )
+	{
+	    lines[0] = m_partial + lines[0];
+	    m_partial = "";
+	}
 
 	// The buffer may not end on a tag boundary.. check for this and
 	// store the partial line in a local variable to combine with the
@@ -127,6 +133,7 @@ class PrettifyingOutputStreamWriter extends OutputStreamWriter
 	{
 	    super.write( INDENTATION );
 	}
+	// NOTE: 20110721 MCD, should use platform independent newLine rather than "\n" directly.
 	super.write( aLine + "\n" );
     }
 }

@@ -415,7 +415,7 @@ public class VOTableMapper extends SedMapper
                     newParent = segment.createChar ();
                 }
                 else
-                    logger.warning ("Invalid parent. Expected Segment");
+                    logger.warning ("(CHAR) Invalid parent. Expected Segment");
                 break;
 
             case VOTableKeywords.SEG_CURATION:
@@ -709,7 +709,6 @@ public class VOTableMapper extends SedMapper
                 boolean customParamSet = false;
                 Param param;
 
-
                 if (parent instanceof Segment )
                 {
                     segment = (Segment)parent;
@@ -718,7 +717,7 @@ public class VOTableMapper extends SedMapper
                 }
                 else
                 {
-                    logger.warning ("Invalid parent. Expected Segment");
+                    logger.warning ("(DATA) Invalid parent. Expected Segment");
                     break;
                 }
                 for (ParamElement pp : params)
@@ -736,7 +735,6 @@ public class VOTableMapper extends SedMapper
                     if (customParamSet)
                         this.customRefCount++;
                 }
-
 
 
                 this.setCustomData (data, fields);
@@ -759,7 +757,7 @@ public class VOTableMapper extends SedMapper
                 }
                 else
                 {
-                    logger.warning ("Invalid parent. Expected Segment");
+                    logger.warning ("(DATA_STAXIS) Invalid parent. Expected Segment");
                     break;
                 }
 
@@ -795,7 +793,7 @@ public class VOTableMapper extends SedMapper
                 }
                 else
                 {
-                    logger.warning ("Invalid parent. Expected Segment");
+                    logger.warning ("(DATA_FBAXIS) Invalid parent. Expected Segment");
                     break;
                 }
 
@@ -831,7 +829,7 @@ public class VOTableMapper extends SedMapper
                 }
                 else
                 {
-                    logger.warning ("Invalid parent. Expected Segment");
+                    logger.warning ("(DATA_AXIS_ACC) Invalid parent. Expected Segment");
                     break;
                 }
 
@@ -858,33 +856,31 @@ public class VOTableMapper extends SedMapper
 
             default:
             {
-
                 // the group is not known
 
                 ParamElement []params = topgroup.getParams();
                 dataSubGroup = false;
                 
-                // if the parent is a segment and the group has fields
-                // then the group is a data group
                 if (dataParent != null)
+		{
+		    // Unknown Group under Data
                     dataSubGroup = true;
+		}
                 else if (parent instanceof Segment)
+		{
+		    // Unknown Group on Segment.. see if it has FIELDS, which would put it under Data
                     dataSubGroup = this.checkForFields (topgroup);
+		}
                 
                 if (dataSubGroup)
                 {
-
                     if (dataParent == null)
                     {
+			// have Group with fields on Segment.
                         ArrayOfPoint points;
                         segment = (Segment)parent;
                         points = segment.createData();
                         dataParent = points.createPoint ();
-                    }
-                    else
-                    {
-                        logger.warning ("Invalid parent. Expected Segment");
-                        break;
                     }
 
                     // process this group and its sub groups
@@ -965,16 +961,19 @@ public class VOTableMapper extends SedMapper
         {
             customGroup = new Group (this.subGroupCount);
             customGroup.setGroupId (topgroup.getID ());
+	    // ****
+	    // MCD TEMP: SET UTYPE and NAME and UCD ??
+	    // ****
             customGroups.add (customGroup);
             try {
-				group.addCustomGroup  (customGroup);
-			} catch (SedNullException exp) {
-				logger.warning(exp.getMessage ());
-				continue;
-			} catch (SedInconsistentException exp) {
-				logger.warning(exp.getMessage ());
-				continue;
-			}
+		group.addCustomGroup  (customGroup);
+	    } catch (SedNullException exp) {
+		logger.warning(exp.getMessage ());
+		continue;
+	    } catch (SedInconsistentException exp) {
+		logger.warning(exp.getMessage ());
+		continue;
+	    }
 
             // add in all the parameters
             for (int ii=0; ii<params.length; ii++) 
