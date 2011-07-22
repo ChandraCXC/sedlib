@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cfa.vao.sed</groupId>
   <artifactId>sedlib</artifactId>
-  <version>beta2-0.2</version>
+  <version>beta2-0.3</version>
   <packaging>jar</packaging>
   <name>VAO SED Library</name>
 
