@@ -94,7 +94,7 @@ public class FitsKeywords extends Utypes{
         keywords[SEG_CURATION_DATE] = "VODATE";
         keywords[SEG_DATAID_TITLE] = "TITLE";
         keywords[SEG_DATAID_CREATOR] = "AUTHOR";
-        keywords[SEG_DATAID_COLLECTION] = "COLLECTn";
+        keywords[SEG_DATAID_COLLECTION] = "COLLECT";
         keywords[SEG_DATAID_DATASETID] = "DS_IDENT";
         keywords[SEG_DATAID_CREATORDID] = "CR_IDENT";
         keywords[SEG_DATAID_DATE] = "DATE";
@@ -102,7 +102,7 @@ public class FitsKeywords extends Utypes{
         keywords[SEG_DATAID_INSTRUMENT] = "INSTRUME";
         keywords[SEG_DATAID_CREATIONTYPE] = "CRETYPE";
         keywords[SEG_DATAID_LOGO] = "VOLOGO";
-        keywords[SEG_DATAID_CONTRIBUTOR] = "CONTRIBn";
+        keywords[SEG_DATAID_CONTRIBUTOR] = "CONTRIB";
         keywords[SEG_DATAID_DATASOURCE] = "DSSOURCE";
         keywords[SEG_DATAID_BANDPASS] = "SPECBAND";
         keywords[SEG_DD_SNR] = "DER_SNR";
@@ -199,21 +199,20 @@ public class FitsKeywords extends Utypes{
 
 
         // populate maps
-
         for (int ii=0; ii < keywords.length; ii++) 
         {
-            if (fitsMap.containsKey (keywords[ii]))
+            if (fitsMap.containsKey(keywords[ii]))
             {
                 Integer values[] = fitsMap.get(keywords[ii]);
                 Integer newValues[] = new Integer [values.length+1];
-                System.arraycopy (values, 0, values, 0, values.length);
+                System.arraycopy(values, 0, values, 0, values.length);
                 newValues[values.length] = ii;
             }
             else
             {
                 Integer values[] = new Integer[1];
                 values[0] = ii;
-                fitsMap.put (keywords[ii], values);
+                fitsMap.put(keywords[ii], values);
             }
         }
     }
@@ -242,17 +241,23 @@ public class FitsKeywords extends Utypes{
             return utypeEnum;
 
         // all keywords should be upper case
-        compName = compName.toUpperCase ();
+        compName = compName.toUpperCase();
 
-        utypeEnum = fitsMap.get (compName);
+        utypeEnum = fitsMap.get(compName);
 
         if (utypeEnum == null)
         {
             // several keywords have variable numbers in them which 
             // can be remapped as the letter n
-            if ((compName.matches ("^COLLECT[1-9][0-9]*$")) ||
-                (compName.matches ("^CONTRIB[1-9][0-9]*$")) ||
-                (compName.matches ("^TDMIN[1-9][0-9]*$")) ||
+            if ((compName.matches("^COLLECT[1-9][0-9]*$")) ||
+                (compName.matches("^CONTRIB[1-9][0-9]*$")) )
+	    {
+		//20110829: MCD fix for handling of these array keys.
+		// if not array, keyword can be just a scalar key with no index
+                compName = compName.replaceFirst("[1-9][0-9]*", "");
+                utypeEnum = fitsMap.get(compName);
+	    }
+	    else if ((compName.matches ("^TDMIN[1-9][0-9]*$")) ||
                 (compName.matches ("^TDMAX[1-9][0-9]*$")) ||
                 (compName.matches ("^TCDLT[1-9][0-9]*$")) ||
                 (compName.matches ("^TCTYP[1-9][0-9]*Z$")))
@@ -260,7 +265,7 @@ public class FitsKeywords extends Utypes{
                 compName = compName.replaceFirst ("[1-9][0-9]*", "n");
                 utypeEnum = fitsMap.get (compName);
             }
-            else
+	    if (utypeEnum == null)
             {
                 utypeEnum = new Integer[1];
                 utypeEnum[0] = INVALID_UTYPE;

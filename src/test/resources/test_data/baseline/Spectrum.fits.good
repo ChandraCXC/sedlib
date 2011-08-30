@@ -1,4 +1,4 @@
-XTENSION= 'BINTABLE'           / Java FITS: Thu Mar 31 10:50:32 EDT 2011        
+XTENSION= 'BINTABLE'           / Java FITS: Mon Aug 29 14:30:56 EDT 2011        
 BITPIX  =                    8                                                  
 NAXIS   =                    2 / Dimensionality                                 
 NAXIS1  =                  984                                                  
@@ -172,8 +172,8 @@ SPECBAND= 'TBD     '
 CR_IDENT= 'TBD     '                                                            
 VOLOGO  = 'http://cfa-www.harvard.edu/nvo/cfalogo.jpg'                          
 DSSOURCE= 'TBD     '                                                            
-COLLECT1= 'G300    '                                                            
-CONTRIB1= 'TBD     '                                                            
+COLLECT = 'G300    '                                                            
+CONTRIB = 'TBD     '                                                            
 DER_SNR =                  3.0                                                  
 DER_VAR =                  0.0                                                  
 DER_Z   =                  0.0                                                  
