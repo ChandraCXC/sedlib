@@ -1,21 +1,68 @@
-<?xml version="1.0"?><project xmlns:pom="http://maven.apache.org/POM/4.0.0">
+<?xml version="1.0"?>
+<project xmlns:pom="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cfa.vao.sed</groupId>
   <artifactId>sedlib</artifactId>
-  <version>beta2-0.3</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
   <name>VAO SED Library</name>
+  <description>
+    The SED Library is a set of Java classes which represent Spectral Energy 
+    Distribution (SED) Data as defined by the IVOA Spectrum Data Model v1.03. 
+    The libary provides a base set of classes as well as a high level API 
+    which allows users to easily create and manipulate SED data. Supported 
+    serialization formats are VOTable and FITS. 
+  </description>
+
+  <organization>
+     <name>Virtual Astronomical Observatory</name>
+     <url>http://www.usvao.org</url>
+  </organization>
+
+  <developers>
+     <developer>
+       <name>Janet DePonte Evans</name>
+       <email>janet@cfa.harvard.edu</email>
+       <organization>Harvard-Smithsonian Center For Astrophysics</organization>
+       <organizationUrl>http://www.cfa.harvard.edu</organizationUrl>
+       <roles>
+         <role>project manager</role>
+       </roles>
+     </developer>
+     <developer>
+       <name>Mark Cresitello-Dittmar</name>
+       <email>mcd@cfa.harvard.edu</email>
+       <organization>Harvard-Smithsonian Center For Astrophysics</organization>
+       <organizationUrl>http://www.cfa.harvard.edu</organizationUrl>
+       <roles>
+         <role>group lead</role>
+       </roles>
+     </developer>
+     <developer>
+       <name>Omar Laurino</name>
+       <email>olaurino@cfa.harvard.edu</email>
+       <organization>Harvard-Smithsonian Center For Astrophysics</organization>
+       <organizationUrl>http://www.cfa.harvard.edu</organizationUrl>
+       <roles>
+         <role>developer</role>
+       </roles>
+     </developer>
+  </developers>
+
+  <issueManagement>
+      <system>JIRA</system>
+      <url>http://help.usvao.org:8080</url>
+  </issueManagement>
+
+  <ciManagement>
+      <system>Jenkins</system>
+      <url>http://vaotest1.tuc.noao.edu:8080/job/sed-lib/</url>
+  </ciManagement>
 
   <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
-<!--  <scm>
-     <connection>scm:svn:svn+ssh://usvao-svn@svn.usvao.org/usvao/prototype/sedlib/trunk</connection>
-     <developerConnection>scm:svn:svn+ssh://usvao-svn@svn.usvao.org/usvao/prototype/sedlib/trunk</developerConnection>
-  </scm> -->
-
-
   <reporting>
     <plugins>
 <!--      <plugin>
@@ -89,21 +136,6 @@
 
   <build>    
     <plugins>
-
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-        <archive>
-          <manifest>
-            <mainClass>cfa.vo.sedlib.converter.SedConverter</mainClass>
-            <packageName>cfa.vo.sedlib.converter</packageName>
-          </manifest>
-        </archive>
-          </configuration>
-      </plugin>
-
-
       <plugin>
           <groupId>com.mycila.maven-license-plugin</groupId>
           <artifactId>maven-license-plugin</artifactId>
@@ -140,7 +172,6 @@
         </executions>
       </plugin>
 
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -158,6 +189,9 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
           <descriptors>
             <descriptor>src/main/tar.xml</descriptor>
           </descriptors>
@@ -195,7 +229,6 @@
   </repositories>
 
   <dependencies>
- 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -210,11 +243,11 @@
   </dependencies>
 
   <distributionManagement>
-        <repository>
-            <id>vao-deploy-repository</id>
-            <name>vaotest2.tuc.noao.edu-releases</name>
-            <url>http://vaotest2.tuc.noao.edu:8080/artifactory/libs-snapshot-local</url>
-        </repository>
+    <repository>
+       <id>vao-deploy-repository</id>
+       <name>vaotest2.tuc.noao.edu-releases</name>
+       <url>http://vaotest2.tuc.noao.edu:8080/artifactory/libs-snapshot-local</url>
+    </repository>
   </distributionManagement>
 
 </project>

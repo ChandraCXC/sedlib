@@ -180,7 +180,6 @@ public class FitsSerializer implements ISedSerializer
         BinaryTable binaryTable;
         BinaryTableHDU binaryTableHDU;
 
-        
         if (sed.getNumberOfSegments () == 0)
             return fits;
 
@@ -238,10 +237,11 @@ public class FitsSerializer implements ISedSerializer
             	throw new SedWritingException (exp.getMessage (), exp);
             }
 
+	    // get table header 
             header = binaryTableHDU.getHeader ();
 
-            //make sure the header is at the end of it's default information
-            this.setHeaderCursor (header);
+            // make sure the header is at the end of it's default information
+            this.setHeaderCursor(header);
 
             this.addSegmentToHeader (segment, header);
 
@@ -254,32 +254,14 @@ public class FitsSerializer implements ISedSerializer
                 // add the data information to the header
                 this.addDataToHeader (header);
             }
+        }
 
-        }
-        
-        // update the primary hdu so that the NAXIS is zero
-        // this conforms to the FITS-3.0
-        BasicHDU hdu;
-        try
-        {
-            hdu = fits.getHDU (0);
-        }
-        catch (Exception exp)
-        {
-        	throw new SedWritingException ("Could not open the primary header", exp);
-        }
-        
-        try
-        {
-            hdu.addValue ("NAXIS", 0, null);
-        }
-        catch (Exception exp)
-        {
-        	throw new SedWritingException ("Could not set NAXIS to zero.", exp);
-        }
+	// MCD NOTE 20110810:
+	//   Removed manual setting of NAXIS=0.
+	//   FITS-3.0 is for NAXIS=0 with NO NAXIS1 keyword
+	//   This segment set NAXIS=0 but kept NAXIS1=0 which is a violation of the standard.
 
         return fits;
-
     }
 
     /**
@@ -373,16 +355,6 @@ public class FitsSerializer implements ISedSerializer
         if (_char.isSetFluxAxis ())
             this.addCharacterizationAxisToHeader (_char.getFluxAxis (), header, FitsKeywords.SEG_CHAR_FLUXAXIS);
             
-/*        if (_char.isSetCharacterizationAxis ())
-        {
-            List <CharacterizationAxis> charAxisList = _char.getCharacterizationAxis ();
-            for (CharacterizationAxis charAxis : charAxisList)
-            {
-                this.addCharacterizationAxisToHeader (charAxis, header, FitsKeywords.SEG_CHAR_CHARAXIS);
-            }
-        }
-*/
-
         this.addCustomParamsToHeader (_char, header);
     }
 
@@ -536,7 +508,7 @@ public class FitsSerializer implements ISedSerializer
                 // set the max bound
                 keywordMatch = true;
                 rngUtype = this.mergeUtypes (newUtype, FitsKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX, functionName);
-                if (rngUtype == FitsKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN)
+                if (rngUtype == FitsKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX)
                     keywordMatch = this.matchKeywordToColumn (FitsKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX, FitsKeywords.SEG_DATA_SPECTRALAXIS_VALUE);
                 if (keywordMatch)
                     this.addSedParam (bounds.getRange ().getMax (), header, rngUtype );
@@ -906,25 +878,37 @@ public class FitsSerializer implements ISedSerializer
             this.addSedParam (dataID.getLogo (), header, FitsKeywords.SEG_DATAID_LOGO);
         if (dataID.isSetDataSource ())
             this.addSedParam (dataID.getDataSource (), header, FitsKeywords.SEG_DATAID_DATASOURCE);
-        if (dataID.isSetCollection ())
+        if (dataID.isSetCollection())
         {
-            List<TextParam> collection = dataID.getCollection ();
+            List<TextParam> collection = dataID.getCollection();
             String keyword = FitsKeywords.getKeyword(FitsKeywords.SEG_DATAID_COLLECTION);
-
-            // remove the "n" from the end of the keyword
-            keyword = keyword.substring (0, keyword.length ()-1);
-            for (int ii=0; ii < collection.size (); ii++)
-                this.addSedParam (collection.get(ii), header, keyword+(ii+1));
+	    if ( collection.size() == 1 )
+	    {
+		// only one.. write as scalar key
+		this.addSedParam(collection.get(0), header, keyword);
+	    }
+	    else
+	    {
+		// write as array key
+		for (int ii=0; ii < collection.size(); ii++)
+		    this.addSedParam(collection.get(ii), header, keyword+(ii+1));
+	    }
         }
-        if (dataID.isSetContributor ())
+        if (dataID.isSetContributor())
         {
             List<TextParam> collection = dataID.getContributor ();
             String keyword = FitsKeywords.getKeyword(FitsKeywords.SEG_DATAID_CONTRIBUTOR);
-
-            // remove the "n" from the end of the keyword
-            keyword = keyword.substring (0, keyword.length ()-1);
-            for (int ii=0; ii < collection.size (); ii++)
-                this.addSedParam (collection.get(ii), header, keyword+(ii+1));
+	    if ( collection.size() == 1 )
+	    {
+		// only one.. write as scalar key
+		this.addSedParam(collection.get(0), header, keyword);
+	    }
+	    else
+	    {
+		// write as array key
+		for (int ii=0; ii < collection.size (); ii++)
+		    this.addSedParam (collection.get(ii), header, keyword+(ii+1));
+	    }
         }
 
         this.addCustomParamsToHeader (dataID, header);
@@ -1425,6 +1409,8 @@ public class FitsSerializer implements ISedSerializer
             header.insertHistory (value);
         else if (keyword.equalsIgnoreCase ("COMMENT"))
             header.insertComment (value);
+        else if (keyword.equalsIgnoreCase (""))
+            header.insertCommentStyle(keyword, value);
         else
             header.addValue(keyword, value, null);
     }
@@ -1500,7 +1486,7 @@ public class FitsSerializer implements ISedSerializer
 
     /**
      * Add the specified generic Param to the HDU header. This also allows for
-     * keyword to be specified (opposed to just using the defaul)
+     * keyword to be specified (opposed to just using the default)
      */
     private void addSedParam(Param param, Header header, String keyword) throws SedInconsistentException, SedWritingException
     {
@@ -1518,19 +1504,19 @@ public class FitsSerializer implements ISedSerializer
         keyword = keyword.toUpperCase();
         try
         {
-        	if (param instanceof IntParam)
-        		this.finalizeAddSedParam ((IntParam)param, header, keyword);
-        	else if (param instanceof DoubleParam)
-        		this.finalizeAddSedParam ((DoubleParam)param, header, keyword);
-        	else if (param instanceof TimeParam)
-        		this.finalizeAddSedParam ((TimeParam)param, header, keyword);
-        	else
-        		this.finalizeAddSedParam (param, header, keyword);
+	    if (param instanceof IntParam)
+		this.finalizeAddSedParam ((IntParam)param, header, keyword);
+	    else if (param instanceof DoubleParam)
+		this.finalizeAddSedParam ((DoubleParam)param, header, keyword);
+	    else if (param instanceof TimeParam)
+		this.finalizeAddSedParam ((TimeParam)param, header, keyword);
+	    else
+		this.finalizeAddSedParam (param, header, keyword);
         }
         catch (HeaderCardException exp)
         {
 //    	    throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+param.getValue ()+" to header.", exp);
-        	logger.log(Level.WARNING, "Failed to add keyword,{0}, with value {1} to header. The following fits exception was given \"{2}\".", new Object[]{keyword, param.getValue(), exp.getMessage()});
+	    logger.log(Level.WARNING, "Failed to add keyword,{0}, with value {1} to header. The following fits exception was given \"{2}\".", new Object[]{keyword, param.getValue(), exp.getMessage()});
         }
     }
 

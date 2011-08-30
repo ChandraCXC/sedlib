@@ -762,8 +762,8 @@ public class FitsMapper extends SedMapper
                             Param param;
                             // Since there can be multiple copies of the history and comments
                             // we don't include an id for these since id's need to be unique
-                            if (key.equalsIgnoreCase ("HISTORY") || key.equalsIgnoreCase ("COMMENT"))
-                            {
+			    if (key.equalsIgnoreCase("HISTORY") || key.equalsIgnoreCase("COMMENT") || key.equalsIgnoreCase(""))
+			    {
                                 // history and comment values are being recognized as comments
                                 if (value == null)
                                     value = card.getComment ();
@@ -801,6 +801,11 @@ public class FitsMapper extends SedMapper
                     	{
                     		logger.warning(exp.getMessage ());
                     	}
+                    	catch (Exception exp)
+                    	{
+			    logger.warning( String.format("Problem processing keyword '%s'.", key));
+                    	}
+
                     }
                     break;
                 }
