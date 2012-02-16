@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cfa.vao.sed</groupId>
   <artifactId>sedlib</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <packaging>jar</packaging>
   <name>VAO SED Library</name>
   <description>
-    The SED Library is a set of Java classes which represent Spectral Energy 
-    Distribution (SED) Data as defined by the IVOA Spectrum Data Model v1.03. 
-    The libary provides a base set of classes as well as a high level API 
-    which allows users to easily create and manipulate SED data. Supported 
-    serialization formats are VOTable and FITS. 
+    The SED Library is a set of Java classes which represent Spectral Energy
+    Distribution (SED) Data as defined by the IVOA Spectrum Data Model v1.03.
+    The libary provides a base set of classes as well as a high level API
+    which allows users to easily create and manipulate SED data. Supported
+    serialization formats are VOTable and FITS.
   </description>
 
   <organization>
@@ -31,7 +31,7 @@
      </developer>
      <developer>
        <name>Mark Cresitello-Dittmar</name>
-       <email>mcd@cfa.harvard.edu</email>
+       <email>mdittmar@cfa.harvard.edu</email>
        <organization>Harvard-Smithsonian Center For Astrophysics</organization>
        <organizationUrl>http://www.cfa.harvard.edu</organizationUrl>
        <roles>
@@ -62,7 +62,7 @@
   <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <reporting>
     <plugins>
 <!--      <plugin>
@@ -134,7 +134,7 @@
     </plugins>
   </reporting>
 
-  <build>    
+  <build>
     <plugins>
       <plugin>
           <groupId>com.mycila.maven-license-plugin</groupId>
@@ -225,7 +225,7 @@
         <name>vaotest2.tuc.noao.edu-releases</name>
         <url>http://vaotest2.tuc.noao.edu:8080/artifactory/repo</url>
     </repository>
-    
+
   </repositories>
 
   <dependencies>
