@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for samplingPrecisionRefVal complex type.
  * 
  * 
  */
 public class SamplingPrecisionRefVal
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected DoubleParam fillFactor;
@@ -80,6 +82,34 @@ public class SamplingPrecisionRefVal
 
     public boolean isSetFillFactor() {
         return (this.fillFactor!= null);
+    }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isFillFactorUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createFillFactor();
+	    else
+		value = this.getFillFactor();
+	}
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isFillFactorUtype( utypeNum ) )
+	{
+            this.setFillFactor( (DoubleParam)value );
+	}
+	return;
     }
 
 }

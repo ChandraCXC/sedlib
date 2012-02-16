@@ -29,32 +29,37 @@ package cfa.vo.sedlib.io;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.net.URL;
+
+//
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
-
-import uk.ac.starlink.table.ColumnInfo;
-import uk.ac.starlink.table.StarTable;
-import uk.ac.starlink.votable.GroupElement;
-import uk.ac.starlink.votable.ParamElement;
+//
+import uk.ac.starlink.votable.VOStarTable;
 import uk.ac.starlink.votable.TableElement;
 import uk.ac.starlink.votable.VOElement;
-import uk.ac.starlink.votable.FieldElement;
-import uk.ac.starlink.votable.VOStarTable;
 import uk.ac.starlink.votable.dom.DelegatingAttr;
+//
+import uk.ac.starlink.table.ColumnInfo;
+import uk.ac.starlink.table.DescribedValue;
+//
 import cfa.vo.sedlib.*;
 import cfa.vo.sedlib.common.SedConstants;
 import cfa.vo.sedlib.common.SedException;
 import cfa.vo.sedlib.common.SedInconsistentException;
-import cfa.vo.sedlib.common.SedNullException;
 import cfa.vo.sedlib.common.SedNoDataException;
 import cfa.vo.sedlib.common.SedParsingException;
 import cfa.vo.sedlib.common.ValidationErrorEnum;
 import cfa.vo.sedlib.common.ValidationError;
+
 import cfa.vo.sedlib.common.VOTableKeywords;
+import cfa.vo.sedlib.common.Utypes;
 
 /**
   Maps Sed objects to VOTable objects
@@ -68,6 +73,8 @@ public class VOTableMapper extends SedMapper
     int subGroupCount = 1;
     int customRefCount = 1;
 
+    private boolean verbose = false;
+
     /**
       * Populates a Sed object with information from a VOTable object.
       *
@@ -77,6 +84,7 @@ public class VOTableMapper extends SedMapper
       * @throws SedInconsistentException
       * @throws IOException
       */
+    @Override
     public Sed populateSed (Object data, Sed sed) 
     	throws SedParsingException, SedInconsistentException, IOException, SedNoDataException
     {
@@ -88,6 +96,15 @@ public class VOTableMapper extends SedMapper
 
         VOElement root = (VOElement)data;
 
+
+	// Declared namespace.
+	// MCD NOTE: This needs to check for declared namespace(s) and verify
+        //           that it recognizes those declarations.  Along the lines of
+	//           "Does this file contain info that I understand"
+	//           Allowed values s/b "sed", "spec", "phot"?
+        this.namespace = this.extractNamespace(root);
+        sed.setNamespace(this.namespace);
+
         // Get the RESOURCE elements using standard DOM methods.
         NodeList resources = root.getElementsByTagName (VOTableKeywords._RESOURCE);
 
@@ -97,60 +114,52 @@ public class VOTableMapper extends SedMapper
             throw new SedParsingException ("The VOTable must have at least one resource.");
         
         VOElement resource = (VOElement) resources.item(0);
-        VOElement[] tables = resource.getChildrenByName (VOTableKeywords._TABLE);
-        TableElement te;
-        Segment segment;
 
-        this.namespace = this.extractNamespace (root);
-        sed.setNamespace (this.namespace);
-
-        // check the utype is valid
+        // check that the Resource utype is valid
+	// MCD NOTE: Should allow Spectrum instances to be valid Resource.
         utype = resource.getAttribute(VOTableKeywords._UTYPE);
-        if ((utype != null) && (utype.length () > 0))
+        if ((utype != null) && (utype.length() > 0))
         {
-            // if the namespace of the resource doesn't match the namespace of
-            // the spectrum return
+            // Resource namespace should match declared SED model namespace, if any.
             if ((namespace != null) && 
-            		!namespace.equalsIgnoreCase (VOTableKeywords.getNamespace (utype)))
+            		!namespace.equalsIgnoreCase(VOTableKeywords.getNamespace(utype)))
                 return sed;
 
-            if (!VOTableKeywords.compare (utype, VOTableKeywords.SED))
+	    // Check that we can use this Resource
+            if (!VOTableKeywords.compare(utype, VOTableKeywords.SED))
             {
-                // if it doesn't compare try adding a "spectrum." to
-                // the front
+                // if it doesn't compare try adding a "spectrum." to the front.
                 utype = "spectrum."+VOTableKeywords.removeNamespace(utype);
                 if (!VOTableKeywords.compare (utype, VOTableKeywords.SED))
                 {
-                    ValidationError error = new ValidationError (ValidationErrorEnum.INVALID_RESOURCE_UTYPE);
+                    ValidationError error = new ValidationError(ValidationErrorEnum.INVALID_RESOURCE_UTYPE);
                     error.addNote ("Value found "+utype);
                     validationErrors.add (error);
                 }
             }
         }
         
-/*        // clear the sed before populating it
-        sed.clear ();
-*/
-        // Creates a Segment from each TABLE and adds it to the sed
+        VOElement[] tables = resource.getChildrenByName (VOTableKeywords._TABLE);
+        TableElement te;
+        Segment segment;
+
+        // Create a Segment from each TABLE and adds it to the sed
         for (int tblIdx = 0; tblIdx < tables.length; tblIdx++)
         {
             te = (TableElement)tables[tblIdx];
 
-            // check the utype is valid
+            // check Table for supported utype
             utype = te.getAttribute(VOTableKeywords._UTYPE);
-            if ((utype != null) && (utype.length () > 0))
+            if ((utype != null) && (utype.length() > 0))
             {  
-            	// if the namespace of the table does not match the namespace
-                // of the spectrum skip the table
+            	// Table namespace should match declared Spectrum model namespace, if any.
                 if ((namespace != null) && 
-                		!namespace.equalsIgnoreCase (VOTableKeywords.getNamespace (utype)))
+                		!namespace.equalsIgnoreCase(VOTableKeywords.getNamespace(utype)))
                     continue;
                 
-                if (!VOTableKeywords.compare (utype, VOTableKeywords.SEG))
+                if (!VOTableKeywords.compare(utype, VOTableKeywords.SEG))
                 {
-
-                    // if it doesn't compare try comparing "spectrum" 
-                    if (!VOTableKeywords.compare (utype, VOTableKeywords.SPEC))
+                    if (!VOTableKeywords.compare(utype, VOTableKeywords.SPEC))
                     {
                         ValidationError error = new ValidationError (ValidationErrorEnum.INVALID_TABLE_UTYPE);
                         validationErrors.add (error);
@@ -159,21 +168,29 @@ public class VOTableMapper extends SedMapper
                 }
             }
 
-            segment =  this.extractSegmentFromTable (te);
-            sed.addSegment (segment);
-        }
+	    // Extract segment from Table.
+	    // NOTE: This will attempt to interpret the Table even if it does 
+	    // not pass the above checks.. this is to allow for files which 
+	    // do not specify a utype for the table.
 
-        if ((!sed.validate (validationErrors)) || (validationErrors.size () > 0))
+            segment = this.extractSegmentFromTable(te);
+	    if ( segment != null )
+	    {
+              // Returned Segment may be of any supported Spectrum class.
+	      // Or null if the table not supported
+	      // MCD NOTE: Throw/Catch Exception.
+
+		sed.addSegment (segment);
+	    }
+        }
+        if ((!sed.validate(validationErrors)) || (validationErrors.size() > 0))
         {
             logger.warning("Invalid Sed read.");
             for (ValidationError error : validationErrors)
-                logger.warning(error.getErrorMessage ());
+		logger.warning(error.getErrorMessage ());
         }
-
-
         return sed;
     }
-
 
     /**
      * Populate the segment with the non-data parameter found in the table.
@@ -186,71 +203,594 @@ public class VOTableMapper extends SedMapper
     Segment extractSegmentFromTable(TableElement te)
        throws SedParsingException, IOException
     {
-        Segment currentSegment = new Segment ();
+        Segment seg = null;
 
-        VOElement[] groups = te.getChildrenByName(VOTableKeywords._GROUP);
+	String model  = null; 
+	String flavor = null;
+	String utype  = null;
 
-        this.processSegmentTableData (currentSegment, te);
+	// Create a VOStarTable instance from input table.
+        VOStarTable starTable = new VOStarTable( te );
 
-        this.setSegmentParams( currentSegment, te.getParams() );
+	// Spectrum model tables should have a DataModel and Type parameter
+	// which defines the model, version and flavor of the table contents.
+	// Find and validate these
+	List<DescribedValue> inparams = starTable.getParameters();
 
-        // loop through all the groups and populate the segment
-        for(int grpIdx=0; grpIdx < groups.length; grpIdx++)
-        {
-            this.recurseGroup((GroupElement)groups[grpIdx], 
-                              currentSegment, null);
-        }
+	// Find the DataModel parameter.  Is required and unique.
+	for ( DescribedValue item : inparams )
+	{
+	    utype = item.getInfo().getUtype();
+	    if ( utype != null &&  utype.toUpperCase().endsWith("DATAMODEL") )
+	    {
+		model = item.getValueAsString(80).toUpperCase();
+		break;
+	    }
+	}
+	if ( (model == null) || model.equals("") || !(model.startsWith("SPECTRUM")) )
+	{
+	    // No DataModel parameter found, assume this is NOT a Spectral Model Table.
+	    // OR DataModel parameter not expected value.
+	    return null;
+	}
 
-        this.processSegmentCustomData (currentSegment);
-            
+	// Type should be in same portion as model (in hierarchy), with same namespace.
+	// Need to look for this explicitly because there is more than one Type.
+	String tmpstr = utype.toUpperCase().replace("DATAMODEL", "TYPE");
 
-        return currentSegment;
+	flavor = "SPECTRUM"; // default
+	for ( DescribedValue item : inparams )
+	{
+	    utype = item.getInfo().getUtype();
+	    if ( utype != null && utype.toUpperCase().equals(tmpstr) )
+	    {
+		flavor = item.getValueAsString(80).toUpperCase();
+		break;
+	    }
+	}
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO: DataModel      = "+ model);
+	    System.out.println("INFO: Spectral Type  = "+ flavor);
+	    System.out.println("INFO:");
+	}
+
+        // Get UType list appropriate for this DataModel and Type for processing 
+	// the table contents.
+	// utypes = new VOUtypes( model, flavor );
+        Utypes utypes = new Utypes();
+
+
+	// Use Type parameter to define the Spectral Model subclass being instantiated.
+	if ( flavor.equals("SPECTRUM") )
+	    seg = (Segment) new Spectrum();
+	else
+	    seg = new Segment();
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO: Creating instance of " + seg.getClass().getName());
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Process Parameters... ");
+	    printParameterList( inparams );
+	}
+
+        // Process parameters
+	processSegmentLevelParams( seg, utypes, inparams );
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Segment Level Parameters Processed: " );
+	    printParameterList( inparams );
+	}
+
+	// **********  Point Level Info **********
+
+	// Process items which apply at the Point level.
+
+	// Table columns
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Process Point Data... ");
+	}
+	processPointLevelData( seg, utypes, starTable );
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Point Level Data Processed: ");
+	}
+
+	// Point level constants
+	processPointLevelParams( seg, utypes, inparams );
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Point Level Parameters Processed: ");
+	    printParameterList( inparams );
+	}
+
+	// Puts custom data onto Points
+        this.distributeCustomData(seg);
+
+
+	// **********  Custom Parameters **********
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Process Custom Parameters... ");
+	}
+
+	// Process items which do not map to the model.
+	// Custom columns are handled in processPointLevelData() where they
+	// are put on the customData has table of this class.. 
+	processCustomParams( seg, utypes, inparams );
+	if ( this.verbose )
+	{
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Custom Parameters Processed: ");
+	    printParameterList( inparams );
+	}
+
+        return seg;
     }
 
+    /**
+     * Handles Segment Level information from the input StarTable parameter list, 
+     * which map to Param Type objects.
+     *
+     * The input segment will be updated.
+     * Input parameters which are handled by this method are removed
+     * from the List.
+     *
+     * @param segment
+     *     {@link Segment}
+     * @param utypes
+     *     {@link Utypes}
+     * @param List<DescribedValue>
+     *    {@link DescribedValue}
+     */
+    private void  processSegmentLevelParams( Segment seg, Utypes utypes, List<DescribedValue> inparams ) 
+           throws SedParsingException, IOException
+    {
+	List <CharacterizationAxis> axes = null;
+	CharacterizationAxis axis = null;
+
+	String utype  = null;
+	int utypeNum;
+
+	Iterator itr = inparams.iterator();
+	DescribedValue item;
+	Object value;
+
+	while( itr.hasNext() )
+	{
+	    item = (DescribedValue)itr.next();
+	    value = null;
+
+	    // Translate utype to number (enum).
+	    utype = item.getInfo().getUtype();
+	    utypeNum = utypes.getUtypeNum( utype );
+
+	    // Unrecognized utype.
+	    if ( utypeNum == utypes.INVALID_UTYPE)
+		continue;
+
+	    // Immutable utypes.
+	    if ( ( utypeNum == utypes.DATAMODEL ) ||
+		 ( utypeNum == utypes.LENGTH ) )
+	    {
+		itr.remove();
+		continue;
+	    }
+
+	    if ( utypes.isCharAxisUtype( utypeNum ) )
+	    {
+		if ( axes == null )
+		{
+		    axes = seg.createChar().createCharacterizationAxis();
+		    if ( axes.isEmpty() )
+			axes.add( new CharacterizationAxis() );
+
+		    axis = axes.get( axes.size() - 1 );
+		}
+
+		if ( CharAxisFieldIsSet( axis, utypeNum ) )
+		{
+		    // Field is already set, assume new axis definition.
+		    axis = new CharacterizationAxis();
+		    axes.add( axis );
+		}
+
+		value = axis.getValueByUtype( utypeNum, true );
+		value = loadValue( item, value );
+		axis.setValueByUtype( utypeNum, value );
+
+		itr.remove();
+	    }
+	    else
+	    {
+		try {
+
+		    if ( utypes.isCollectionUtype( utypeNum ) || 
+			 utypes.isContributorUtype( utypeNum ) )
+		    {
+			// These two are lists which must be added to.
+			// The expectation is that there will be 1 String value per instance
+			// of this utype.
+			TextParam tmp = new TextParam();
+			loadParam( item, tmp );
+
+			List<TextParam> params = (List<TextParam>)seg.getValueByUtype( utypeNum, true );
+			if ( params != null )
+			{
+			    params.add( tmp );
+			    seg.setValueByUtype( utypeNum, params );
+			}
+			itr.remove();
+		    }
+		    else
+		    {
+			// Attempt to get value from  Utype interface
+			value = seg.getValueByUtype( utypeNum, true );
+			if ( value != null )
+			{
+			    value = loadValue( item, value );
+			    seg.setValueByUtype( utypeNum, value );
+			    itr.remove();
+			}
+		    }
+		}
+		catch ( SedInconsistentException expa)
+		{
+		  // not matched.. no problem.
+		}
+		catch (Exception expb)
+		{
+		    logger.warning(expb.getMessage());
+		}
+	    }
+	}
+
+	return;
+    }
 
     /**
-     * Populate the segment with data specific information. The input segment
-     * will be updated.
+     * Populate the segment with data specific information. 
+     * 
+     * The input segment will be updated.
      * @param table
      *    {@link TableElement}
      * @param segment
      *     {@link Segment}
      */
-    private void  processSegmentTableData( Segment segment, TableElement te) 
+    private void  processPointLevelData( Segment segment, Utypes utypes, VOStarTable starTable ) 
            throws SedParsingException, IOException
     {
-        StarTable starTable = new VOStarTable( te );
 
-        //
+        Object   values  = null;
+        double[] dValues = null;
+        int[]    iValues = null;
+	String   strval  = null;
+
+	String utype = null;
+	int utypeNum;
+
+	int nrows = (int)starTable.getRowCount();
+	int ncols = (int)starTable.getColumnCount();
+
         //  Get a fresh array of data points for us to fill in and
         //  stick it in the segment.  We need to do this because the
         //  list will be traversed for each column and data added to
         //  the points so we cannot simply add a new Point as we loop
         //  over the rows.
-        ArrayOfPoint pointArray = new ArrayOfPoint ();
-        List<Point> pointList = pointArray.createPoint();
-
+        ArrayOfPoint points = new ArrayOfPoint();
+        List<Point> pointList = points.createPoint();
+        
         for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++)
             pointList.add( iRow, new Point () );
 
-        //TODO TEST that error of now all rows same length is handled
-        //  A case for each column type in the table.  We find the
-        //  right method for putting the data in the data list and
-        //  iterate over the rows.
-        // Now set the values of all the datapoints for this column
-        this.setPointDataField(pointList, starTable, te.getFields ());
-      
+	segment.setData( points );
 
-        if (!pointList.isEmpty ())
-            segment.setData( pointArray );
+        // Now set the values of all the datapoints for each column
+        for ( int iCol = 0; iCol < ncols; iCol++ )
+        {
+            ColumnInfo infoCol = starTable.getColumnInfo(iCol);
 
+            utype = infoCol.getUtype();
+	    //if ( utype == null )
+	    //  continue;
+
+	    // Translate utype to number (enum).
+	    utypeNum = utypes.getUtypeNum( utype );
+
+	    // Unrecognized utype.
+	    if ( utypeNum == utypes.INVALID_UTYPE)
+	    {
+		setCustomPointData( starTable, iCol );
+		continue;
+	    }
+
+	    // MCD NOTE: At this point, the item could be ANY recognized utype.
+	    // would like a further screen for PointLevel only.. to catch utypes
+	    // which are not supposed to vary perPoint...
+
+	    // Recognized column, extract StarTable data as array of values.
+	    Class dataClass = infoCol.getContentClass();
+
+	    if ((dataClass == Integer.class) || (dataClass == Long.class) || (dataClass == Short.class))
+	    {
+		iValues = new int[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    strval = starTable.getCell( iRow, iCol ).toString();
+		    iValues[iRow] = Integer.parseInt(strval);//  throws NumberFormatException
+		}
+		values = iValues;
+	    }
+	    else if ((dataClass == Double.class) || (dataClass == Float.class))
+	    {
+		dValues = new double[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    strval = starTable.getCell( iRow, iCol ).toString();
+		    dValues[iRow] = Double.valueOf(strval).doubleValue(); //  throws NumberFormatException
+		}
+		values = dValues;
+	    }
+
+	    // Assign values for this column to Points
+	    try
+	    {
+		points.setDataValues( values, utypeNum );
+	    }
+	    catch (SedInconsistentException exp)
+	    {
+		throw new SedParsingException("Problem setting Data values for " + utype);
+	    }
+
+	    // Define Field info. for this column
+	    try
+	    {
+		String id = null;
+		if ( infoCol.getAuxDatum(VOStarTable.ID_INFO) != null )
+		    id = infoCol.getAuxDatum(VOStarTable.ID_INFO).getValue().toString();
+
+		Field field = new Field (infoCol.getName(),
+					 infoCol.getUCD(), 
+					 infoCol.getUnitString(), 
+					 null,
+					 id );
+		points.setDataInfo( field, utypeNum );
+	    }
+	    catch (SedException exp)
+	    {
+		throw new SedParsingException("Problem setting field info for " + utype);
+	    }
+	}
+     
+    }
+
+
+    /**
+     * Handles information from the input StarTable parameter list which
+     * map to Point Level model elements.
+     *
+     * These values are constant for all Points (rows).
+     *
+     * NOTE:
+     *   The expectation is that the column data has already been processed 
+     *   so that the Point array is already established (processPointLevelData).
+     *
+     * The input segment will be updated.
+     * Input parameters which are handled by this method are removed
+     * from the List.
+     *
+     * @param segment
+     *     {@link Segment}
+     * @param utypes
+     *     {@link Utypes}
+     * @param List<DescribedValue>
+     *    {@link DescribedValue}
+     */
+    private void  processPointLevelParams( Segment seg, Utypes utypes, List<DescribedValue> inparams ) 
+           throws SedParsingException, IOException
+    {
+        Object   values  = null;
+        double[] dValues = null;
+        int[]    iValues = null;
+	String   strval  = null;
+
+	String utype  = null;
+	int utypeNum;
+
+	Iterator itr = inparams.iterator();
+	DescribedValue item;
+
+        ArrayOfPoint points = seg.getData();
+	int nrows = seg.getLength();
+
+	while( itr.hasNext() )
+	{
+	    item = (DescribedValue)itr.next();
+
+	    utype = item.getInfo().getUtype();
+
+	    // Translate utype to number (enum).
+	    utypeNum = utypes.getUtypeNum( utype );
+
+	    if ( utypeNum == utypes.INVALID_UTYPE )
+		continue;
+
+	    // We want to know that this is a Point Level UType..
+	    // So that the order of processing the parameter list is not important.
+	    // For now.. use knowledge of UType enumerations, but would be better
+	    // if the utypes class itself could tell us this.
+	    if ( (utypeNum < utypes.SEG_DATA ) || ( utypeNum > utypes.SEG_DATA_BGM_ACC_CONFIDENCE ) )
+		continue;
+
+
+	    // Recognized column, define array of values.
+	    Class dataClass = item.getInfo().getContentClass();
+
+	    if ((dataClass == Integer.class) || (dataClass == Long.class) || (dataClass == Short.class))
+	    {
+		iValues = new int[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    strval = item.getValue().toString();
+		    iValues[iRow] = Integer.parseInt(strval);//  throws NumberFormatException
+		}
+		values = iValues;
+	    }
+	    else if ((dataClass == Double.class) || (dataClass == Float.class))
+	    {
+		dValues = new double[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    strval = item.getValue().toString();
+		    dValues[iRow] = Double.valueOf(strval).doubleValue(); //  throws NumberFormatException
+		}
+		values = dValues;
+	    }
+
+	    // Assign values for this column to Points
+	    try
+	    {
+		points.setDataValues( values, utypeNum );
+	    }
+	    catch (SedInconsistentException exp)
+	    {
+		throw new SedParsingException("Problem setting Data values for " + utype);
+	    }
+
+	    // Define Field info. for this column
+	    try
+	    {
+		Field field = new Field (item.getInfo().getName(),
+					 item.getInfo().getUCD(), 
+					 item.getInfo().getUnitString(), 
+					 null,
+					 null );
+
+		// create an alternate id for when the custom object has no id.
+		if (! field.isSetInternalId() )
+		{
+		    field.setInternalId("_customId"+this.customRefCount);
+		    this.customRefCount++;
+		}
+
+		points.setDataInfo( field, utypeNum );
+	    }
+	    catch (SedException exp)
+	    {
+		throw new SedParsingException("Problem setting field info for " + utype);
+	    }
+	}
+
+	return;
+    }
+
+
+    private void  processCustomParams( Segment seg, Utypes utypes, List<DescribedValue> inparams ) 
+           throws SedParsingException, IOException
+    {
+	String utype  = null;
+	int utypeNum;
+
+	Iterator itr = inparams.iterator();
+	DescribedValue item;
+
+	while( itr.hasNext() )
+	{
+	    item = (DescribedValue)itr.next();
+
+	    utype = item.getInfo().getUtype();
+
+	    // Screen out known unwanted VOTable items.
+	    if ( utype == null )
+	    {
+		// utype associated with the Table
+		if ( item.getInfo().getName().equals("utype") )
+		{
+		    itr.remove();
+		    continue;
+		}
+	    }
+
+	    // Translate utype to number (enum).
+	    utypeNum = utypes.getUtypeNum( utype );
+
+	    if ( utypeNum != utypes.INVALID_UTYPE )
+		continue;
+
+	    // Create appropriate Parameter Type for this item.
+	    Param param = null;
+	    Class dataClass = item.getInfo().getContentClass();
+	    if ((dataClass == Integer.class) || (dataClass == Long.class) || (dataClass == Short.class))
+	    {
+	        param = new IntParam();
+	    }
+	    else if ((dataClass == Double.class) || (dataClass == Float.class))
+	    {
+	        param = new DoubleParam();
+	    }
+	    else if (dataClass == String.class)
+	    {
+	        param = new TextParam();
+	    }
+	    else if ( dataClass == URL.class )
+	    {
+	        logger.log (Level.WARNING, "Parameter of unsupported type will be lost; ''{0}'' = {1} type.", new Object[]{item.getInfo().getName(), dataClass.getSimpleName()});
+		continue;
+	    }
+	    else
+	    {
+	        logger.warning ("The data type, for the custom parameter is not supported. Supported datatypes include char, int, short, long, float and double");
+	        continue;
+	    }
+	    
+	    // Load our Param with StarTable parameter info.
+	    this.loadParam( item, param );
+	    
+	    // How is Utype for custom parameters defined/propogated?
+	    
+	    // Set ID which is not included in the load (should it?)
+	    //param.setId( item.getInfo().getAuxDatum(VOStarTable.ID_INFO).getValue().toString() );
+	    if (! param.isSetInternalId())
+	    {
+	        // create an alternative id for when the custom id is not set
+	        param.setInternalId( "_customId" + this.customRefCount );
+	        this.customRefCount++;
+	    }
+	    
+            try
+	    {
+	        // NOTE: Here we add all custom parameters on the Segment Level.
+	        // May want to identify the base by interpreting the Utype according
+	        // to the Utype extension rules and place the parameter on that object
+	        // so that it would be serialized in the same grouping.
+                seg.addCustomParam( param );
+            }
+            catch (SedException exp)
+            {
+                logger.warning(exp.getMessage());
+            }
+
+	    itr.remove();
+	}
     }
 
 
     /**
      * Populate points with custom data found in the segment
      */
-    private void  processSegmentCustomData (Segment segment)
+    private void  distributeCustomData (Segment segment)
     {
         List<Point> points;
         ArrayOfPoint dataPoints;
@@ -265,7 +805,6 @@ public class VOTableMapper extends SedMapper
         // write the rest of the custom data to the points
         for (String id : this.customData.keySet ())
         {
-
             data = this.customData.get(id);
 
             for (int ii=0; ii<data.size (); ii++)
@@ -289,2546 +828,521 @@ public class VOTableMapper extends SedMapper
     }
 
 
-               
+    private void setCustomPointData( VOStarTable starTable, int iCol )
+                throws SedParsingException, IOException
+    {
+	ColumnInfo infoCol = starTable.getColumnInfo(iCol);
+	int nrows = (int)starTable.getRowCount();
 
+	boolean updateCustomRefCount = false;
+
+	String id = null;
+	if ( infoCol.getAuxDatum(VOStarTable.ID_INFO) != null )
+	    id = infoCol.getAuxDatum(VOStarTable.ID_INFO).getValue().toString();
+
+	String idtag = null;
+	if ( id == null )
+	    idtag = "_customId"+this.customRefCount;
+	else
+	    idtag = id;
+
+	/* Param list to hold custom data */
+	List <Param> params = new ArrayList<Param>( nrows );
+
+	/* Determine data type */
+	Class dataClass = infoCol.getContentClass();
+
+	for ( int iRow = 0; iRow < nrows; iRow++ )
+	{
+	    Param param = null;
+	    if ((dataClass == Integer.class) || (dataClass == Long.class) || (dataClass == Short.class))
+	    {
+		param = this.newIntParam( starTable.getCell( iRow, iCol ), infoCol );
+	    }
+	    else if ((dataClass == Double.class) || (dataClass == Float.class))
+	    {
+		param = this.newDoubleParam( starTable.getCell( iRow, iCol ), infoCol );
+	    }
+	    else if (dataClass == String.class)
+	    {
+		param = this.newTextParam( starTable.getCell( iRow, iCol ), infoCol );
+	    }
+	    else
+		logger.warning ("The data type, for the custom data is not supported. Supported datatypes include char, int, short, long, float and double");
+                        
+	    if (param == null)
+	    	param = new Param();
+                        
+	    // if the field is potentially referenced somewhere
+	    // store the params into a table otherwise add it
+	    // directly to the point
+	    if ( id != null )
+	    {
+	        param.setId( id );
+		params.add(param);
+	    }
+	    else
+	    {
+	        // every field needs to have an id -- create one
+	        param.setInternalId( idtag );
+	        updateCustomRefCount = true;
+
+		// Adding custom column to list.
+		params.add(param);
+	    }
+            
+	}
+	if (updateCustomRefCount)
+	    this.customRefCount++;
+	
+	if ( idtag != null)
+	    this.customData.put( idtag, params );
+
+    }
 
     /**
-     * Loop through the groups and subgroups, updating the segment 
-     * with relevant parameters.
+     *  Set a particular non-Param type field of a CharacterizationAxis 
+     *   from StarTable information
+     * 
      */
-    private void recurseGroup(GroupElement topgroup,
-                              Group parent,
-                              List<? extends Group> dataParent) 
-        throws SedParsingException
+    private void setCharAxisField( CharacterizationAxis axis, int utypeNum, DescribedValue item )
     {
-
-        // This will be used in several cases.
-        Segment segment = null;
-        String utype = topgroup.getAttribute(VOTableKeywords._UTYPE);
-        GroupElement[] subgroups = topgroup.getGroups();
-        Group newParent = parent;
-        List<? extends Group> newDataParent = null;
-        FieldElement[] fields = topgroup.getFields ();
-        boolean dataSubGroup = false;
-
-        int utypeIdx = VOTableKeywords.getUtypeFromString( utype, this.namespace );
-
-        //Figure out which GROUP we are dealing with
-        switch(utypeIdx)
-        {
-            case VOTableKeywords.TARGET:
-                if (parent instanceof Segment)
-                    this.setTargetParams( ((Segment)parent).createTarget (), topgroup.getParams());
-                else
-                {
-                    logger.warning ("Invalid parent. Expected segment");
-                    break;
-                }
-
-                newParent = ((Segment)parent).getTarget ();
-                break;
-
-            case VOTableKeywords.SEG_CS:
-                if (parent instanceof Segment)
-                {
-                    CoordSys coordSys = new CoordSys();
-                    ((Segment)parent).setCoordSys( coordSys );
-                    coordSys.createCoordFrame().clear();
-                    ParamElement[] params = topgroup.getParams();
-                    this.setCoordSysParams( coordSys, params );
-                    newParent = coordSys;
-                }
-                else
-                    logger.warning ("Invalid parent. Expected segment");
-                break;
-            case VOTableKeywords.SEG_CS_SPACEFRAME:
-                if (parent instanceof CoordSys)
-                {
-                    CoordSys coordSys = (CoordSys)parent;
-                    SpaceFrame spaceFrame = new SpaceFrame();
-                    coordSys.createCoordFrame().add( spaceFrame );   
-                    this.setCoordFrameParams( spaceFrame, topgroup.getParams());
-                    newParent = spaceFrame;
-                }
-                else
-                    logger.warning ("Invalid parent. Expected CoordSys");
-                break;
-
-            case VOTableKeywords.SEG_CS_TIMEFRAME:
-                if (parent instanceof CoordSys)
-                {
-                    CoordSys coordSys = (CoordSys)parent;
-                    TimeFrame timeFrame = new TimeFrame();
-                    coordSys.createCoordFrame().add( timeFrame );
-                    this.setCoordFrameParams( timeFrame, topgroup.getParams());
-                    newParent = timeFrame;
-                }
-                else
-                    logger.warning ("Invalid parent. Expected CoordSys");
-                break;
-
-            case VOTableKeywords.SEG_CS_SPECTRALFRAME:
-                if (parent instanceof CoordSys)
-                {
-                    CoordSys coordSys = (CoordSys)parent;
-                    SpectralFrame spectralFrame = new SpectralFrame();
-                    coordSys.createCoordFrame().add( spectralFrame );
-                    this.setCoordFrameParams( spectralFrame, topgroup.getParams());
-                    newParent = spectralFrame;
-                }    
-                else
-                    logger.warning ("Invalid parent. Expected CoordSys");
-                break;
-
-            case VOTableKeywords.SEG_CS_REDFRAME:
-                if (parent instanceof CoordSys)
-                {
-                    CoordSys coordSys = (CoordSys)parent;
-                    RedshiftFrame redshiftFrame = new RedshiftFrame();
-                    coordSys.createCoordFrame().add( redshiftFrame );
-                    this.setCoordFrameParams( redshiftFrame, topgroup.getParams());
-                    newParent = redshiftFrame;
-                }
-                else
-                    logger.warning ("Invalid parent. Expected CoordSys");
-                break;
-
-            case VOTableKeywords.SEG_CS_GENFRAME:
-                if (parent instanceof CoordSys)
-                {
-                    CoordSys coordSys = (CoordSys)parent;
-                    CoordFrame coordFrame = new CoordFrame();
-                    coordSys.createCoordFrame().add( coordFrame );
-                    this.setCoordFrameParams( coordFrame, topgroup.getParams());
-                    newParent = coordFrame;
-                }
-                else
-                    logger.warning ("Invalid parent. Expected CoordSys");
-                break;
-            case VOTableKeywords.SEG_CHAR:
-                if (parent instanceof Segment)
-                {
- 
-                    segment = (Segment)parent;
- //                   this.setCharAxisParams(segment.createChar(), topgroup.getParams ());
-
-                    newParent = segment.createChar ();
-                }
-                else
-                    logger.warning ("(CHAR) Invalid parent. Expected Segment");
-                break;
-
-            case VOTableKeywords.SEG_CURATION:
-            case VOTableKeywords.SEG_CURATION_CONTACT:
-                Curation curation = null;
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    curation = segment.createCuration ();
-                }
-                else if (parent instanceof Curation)
-                    curation = (Curation)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Curation");
-                    break;
-                }
-                this.setCurationParams( curation, topgroup.getParams ());
-                newParent = curation;
-                break;
-            case VOTableKeywords.SEG_DATAID:
-                DataID dataId = null;
-
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    if (segment.getDataID() == null)
-                        segment.setDataID( new DataID());
-                    dataId = segment.getDataID();
-                }
-                else if (parent instanceof DerivedData)
-                    dataId = (DataID)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or DerivedData");
-                    break;
-                }
-
-                this.setDataIDParams(dataId, topgroup.getParams ());
-
-                newParent = dataId;
-                break;
-
-            case VOTableKeywords.SEG_DD:
-            case VOTableKeywords.SEG_DD_REDSHIFT:
-            case VOTableKeywords.SEG_DD_REDSHIFT_VALUE:
-            case VOTableKeywords.SEG_DD_REDSHIFT_QUALITY:
-            case VOTableKeywords.SEG_DD_REDSHIFT_RESOLUTION:
-            case VOTableKeywords.SEG_DD_REDSHIFT_ACC:
-            case VOTableKeywords.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
-            case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERR:
-                DerivedData derived = null;
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    derived = segment.createDerived();
-                }
-                else if ( parent instanceof DerivedData )
-                    derived = (DerivedData)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or DerivedData");
-                    break;
-                }
-
-                this.setDerivedDataParams(derived, topgroup.getParams ());
-
-                newParent = derived;
-                break;
-
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_SAMPPREC:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_BOUNDS:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_SUPPORT:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC:
-            case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC:
-
-                CharacterizationAxis spatialAxis = null;
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    spatialAxis = segment.createChar ().createSpatialAxis ();
-                }
-                else if (parent instanceof Characterization)
-                    spatialAxis = ((Characterization)parent).createSpatialAxis();
-                else if (parent instanceof CharacterizationAxis)
-                    spatialAxis = (CharacterizationAxis)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Characterization or CharacterizationAxis");
-                    break;
-                }
-
-                if (utypeIdx == VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC)
-                    this.setAccuracyParams( spatialAxis.createAccuracy (), 
-                                          topgroup.getParams() );
-                else if (utypeIdx == VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC)
-                    this.setAccuracyParams( spatialAxis.createCoverage().
-                                          createLocation().createAccuracy(),
-                                          topgroup.getParams() );
-
-                else
-                    this.setCharAxisParams( spatialAxis, topgroup.getParams () );
-
-                newParent = spatialAxis;
-                break;
-
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_SAMPPREC:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_SUPPORT:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC:
-            case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC:
-                CharacterizationAxis timeAxis = null;
-
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    timeAxis = segment.createChar ().createTimeAxis ();
-                }
-                else if (parent instanceof Characterization)
-                    timeAxis = ((Characterization)parent).createTimeAxis();
-                else if (parent instanceof CharacterizationAxis)
-                    timeAxis = (CharacterizationAxis)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Characterization or CharacterizationAxis");
-                    break;
-                }
-               
-
-
-                if (utypeIdx == VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC)
-                    this.setAccuracyParams( timeAxis.createAccuracy (), 
-                                          topgroup.getParams() );
-                else if (utypeIdx == VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC)
-                    this.setAccuracyParams( timeAxis.createCoverage().
-                                          createLocation().createAccuracy(),
-                                          topgroup.getParams() );
-                else
-                    this.setCharAxisParams( timeAxis, topgroup.getParams () );
-
-                newParent = timeAxis;
-                break;
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_SAMPPREC:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
-            case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
-
-                SpectralCharacterizationAxis spectralAxis = null;
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    spectralAxis = segment.createChar ().createSpectralAxis ();
-                }
-                else if (parent instanceof Characterization)
-                    spectralAxis = ((Characterization)parent).createSpectralAxis();
-                else if (parent instanceof SpectralCharacterizationAxis)
-                    spectralAxis = (SpectralCharacterizationAxis)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Characterization or SpectralCharacterizationAxis");
-                    break;
-                }
-
-                // handle accuracy params specially
-                if (utypeIdx == VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC)
-                    this.setAccuracyParams( spectralAxis.createAccuracy (), 
-                                          topgroup.getParams() );
-                else if (utypeIdx == VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC)
-                    this.setAccuracyParams( spectralAxis.createCoverage().
-                                          createLocation().createAccuracy(),
-                                          topgroup.getParams() );
-
-                else
-                    this.setCharAxisParams( spectralAxis, topgroup.getParams() );
-                newParent = spectralAxis;
-                break;
-
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_SUPPORT:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC:
-            case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC:
-                CharacterizationAxis fluxAxis = null;
-
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    fluxAxis = segment.createChar ().createFluxAxis ();
-                }
-                else if (parent instanceof Characterization)
-                    fluxAxis = ((Characterization)parent).createFluxAxis();
-                else if (parent instanceof CharacterizationAxis)
-                    fluxAxis = (CharacterizationAxis)parent;
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Characterization or CharacterizationAxis");
-                    break;
-                }
-            
-                if (utypeIdx == VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC)
-                    this.setAccuracyParams( fluxAxis.createAccuracy (), 
-                                          topgroup.getParams() );
-                else if (utypeIdx == VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC)
-                    this.setAccuracyParams( fluxAxis.createCoverage().
-                                          createLocation().createAccuracy(),
-                                          topgroup.getParams() );
-                else
-
-                    this.setCharAxisParams( fluxAxis, topgroup.getParams() );
-                newParent = fluxAxis;
-                break;
-            case VOTableKeywords.SEG_CHAR_CHARAXIS:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_SAMPPREC:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_COV:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_SUPPORT:
-            case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC:
- //           case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC:
-                List<CharacterizationAxis> charAxisList = null;
-                CharacterizationAxis charAxis;
-
-                if (parent instanceof Segment)
-                {
-                    segment = (Segment)parent;
-                    charAxisList = segment.createChar ().createCharacterizationAxis ();
-                    newParent = segment.getChar ();
-                }
-                else if (parent instanceof Characterization)
-                {
-                    charAxisList = ((Characterization)parent).createCharacterizationAxis();
-                    newParent = parent;
-        		} 
-                else
-                {
-                    logger.warning ("Invalid parent. Expected Segment or Characteriztion");
-                    break;
-                }
-
-                // if this is a new axis add it to the list
-                // or if there are no axes on the list
-                // otherwise use the last one on the list
-                if ((utypeIdx == VOTableKeywords.SEG_CHAR_CHARAXIS) ||
-                     charAxisList.isEmpty ())
-                {
-                    charAxis = new CharacterizationAxis ();
-                    charAxisList.add (charAxis);
-                }
-                else
-                    charAxis = charAxisList.get (charAxisList.size () - 1);
-
-
-                if (utypeIdx == VOTableKeywords.SEG_CHAR_CHARAXIS_ACC)
-                    this.setAccuracyParams( charAxis.createAccuracy (),
-                                          topgroup.getParams() );
- /*               else if (utypeIdx == VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC)
-                    this.setAccuracyParams( charAxis.createCoverage().
-                                          createLocation().createAccuracy(),
-                                          topgroup.getParams() );
- */
-                else
-
-                    this.setCharAxisParams( charAxis, topgroup.getParams() );
-                break;
-
-            case VOTableKeywords.SEG_DATA:
-            {
-
-                List<Point> data = null;
-                ParamElement params[] = topgroup.getParams ();
-                boolean customParamSet = false;
-                Param param;
-
-                if (parent instanceof Segment )
-                {
-                    segment = (Segment)parent;
-                    ArrayOfPoint points = segment.getData();
-                    data = points.createPoint ();
-                }
-                else
-                {
-                    logger.warning ("(DATA) Invalid parent. Expected Segment");
-                    break;
-                }
-                for (ParamElement pp : params)
-                {
-                    for (Point pnt : data)
-                    {
-                        param = this.setCustomParam (pnt, pp);
-                        if ((param != null) && (!param.isSetInternalId ()))
-                        {
-                            // create an alternative id for when the custom id is not set
-                            param.setInternalId ("_customId"+this.customRefCount);
-                            customParamSet = true;
-                        }
-                    }
-                    if (customParamSet)
-                        this.customRefCount++;
-                }
-
-
-                this.setCustomData (data, fields);
-
-                newDataParent = data;
-                dataSubGroup = true;
-                break;
-            }
-            case VOTableKeywords.SEG_DATA_SPECTRALAXIS:
-            case VOTableKeywords.SEG_DATA_TIMEAXIS:
-            {
-                List<Point> data = null;
-                List<SedCoord> coordData;
-
-                if (parent instanceof Segment )
-                {
-                    segment = (Segment)parent;
-                    ArrayOfPoint points = segment.getData();
-                    data = points.createPoint ();
-                }
-                else
-                {
-                    logger.warning ("(DATA_STAXIS) Invalid parent. Expected Segment");
-                    break;
-                }
-
-                coordData = new ArrayList<SedCoord> (data.size ());
-                for (Point pnt : data)
-                {
-                    if (utypeIdx == VOTableKeywords.SEG_DATA_SPECTRALAXIS)
-                        coordData.add (pnt.createSpectralAxis ());
-                    else
-                        coordData.add (pnt.createTimeAxis ());
-                }
-
-                this.setSedCoordParams (coordData, topgroup.getParams ());
-                this.setCustomData (coordData, fields);
-
-                newDataParent = coordData;
-                dataSubGroup = true;
-                break;
-           
-            }
-
-            case VOTableKeywords.SEG_DATA_FLUXAXIS:
-            case VOTableKeywords.SEG_DATA_BGM:
-            {
-                List<Point> data = null;
-                List<SedQuantity> quantityData;
-
-                if (parent instanceof Segment )
-                {
-                    segment = (Segment)parent;
-                    ArrayOfPoint points = segment.getData();
-                    data = points.createPoint ();
-                }
-                else
-                {
-                    logger.warning ("(DATA_FBAXIS) Invalid parent. Expected Segment");
-                    break;
-                }
-
-                quantityData = new ArrayList<SedQuantity> (data.size ());
-                for (Point pnt : data)
-                {
-                    if (utypeIdx == VOTableKeywords.SEG_DATA_FLUXAXIS)
-                        quantityData.add (pnt.createFluxAxis ());
-                    else
-                        quantityData.add (pnt.createBackgroundModel ());
-                }
-
-                this.setSedQuantityParams (quantityData, topgroup.getParams ());
-                this.setCustomData (quantityData, fields);
-                newDataParent = quantityData;
-                dataSubGroup = true;
-                break;
-            }
-
-            case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC:
-            case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC:
-            case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC:
-            case VOTableKeywords.SEG_DATA_BGM_ACC:
-            {
-                List<Point> data = null;
-                List<Accuracy> accuracyData;
-
-                if (parent instanceof Segment )
-                {
-                    segment = (Segment)parent;
-                    ArrayOfPoint points = segment.getData();
-                    data = points.createPoint ();
-                }
-                else
-                {
-                    logger.warning ("(DATA_AXIS_ACC) Invalid parent. Expected Segment");
-                    break;
-                }
-
-                accuracyData = new ArrayList<Accuracy> (data.size ());
-                for (Point pnt : data)
-                {
-                    if (utypeIdx == VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC)
-                        accuracyData.add (pnt.createSpectralAxis ().createAccuracy ());
-                    else if (utypeIdx == VOTableKeywords.SEG_DATA_FLUXAXIS_ACC)
-                        accuracyData.add (pnt.createFluxAxis ().createAccuracy ());
-                    else if (utypeIdx == VOTableKeywords.SEG_DATA_TIMEAXIS_ACC)
-                        accuracyData.add (pnt.createTimeAxis ().createAccuracy ());
-                    else
-                        accuracyData.add (pnt.createBackgroundModel ().createAccuracy ());
-                }
-
-                this.setDataAccuracyParams (accuracyData, topgroup.getParams ());
-                this.setCustomData (accuracyData, fields);
-
-                newDataParent = accuracyData;
-                break;
-
-            }
-
-            default:
-            {
-                // the group is not known
-
-                ParamElement []params = topgroup.getParams();
-                dataSubGroup = false;
-                
-                if (dataParent != null)
-		{
-		    // Unknown Group under Data
-                    dataSubGroup = true;
-		}
-                else if (parent instanceof Segment)
-		{
-		    // Unknown Group on Segment.. see if it has FIELDS, which would put it under Data
-                    dataSubGroup = this.checkForFields (topgroup);
-		}
-                
-                if (dataSubGroup)
-                {
-                    if (dataParent == null)
-                    {
-			// have Group with fields on Segment.
-                        ArrayOfPoint points;
-                        segment = (Segment)parent;
-                        points = segment.createData();
-                        dataParent = points.createPoint ();
-                    }
-
-                    // process this group and its sub groups
-                    this.recurseDataGroup (topgroup, dataParent);
-
-                    // all sub groups would have been processed so clear them out
-                    subgroups = new GroupElement [0];
-                    newDataParent = null;
-                }
-                else
-                {
-                    // create a new group and add it to the parent
-                    Group customGroup = new Group ();
-                    customGroup.setGroupId (topgroup.getID ());
-                    try {
-						parent.addCustomGroup  (customGroup);
-						
-					} catch (SedNullException exp) {
-						logger.warning(exp.getMessage ());
-						break;
-					} catch (SedInconsistentException exp) {
-						logger.warning(exp.getMessage ());
-						break;
-					}   
-					
-                    // add in all the parameters
-                    for (ParamElement param : params)
-                        this.setCustomParam (customGroup, param);
-
-                    newParent = customGroup;			
-
-                }
-                break;
-            }
-        }
-
-        // Clean up the fields
-        // If the parent is not a segment or data then fields
-        // are invalid. Remove any invalid fields from the field table.
-        if (!(newParent instanceof Segment) && !dataSubGroup)
-        {
-            for (FieldElement field : fields)
-            {
-                String id = field.getID ();
-                logger.warning ("The field, "+id+", is referenced under an invalid group and will be ignored. It must be part of the segment or a data specific subgroup.");
-
-                this.customData.remove (id);
-            }
-        }
-
-        for(int ii=0; ii<subgroups.length; ii++)
-        {
-            this.recurseGroup(subgroups[ii],
-                               newParent,
-                               newDataParent);
-        }
-
+	String value = null;
+
+	if ( axis == null )
+	    return;
+
+	// Extract the values (as string)
+	if ( item.getValue() == null )
+	    value = SedConstants.DEFAULT_STRING ;
+	else
+	    value = item.getValue().toString() ;
+
+	switch(utypeNum)
+	{
+	case Utypes.SEG_CHAR_FLUXAXIS_NAME:
+	case Utypes.SEG_CHAR_SPATIALAXIS_NAME:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_NAME:
+	case Utypes.SEG_CHAR_TIMEAXIS_NAME:
+	    axis.setName( value );
+
+	    /* serializations may put ucd and unit on name parameter. */
+	    value = item.getInfo().getUCD();
+	    if ( value != null )
+		axis.setUcd( value );
+
+	    value = item.getInfo().getUnitString();
+	    if ( value != null )
+		axis.setUnit( value );
+	    break;
+
+	case Utypes.SEG_CHAR_FLUXAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UNIT:
+	case Utypes.SEG_CHAR_TIMEAXIS_UNIT:
+	    axis.setUnit( value );
+	    break;
+
+	case Utypes.SEG_CHAR_FLUXAXIS_UCD:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UCD:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UCD:
+	case Utypes.SEG_CHAR_TIMEAXIS_UCD:
+	    axis.setUcd( value );
+	    break;
+
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_RANGE:
+	    Interval range = new Interval();
+	    loadParam( item, range );
+	    axis.createCoverage().createSupport().createRange().add( range );
+
+	default:
+	    break;
+	}
+
+	return;
     }
 
 
     /**
-     * Loop through the groups and subgroups, updating the data
-     * points with relevant parameters and fields.
+     *  Set a particular non-Param type field of a CoordFrame Type object 
+     *   from StarTable information
+     * 
      */
-    private void recurseDataGroup(GroupElement topgroup,
-                              List<? extends Group> parent) 
-        throws SedParsingException
+    private void setCoordFrameField( CoordFrame frame, int utypeNum, DescribedValue item )throws SedInconsistentException
     {
-        // This will be used in several cases.
-        GroupElement[] subgroups = topgroup.getGroups();
-        FieldElement[] fields = topgroup.getFields ();
-        ParamElement[] params = topgroup.getParams ();
-        List<Group> customGroups = new ArrayList<Group> ();
-        Param sedParam;
-        Group customGroup;
+	String value = null;
 
-        for (Group group : parent)
-        {
-            customGroup = new Group (this.subGroupCount);
-            customGroup.setGroupId (topgroup.getID ());
-	    // ****
-	    // MCD TEMP: SET UTYPE and NAME and UCD ??
-	    // ****
-            customGroups.add (customGroup);
-            try {
-		group.addCustomGroup  (customGroup);
-	    } catch (SedNullException exp) {
-		logger.warning(exp.getMessage ());
-		continue;
-	    } catch (SedInconsistentException exp) {
-		logger.warning(exp.getMessage ());
+	if ( frame == null )
+	    return;
+
+	// Extract the values (as string)
+	if ( item.getValue() == null )
+	    value = SedConstants.DEFAULT_STRING ;
+	else
+	    value = item.getValue().toString() ;
+
+	switch(utypeNum)
+	{
+	case Utypes.SEG_CS_GENFRAME_ID:
+	case Utypes.SEG_CS_REDFRAME_ID:
+	case Utypes.SEG_CS_SPECTRALFRAME_ID:
+	case Utypes.SEG_CS_TIMEFRAME_ID:
+	case Utypes.SEG_CS_SPACEFRAME_ID:
+	    if ( frame.isSetId() )
+		throw new SedInconsistentException ("CoordFrame field already set, cannot have multiple definitions.");
+	    else
+		frame.setId( value );
+
+	    break;
+	case Utypes.SEG_CS_GENFRAME_UCD:
+	case Utypes.SEG_CS_REDFRAME_UCD:
+	case Utypes.SEG_CS_SPECTRALFRAME_UCD:
+	case Utypes.SEG_CS_TIMEFRAME_UCD:
+	case Utypes.SEG_CS_SPACEFRAME_UCD:
+	    if ( frame.isSetUcd() )
+		throw new SedInconsistentException ("CoordFrame field already set, cannot have multiple definitions.");
+	    else
+		frame.setUcd( value );
+	    break;
+	case Utypes.SEG_CS_GENFRAME_NAME:
+	case Utypes.SEG_CS_REDFRAME_NAME:
+	case Utypes.SEG_CS_SPECTRALFRAME_NAME:
+	case Utypes.SEG_CS_TIMEFRAME_NAME:
+	case Utypes.SEG_CS_SPACEFRAME_NAME:
+	    if ( frame.isSetName() )
+		throw new SedInconsistentException ("CoordFrame field already set, cannot have multiple definitions.");
+	    else
+	    {
+		frame.setName( value );
+
+		/* serializations may put ucd on name parameter. */
+		value = item.getInfo().getUCD();
+		if ( value != null )
+		    frame.setUcd( value );
+	    }
+	    break;
+	case Utypes.SEG_CS_GENFRAME_REFPOS:
+	case Utypes.SEG_CS_REDFRAME_REFPOS:
+	case Utypes.SEG_CS_SPECTRALFRAME_REFPOS:
+	case Utypes.SEG_CS_TIMEFRAME_REFPOS:
+	case Utypes.SEG_CS_SPACEFRAME_REFPOS:
+	    if ( frame.isSetReferencePosition() )
+		throw new SedInconsistentException ("CoordFrame field already set, cannot have multiple definitions.");
+	    else
+		frame.setReferencePosition( value );
+
+	    break;
+
+	case Utypes.SEG_CS_REDFRAME_DOPPLERDEF:
+	    try {
+		((RedshiftFrame)frame).setDopplerDefinition( value );
+	    } catch (ClassCastException e) {
+		//logger.warning ("The utype, "+ utype + " is expected to be part of RedshiftFrame. The parameter will be ignored.");
+	    }
+	    break;
+
+	default:
+	    break;
+	}
+
+	return;
+    }
+
+
+    private Object loadValue( DescribedValue item, Object obj )
+    {
+	Object outval = null;
+
+    	if ((item == null)|| (obj == null) )
+	    return outval;
+
+
+	if ( obj instanceof String )
+	{
+	    if ( item.getValue() == null )
+		obj = SedConstants.DEFAULT_STRING ;
+	    else
+		obj = item.getValue().toString();
+	}
+	else if (( obj instanceof DoubleParam )||
+		 ( obj instanceof IntParam ) ||
+		 ( obj instanceof TextParam ) ||
+		 ( obj instanceof DateParam )
+		 )
+	{
+	    loadParam( item, (Param)obj );
+	}
+	else if ( obj instanceof Interval  ) 
+	{
+	    loadParam( item, (Interval)obj );
+	}
+	else if ( obj instanceof ArrayList  ) 
+	{
+	    loadParam( item, (ArrayList)obj );
+	}
+	else
+	    logger.log (Level.WARNING, "loadValue:  {0} = Unsupported data type - {1}", new Object[]{item.getInfo().getName(), obj.getClass().getSimpleName()});
+
+	outval = obj;
+
+	return outval;
+    }
+
+    /**
+     *  Load a Param Type object from StarTable information
+     *  Param Types:
+     *    Param
+     *    DateParam
+     *    DoubleParam
+     *    IntParam
+     *    RangeParam
+     *    SkyRegion
+     *    TextParam
+     *    TimeParam
+     */
+    private void loadParam( DescribedValue item, Param param )
+    {
+    	if ((item == null)||(param == null))
+	    return;
+
+	if ( item.getValue() == null )
+	    param.setValue( SedConstants.DEFAULT_STRING );
+	else
+	    param.setValue( item.getValue().toString() );
+	
+	if ( item.getInfo() != null )
+	{
+	    param.setName( item.getInfo().getName() );
+	    param.setUcd( item.getInfo().getUCD() );
+	
+	    if ( param instanceof DoubleParam )
+		((DoubleParam)param).setUnit( item.getInfo().getUnitString() );
+	    else if ( param instanceof IntParam )
+		((IntParam)param).setUnit( item.getInfo().getUnitString() );
+	    else if ( param instanceof TimeParam )
+		((TimeParam)param).setUnit( item.getInfo().getUnitString() );
+	    else if ( param instanceof RangeParam )
+		((RangeParam)param).setUnit( item.getInfo().getUnitString() );
+	}
+
+	return;
+    }
+
+    /**
+     *  Load a Param from StarTable information
+     */
+    private void loadParam ( DescribedValue item, List<? extends Param> params )
+    {
+    	if ((item == null)||(params == null))
+	    return;
+
+	// Local variables for parameter info.. pertains to all members of the list.
+	String name  = null;
+	String ucd   = null;
+	String unit  = null;
+	String[] values = null;
+
+	if ( item.getInfo() != null )
+	{
+	    name = item.getInfo().getName();
+	    ucd  = item.getInfo().getUCD();
+	    unit = item.getInfo().getUnitString();
+	}
+
+	values = splitValuesIntoStrings( item.getValue() );
+
+	int ii = 0;
+	for ( Param param : params )
+	{
+	    // Some items may have either 1 or 2 values (*Axis.Coverage.Location), 
+	    // If we are provided values, only set as many parameters as values.
+	    // Null 'extra' parameters on list to propogate this fact.
+	    if ( ( values != null ) && ( ii == values.length ) )
+	    {
+		params.set( ii, null );
 		continue;
 	    }
 
-            // add in all the parameters
-            for (int ii=0; ii<params.length; ii++) 
-            {
-                ParamElement param = params[ii];
+	    if ( param != null )
+	    {
+	    	param.setName( name );
+	    	param.setUcd( ucd );
+		
+	    	if ( param instanceof DoubleParam )
+	    	    ((DoubleParam)param).setUnit( unit );
+	    	else if ( param instanceof IntParam )
+	    	    ((IntParam)param).setUnit( unit );
+	    	else if ( param instanceof TimeParam )
+	    	    ((TimeParam)param).setUnit( unit );
+	    	else if ( param instanceof RangeParam )
+	    	    ((RangeParam)param).setUnit( unit );
 
-                sedParam = this.setCustomParam (customGroup, param);
-                if ((sedParam != null) && (!sedParam.isSetInternalId ()))
-                    sedParam.setInternalId ("_customId"+(this.customRefCount+ii));
-            }
-        }
-        this.customRefCount += params.length;
+		if ( (values == null) || (values[ii] == null ) )
+		    param.setValue( SedConstants.DEFAULT_STRING );
+		else
+		    param.setValue( values[ii] );
+	    }
+	    ii++;
+	}
 
-        this.setCustomData (customGroups, fields);
-        this.subGroupCount++;
-
-        for(int ii=0; ii<subgroups.length; ii++)
-            this.recurseDataGroup(subgroups[ii],
-                               customGroups);
-
-       
+	return;
     }
 
     /**
-     * Populate the target from the list params 
+     *  Load an Interval object from StarTable Info
+     *  Note: this is not really a Param Type object, but pretty
+     *        close, so we overload the method.
      */
-    private void setTargetParams(Target target, ParamElement[] params) throws SedParsingException
+    private void loadParam( DescribedValue item, Interval param )
     {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
+    	if ((item == null)||(param == null))
+	    return;
 
-            switch ( utypeIdx )
-            {
-                case VOTableKeywords.TARGET_NAME:
-                    target.setName( this.newTextParam( params[ pii ]));
-                    break;
-                case VOTableKeywords.TARGET_DESCRIPTION:
-                    target.setDescription( this.newTextParam( params[ pii ]));
-                    break;
-                case VOTableKeywords.TARGET_CLASS:
-                    target.setTargetClass( this.newTextParam( params[ pii ]));
-                    break;
-                case VOTableKeywords.TARGET_SPECTRALCLASS:
-                    target.setSpectralClass( this.newTextParam( params[ pii ]));
-                    break;
-                case VOTableKeywords.TARGET_POS:
-                    target.setPos( this.newPositionParam( params[ pii ] ));
-                    break;
-                case VOTableKeywords.TARGET_VARAMPL:
-                    target.setVarAmpl( this.newDoubleParam (params[ pii ]));
-                    break;
-                case VOTableKeywords.TARGET_REDSHIFT:
-                    target.setRedshift( this.newDoubleParam( params[ pii ]));
-                    break;
-                default:
-                    this.setCustomParam (target, params[pii]);
-                    break;
-            }
-        }
+	String name  = null;
+	String ucd   = null;
+	String unit  = null;
+
+	String[] sValues = null;
+
+	if ( item.getInfo() != null )
+	{
+	    name = item.getInfo().getName();
+	    ucd  = item.getInfo().getUCD();
+	    unit = item.getInfo().getUnitString();
+	}
+
+	sValues = splitValuesIntoStrings( item.getValue() );
+	if ( sValues != null )
+	{
+	    if ( sValues.length < 2 )
+		logger.log (Level.WARNING, "Insufficent values supplied for Interval. Expected two (2) got {0}.", sValues.length);
+
+	    for ( int ii = 0; ii < sValues.length; ii++ )
+	    {
+		if ( ii == 0 )		
+		    param.setMin( new DoubleParam( sValues[ii], "", ucd, unit) );
+		else
+		    param.setMax( new DoubleParam( sValues[ii], "", ucd, unit) );
+	    }
+	}
+
+        return;
     }
 
-    /**
-     * Populate the Segment from the list params
-     */
-    private void setSegmentParams( Segment segment,
-                ParamElement[] params ) throws SedParsingException
+    private String[] splitValuesIntoStrings( Object invals )
     {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-            
-            switch (utypeIdx)
-            {
-                case VOTableKeywords.DATAMODEL:
-                    // validate against the data model
-                    break;
-                case VOTableKeywords.TYPE:
-                    segment.setType( this.newTextParam( params[ pii ] ));
-                    break;
-                case VOTableKeywords.LENGTH:
-                    break;
-                case VOTableKeywords.TIMESI:
-                    segment.setTimeSI( this.newTextParam( params[ pii ] ));
-                    break;
-                case VOTableKeywords.SPECTRALSI:
-                    segment.setSpectralSI( this.newTextParam( params[ pii ] ));
-                    break;
-                case VOTableKeywords.FLUXSI:
-                    segment.setFluxSI( this.newTextParam( params[ pii ] ));
-                    break;
-                default:
-                    this.setCustomParam (segment, params[pii]);
-                    break;
-            }
-        }
-    }
-
-    /** 
-     * Add a custom parameter to a specified group
-     *
-     */
-    private Param setCustomParam (Group group, ParamElement param) throws SedParsingException
-    {
-        String datatype = param.getDatatype ();
-        String paramUtype = param.getAttribute(VOTableKeywords._UTYPE);
-        String utypeNamespace = VOTableKeywords.getNamespace(paramUtype);
-        Param pp = null;
-
-        if (paramUtype != "")
-        {
-            if (this.namespace != null)
-            {
-        	if ((utypeNamespace == null) || !(this.namespace.equals (utypeNamespace)))
-        	{
-        		logger.warning ("The utype, "+ paramUtype + " is not recognized and will be ignored.");
-        		return pp;
-        	}
-            }
-        }
-
-        if (datatype.equals ("int") || datatype.equals ("short") || datatype.equals ("long"))
-            pp = this.newIntParam (param);
-        else if (datatype.equals ("double") || datatype.equals ("float"))
-            pp = this.newDoubleParam (param);
-        else if (datatype.equals ("char"))
-            pp = this.newTextParam (param);
-/*        else if (datatype.equals ("date"))
-            pp = new DateParam (param.getValue(),
-                                   param.getName(),
-                                   param.getUcd());
-*/
-        else
-            logger.warning ("The data type, "+datatype+" for the custom param is not supported. Supported datatypes include char, int, and double");
-
-
-
-
-        if (pp != null)
-        {
-            pp.setId (param.getID ());
-
-            try
-            {
-                group.addCustomParam (pp);
-            }
-            catch (SedException exp)
-            {
-                logger.warning (exp.getMessage ());
-            }
-        }
-
-        return pp;
-    }
-
-    /**
-     * Sets the custom data specified by the id to the specified group
-     *
-     */
-    private void setCustomData (List<? extends Group> groups, FieldElement[] fields)
-        throws SedParsingException
-    {
-
-        List<Param> data; 
-        String id;
-        for (FieldElement field : fields)
-        {
-            id = field.getID ();
-            data = this.customData.get(id);
-            
-            if (data == null)
-            	continue;
-
-            for (int ii=0; ii<data.size (); ii++)
-            {
-                // NOTE we assume that the data was set up correctly such
-                // that the number of groups will equal or excede the number of
-                // data elements
-
-                try {
-					groups.get(ii).addCustomParam (data.get(ii));
-				} catch (SedNullException exp) {
-					logger.warning(exp.getMessage ());
-					continue;
-				} catch (SedInconsistentException exp) {
-					logger.warning(exp.getMessage ());
-					continue;
-				}
-            }
-
-            // each custom data should be used only once 
-            // remove it to indicate that it has been used
-            this.customData.remove (id);
-        }
-    }
-
-    /**
-     * This method takes care of PARAMs found within the Data section.
-     * This means that the data IS constant for each row of the table.
-     */
-    private void setSedQuantityParams( List<SedQuantity> data, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-            switch ( utypeIdx )
-            {
-                case VOTableKeywords.SEG_DATA_BGM_VALUE :
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_VALUE :
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-                    
-
-                    for (SedQuantity pnt : data)
-                        pnt.setValue((DoubleParam)param.clone () );
-                    break;
-                }
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_QUALITY:
-                case VOTableKeywords.SEG_DATA_BGM_QUALITY:
-                {
-                    IntParam param = this.newIntParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (SedQuantity pnt : data)
-                        pnt.setQuality((IntParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_DATA_BGM_RESOLUTION:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (SedQuantity pnt : data)
-                        pnt.setResolution((DoubleParam)param.clone ());
-                    break;
-                }
-                default:
-                {
-                    boolean customParamSet = false;
-                    Param param;
-                    for (SedQuantity pnt : data)
-                    {
-                        param = this.setCustomParam (pnt, params[pii]);
-                        if ((param != null) && (!param.isSetInternalId ()))
-                        {
-                            // create an alternative id for when the custom id is not set
-                            param.setInternalId ("_customId"+this.customRefCount);
-                            customParamSet = true;
-                        }
-                    }
-                    if (customParamSet)
-                        this.customRefCount++;
-
-                    
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * This method takes care of PARAMs found within the Data section.
-     * This means that the data IS constant for each row of the table.
-     */
-    private void setSedCoordParams( List<SedCoord> data, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace
-);
-
-            switch ( utypeIdx )
-            {
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_VALUE:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_VALUE :
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (SedCoord pnt : data)
-                        pnt.setValue((DoubleParam)param.clone () );
-                    break;
-                }
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (SedCoord pnt : data)
-                        pnt.setResolution((DoubleParam)param.clone ());
-                    break;
-                }
-
-                default:
-                {
-                    boolean customParamSet = false;
-                    Param param;
-                    for (SedCoord pnt : data)
-                    {
-                        param = this.setCustomParam (pnt, params[pii]);
-                        if ((param != null) && (!param.isSetInternalId ()))
-                        {
-                            // create an alternative id for when the custom id is not set
-                            param.setInternalId ("_customId"+this.customRefCount);
-                            customParamSet = true;
-                        }
-                    }
-                    if (customParamSet)
-                        this.customRefCount++;
-
-
-                    break;
-                }
-            }
-        }
-    }
-
-
-
-    /**
-     * This method takes care of PARAMs found within the Data section.
-     * This means that the data IS constant for each row of the table.
-     */
-    private void setDataAccuracyParams( List<Accuracy> data, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace);
-
-            switch ( utypeIdx )
-            {
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRLOW:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setStatErrLow((DoubleParam)param.clone () );
-                    break;
-                }
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRHIGH:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setStatErrHigh((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_SYSERR:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_SYSERR:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setSysError((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINLOW:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINLOW:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setBinLow((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINHIGH:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINHIGH:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setBinHigh((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINSIZE:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINSIZE:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setBinSize((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERR:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERR:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setStatError((DoubleParam)param.clone () );
-                    break;
-                }
-                case VOTableKeywords.SEG_DATA_BGM_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_CONFIDENCE:
-                {
-                    DoubleParam param = this.newDoubleParam( params[pii] );
-                    // create an alternative id for when the custom id is not set
-                    if (!param.isSetInternalId ())
-                    {
-                        param.setInternalId ("_customId"+this.customRefCount);
-                        this.customRefCount++;
-                    }
-
-                    for (Accuracy pnt : data)
-                        pnt.setConfidence((DoubleParam)param.clone () );
-                    break;
-                }
-                default:
-                {
-                    boolean customParamSet = false;
-                    Param param;
-                    for (Accuracy pnt : data)
-                    {
-                        param = this.setCustomParam (pnt, params[pii]);
-                        if ((param != null) && (!param.isSetInternalId ()))
-                        {
-                            // create an alternative id for when the custom id is not set
-                            param.setInternalId ("_customId"+this.customRefCount);
-                            customParamSet = true;
-                        }
-                    }
-                    if (customParamSet)
-                        this.customRefCount++;
-
-
-                    break;
-                }
-
-            }
-        }
-    }
-
-    /**
-     * Populate the DerivedData from the list params
-     */
-    private void setDerivedDataParams(DerivedData derived, ParamElement[] params)
-           throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-            switch(utypeIdx)
-            {
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINHIGH:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINLOW:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINSIZE:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_SYSERR:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERR:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
-                    Accuracy acc = derived.createRedshift ().createAccuracy ();
-
-                    ParamElement[] paramArray = { params[pii] };
-                    this.setAccuracyParams( acc, paramArray );
-                    break;
-
-                case VOTableKeywords.SEG_DD_REDSHIFT_RESOLUTION:
-                case VOTableKeywords.SEG_DD_REDSHIFT_QUALITY:
-                case VOTableKeywords.SEG_DD_REDSHIFT_VALUE:
-                {
-                    SedQuantity sqt = derived.createRedshift ();
-                    switch( utypeIdx )
-                    {
-                        case VOTableKeywords.SEG_DD_REDSHIFT_RESOLUTION:
-                            sqt.setResolution ( this.newDoubleParam(params[pii]));
-                            break;
-
-                        case VOTableKeywords.SEG_DD_REDSHIFT_QUALITY:
-                            sqt.setQuality ( this.newIntParam(params[pii]));
-                            break;
-
-                        case VOTableKeywords.SEG_DD_REDSHIFT_VALUE:
-                            sqt.setValue ( this.newDoubleParam(params[pii]));
-                            break;
-                    }
-                    break;
-                }
-                case VOTableKeywords.SEG_DD_VARAMPL:
-                    derived.setVarAmpl( this.newDoubleParam(params[pii]));
-                    break;
-
-                case VOTableKeywords.SEG_DD_SNR:
-                    derived.setSNR( this.newDoubleParam(params[pii]));
-                    break;
-
-                default:
-                    this.setCustomParam (derived, params[pii]);
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Populate the DataId from the list params
-     */
-    private void setDataIDParams(DataID dataId, ParamElement[] params) throws SedParsingException
-    {
-        for(int ii=0; ii < params.length; ii++)
-        {
-            String paramUtype = params[ii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-
-            switch( utypeIdx )
-            {
-                case VOTableKeywords.SEG_DATAID_TITLE:
-                    dataId.setTitle ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_CREATOR:
-                    dataId.setCreator ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_CREATORDID:
-                    dataId.setCreatorDID ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_VERSION:
-                    dataId.setVersion ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_BANDPASS:
-                    dataId.setBandpass ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_INSTRUMENT:
-                    dataId.setInstrument ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_LOGO:
-                    dataId.setLogo( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_DATASOURCE:
-                    dataId.setDataSource ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_CREATIONTYPE:
-                    dataId.setCreationType ( this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_DATE:
-                    dataId.setDate ( new DateParam (params[ii].getValue(),
-                                                    params[ii].getName(),
-                                                    params[ii].getUcd(),
-                                                    params[ii].getID()));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_DATASETID:
-                    dataId.setDatasetID (  this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_COLLECTION:
-                    dataId.createCollection().add(  this.newTextParam(params[ii]));
-                    break;
-
-                case VOTableKeywords.SEG_DATAID_CONTRIBUTOR:
-                    dataId.createContributor().add(  this.newTextParam(params[ii]));
-                    break;
-
-                default:
-                    this.setCustomParam (dataId, params[ii]);
-                    break;
-
-            }
-        }
-    }
-
-
-    /**
-     * Populate the Curation from the list params
-     */
-    private void setCurationParams( Curation curation, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-            switch (utypeIdx)
-            {
-                case VOTableKeywords.SEG_CURATION_PUBLISHER:
-                    curation.setPublisher( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_REF:
-                    curation.setReference( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_PUBID:
-                    curation.setPublisherID( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_PUBDID:
-                    curation.setPublisherDID( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_DATE:
-                    curation.setDate( new DateParam(
-                                params[ pii ].getValue(),
-                                params[ pii ].getName(),
-                                params[ pii ].getUcd(),
-                                params[ pii ].getID()));
-                    break;
-                case VOTableKeywords.SEG_CURATION_RIGHTS:
-                    curation.setRights( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_VERSION:
-                    curation.setVersion( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_CONTACT_NAME:
-                    curation.createContact().setName( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CURATION_CONTACT_EMAIL:
-                    curation.createContact().setEmail( this.newTextParam(params[pii]));
-                    break;
-                default:
-                    this.setCustomParam (curation, params[pii]);
-                    break;
-
-            }
-        }
-    }
-
-
-    /**
-     * Populate the CoordFrame from the list params
-     */
-    private void setCoordFrameParams( CoordFrame coordFrame, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String utype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( utype, this.namespace );
-
-            switch (utypeIdx)
-            {
-                case VOTableKeywords.SEG_CS_GENFRAME_ID:
-                case VOTableKeywords.SEG_CS_REDFRAME_ID:
-                case VOTableKeywords.SEG_CS_SPECTRALFRAME_ID:
-                case VOTableKeywords.SEG_CS_TIMEFRAME_ID:
-                case VOTableKeywords.SEG_CS_SPACEFRAME_ID:
-                    coordFrame.setId( params[ pii ].getValue() );
-                    break;
-                case VOTableKeywords.SEG_CS_GENFRAME_UCD:
-                case VOTableKeywords.SEG_CS_REDFRAME_UCD:
-                case VOTableKeywords.SEG_CS_SPECTRALFRAME_UCD:
-                case VOTableKeywords.SEG_CS_TIMEFRAME_UCD:
-                case VOTableKeywords.SEG_CS_SPACEFRAME_UCD:
-                    if (params[ pii ].getValue() != null)
-                        coordFrame.setUcd( params[ pii ].getValue() );
-                    break;
-                case VOTableKeywords.SEG_CS_GENFRAME_NAME:
-                case VOTableKeywords.SEG_CS_REDFRAME_NAME:
-                case VOTableKeywords.SEG_CS_SPECTRALFRAME_NAME:
-                case VOTableKeywords.SEG_CS_TIMEFRAME_NAME:
-                case VOTableKeywords.SEG_CS_SPACEFRAME_NAME:
-                    coordFrame.setName( params[ pii ].getValue() );
-
-                    // account for when the ucd falls in the same
-                    // param as the name
-                    if (params[ pii ].getUcd () != null)
-                        coordFrame.setUcd( params[ pii ].getUcd ());
-                    break;
-                case VOTableKeywords.SEG_CS_GENFRAME_REFPOS:
-                case VOTableKeywords.SEG_CS_REDFRAME_REFPOS:
-                case VOTableKeywords.SEG_CS_SPECTRALFRAME_REFPOS:
-                case VOTableKeywords.SEG_CS_TIMEFRAME_REFPOS:
-                case VOTableKeywords.SEG_CS_SPACEFRAME_REFPOS:
-                    coordFrame.setReferencePosition(params[pii].getValue());
-                    break;
-                case VOTableKeywords.SEG_CS_SPACEFRAME_EQUINOX:
-                    try {
-                        ((SpaceFrame)coordFrame).setEquinox (
-                                          this.newDoubleParam (params[pii]));
-                    } catch (ClassCastException e) {
-                        logger.warning ("The utype, "+ utype + " is expected to be part of SpaceFrame. The parameter will be ignored.");
-
-                    }
-                    break;
-                case VOTableKeywords.SEG_CS_TIMEFRAME_ZERO:
-                    try {
-                        ((TimeFrame)coordFrame).setZero (
-                                          this.newDoubleParam (params[pii]));
-                    } catch (ClassCastException e) {
-                        logger.warning ("The utype, "+ utype + " is expected to be part of TimeFrame. The parameter will be ignored.");
-                    }
-                    break;
-                case VOTableKeywords.SEG_CS_SPECTRALFRAME_REDSHIFT:
-                    try {
-                        ((SpectralFrame)coordFrame).setRedshift ( 
-                                          this.newDoubleParam (params[pii]));
-                    } catch (ClassCastException e) {
-                        logger.warning ("The utype, "+ utype + " is expected to be part of SpectralFrame. The parameter will be ignored.");
-                    }
-                    break;
-                case VOTableKeywords.SEG_CS_REDFRAME_DOPPLERDEF:
-                    try {
-                        ((RedshiftFrame)coordFrame).setDopplerDefinition(params[pii].getValue());
-                    } catch (ClassCastException e) {
-                        logger.warning ("The utype, "+ utype + " is expected to be part of RedshiftFrame. The parameter will be ignored.");
-                    }
-                    break;
-                default:
-                    this.setCustomParam (coordFrame, params[pii]);
-                    break;
-            }
-        }
-    }
-
-
-    /**
-     * Populate the CoordSys from the list params excluding the CoordFrame members.
-     */
-    private void setCoordSysParams( CoordSys coordSys, ParamElement[] params ) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-            switch (utypeIdx)
-            {
-                case VOTableKeywords.SEG_CS_ID:
-                    coordSys.setId( params[pii].getValue() );
-                    break;
-                case VOTableKeywords.SEG_CS_UCD:
-                    coordSys.setUcd( params[pii].getValue() );
-                    break;
-                case VOTableKeywords.SEG_CS_TYPE:
-                    coordSys.setType( params[pii].getValue() );
-                    break;
-                case VOTableKeywords.SEG_CS_HREF:
-                    coordSys.setHref( params[pii].getValue() );
-                    break;
-                default:
-                    this.setCustomParam (coordSys, params[pii]);
-                    break;
-
-            }
-        }
-    }
-
-    /**
-     * Populate the CharacterizationAxis from the list params
-     */
-    private void setCharAxisParams( CharacterizationAxis charAxis, ParamElement[] params) throws SedParsingException
-    {
-        for(int pii=0; pii < params.length; pii++)
-        {
-            String paramUtype = params[pii].getAttribute(VOTableKeywords._UTYPE);
-
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-
-            switch(utypeIdx)
-            {
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_NAME:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_NAME:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_NAME:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_NAME:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_NAME:
-                    charAxis.setName( params[ pii ].getValue() );
-                    if (params[ pii ].getUcd() != null)
-                        charAxis.setUcd (params[ pii ].getUcd());
-                    if (params[ pii ].getUnit() != null)
-                        charAxis.setUnit (params[ pii ].getUnit());
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_UNIT:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_UNIT:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_UNIT:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_UNIT:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_UNIT:
-                    if (params[ pii ].getValue () != null)
-                        charAxis.setUnit( params[ pii ].getValue() );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_UCD:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_UCD:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_UCD:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_UCD:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_UCD:
-                    if (params[ pii ].getValue () != null)
-                        charAxis.setUcd( params[ pii ].getValue() );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_CAL:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_CAL:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_CAL:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_CAL:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_CAL:
-                    charAxis.setCalibration( this.newTextParam(params[pii]));
-                    break;
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
-                    charAxis.setResolution( this.newDoubleParam(params[pii]));
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_RESPOW:
-                    ((SpectralCharacterizationAxis)charAxis).setResPower( 
-                                  this.newDoubleParam(params[ pii ]));
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
-
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
-
-                    logger.warning ("The accuracy utype, "+ paramUtype + " is expected to be part of the Accuracy group. This parameter will be ignored.");
-                
-//                    charAxis.getAccuracy().setConfidence(
-//                                ParamUtils.doubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
-                    this.setAccuracyParams( charAxis.getAccuracy(), params );
-                    break;
-
-//                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
-
-                    CoverageLocation location = charAxis.createCoverage().createLocation();
-                    location.setResolution(this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
-                    charAxis.createCoverage().createBounds().setExtent(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
-                    charAxis.createCoverage().createBounds().createRange().setMin(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
-                    charAxis.createCoverage().createBounds().createRange().setMax(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:
-
-                    String paramValues = params[pii].getValue ();
-
-                    if (paramValues != null)
-                    {
-                         DoubleParam valueList[] = charAxis.createCoverage().createLocation ().createValue ();
-         
-                         String[] values = paramValues.split( IOConstants.LIST_SEPARATOR_PATTERN );                
-                         for (int ii=0; ii<values.length; ii++)
-                         {
-                             valueList[ii] = new DoubleParam (values[ii],
-                                                       params[pii].getName (),
-                                                       params[pii].getUcd (),
-                                                       params[pii].getUnit (),
-                                                       params[pii].getID ());
-                         }
-
-                         charAxis.getCoverage().getLocation().setValue(valueList);
-                    }
-                    break;
-
-//                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
-                    charAxis.createCoverage().createSupport().setExtent(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
-                    charAxis.createCoverage().createSupport().setArea(
-                                new SkyRegion (params[pii].getValue(),
-                                               params[pii].getName(),
-                                               params[pii].getUcd(),
-                                               params[pii].getID()));
-                    break;
-
- //               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_SUPPORT_RANGE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_SUPPORT_RANGE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_RANGE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_RANGE:
-                    charAxis.createCoverage().createSupport().createRange().add(
-                                this.newInterval( params[ pii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT:
-                    charAxis.createSamplingPrecision().setSampleExtent(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                    charAxis.createSamplingPrecision()
-                        .createSamplingPrecisionRefVal().setFillFactor(
-                                this.newDoubleParam( params[ pii ]) );
-                    break;
-
-                default:
-                    this.setCustomParam (charAxis, params[pii]);
-                    break;
-
-            }
-        }
-    }
-
-    /**
-     * Populate the Accuracy from the list params
-     */
-    private void setAccuracyParams( Accuracy acc, ParamElement[] params ) throws SedParsingException
-    {
-        for( int ii = 0; ii < params.length; ii++ )
-        {
-            String paramUtype = params[ ii ].getAttribute(VOTableKeywords._UTYPE);
-            int utypeIdx = VOTableKeywords.getUtypeFromString( paramUtype, this.namespace );
-
-            switch( utypeIdx )
-            {
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
- //               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINHIGH:
-                    acc.setBinHigh ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_BINLOW:
-//                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINLOW:
-                    acc.setBinLow ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
- //               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_BINSIZE:
-                    acc.setBinSize ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
-//                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
-                    acc.setStatErrHigh ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
-//                case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERRLOW:
-                    acc.setStatErrLow ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_SYSERR:
- //               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_SYSERR:
-                    acc.setSysError ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_STATERR:
- //               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_STATERR:
-                    acc.setStatError ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                case VOTableKeywords.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
-//               case VOTableKeywords.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case VOTableKeywords.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
-                    acc.setConfidence ( this.newDoubleParam( params[ ii ]) );
-                    break;
-
-                default:
-                    this.setCustomParam (acc, params[ii]);
-                    break;
-
- 
-            }
-        }
-    }
-
-    /**
-     * Populate the data points from the data stored in the StarTable.
-     * The point
-     */
-    private void setPointDataField(List<Point> pointList,
-                StarTable starTable,
-                FieldElement []fields)
-                throws SedParsingException, IOException
-    {
-
-        for ( int iCol = 0; iCol < starTable.getColumnCount(); iCol++ )
-        {
-            ColumnInfo infoCol = starTable.getColumnInfo(iCol);
-            String utype = infoCol.getUtype ();
-            int utypeIdx = VOTableKeywords.getUtypeFromString( utype,
-                                                               this.namespace );
-
-            switch ( utypeIdx )
-            {
-                // for Flux
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_VALUE :
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++)
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow, iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().setValue( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setStatErrLow( param );
-                    }
-                    
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERRHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setStatErrHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_SYSERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setSysError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_QUALITY:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        IntParam param = this.newIntParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().setQuality( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setBinLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setBinHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_BINSIZE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setBinSize( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_STATERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setStatError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_RESOLUTION:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().setResolution( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_FLUXAXIS_ACC_CONFIDENCE:
-                	for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createFluxAxis().createAccuracy().setConfidence( param );
-                    }
-                    break;
-
-                // for Spectral
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_VALUE :
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().setValue( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setStatErrLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setStatErrHigh( param );
-                    }
-                    break;
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setSysError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().setResolution( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setBinLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setBinHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setBinSize( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setStatError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_SPECTRALAXIS_ACC_CONFIDENCE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createSpectralAxis().createAccuracy().setConfidence( param );
-                    }
-                    break;
-
-
-                // for Time
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_VALUE :
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().setValue( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERRLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setStatErrLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERRHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setStatErrHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_SYSERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setSysError( param );
-                    }
-                    break;
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_RESOLUTION:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().setResolution( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setBinLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setBinHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_BINSIZE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setBinSize( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_STATERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setStatError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_TIMEAXIS_ACC_CONFIDENCE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createTimeAxis().createAccuracy().setConfidence( param );
-                    }
-                    break;
-
-                // for background model
-                case VOTableKeywords.SEG_DATA_BGM_VALUE :
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().setValue( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERRLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setStatErrLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERRHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setStatErrHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_SYSERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setSysError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_QUALITY:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        IntParam param = this.newIntParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().setQuality( param );
-                    }
-                    break;
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINLOW:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setBinLow( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINHIGH:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setBinHigh( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_BINSIZE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setBinSize( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_STATERR:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setStatError( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_RESOLUTION:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow,iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-
-                        pointList.get( iRow ).createBackgroundModel().setResolution ( param );
-                    }
-                    break;
-
-                case VOTableKeywords.SEG_DATA_BGM_ACC_CONFIDENCE:
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-                        DoubleParam param = this.newDoubleParam( starTable.getCell( iRow, iCol ), infoCol );
-                        param.setId (fields[iCol].getID ());
-                        pointList.get( iRow ).createBackgroundModel().createAccuracy().setConfidence( param );
-                    }
-                    break;
-
-                default:
-                {
-                    List <Param> params = new ArrayList<Param> ((int)starTable.getRowCount ());
-                    Class dataClass = infoCol.getContentClass ();
-                    boolean updateCustomRefCount = false;
-
-                    for ( int iRow = 0; iRow < starTable.getRowCount(); iRow++ )
-                    {
-
-                    	Param param = null;
-                        if ((dataClass == Integer.class) || (dataClass == Long.class) || (dataClass == Short.class))
-                            param = this.newIntParam (starTable.getCell( iRow, iCol ), infoCol );
-                        else if ((dataClass == Double.class) || (dataClass == Float.class))
-                            param = this.newDoubleParam (starTable.getCell( iRow, iCol ), infoCol );
-                        else if (dataClass == String.class)
-                        {
-                            String value = (String)starTable.getCell( iRow, iCol );
-
-                            if (value != null)              
-                        	    param = new TextParam (value,
-                                    				infoCol.getName(),
-                                    				infoCol.getUCD());
-                            else
-                                param = new TextParam (null, 
-                                                                infoCol.getName(),
-                                                                infoCol.getUCD());
-                        }
-                        else
-                            logger.warning ("The data type, "+fields[iCol].getDatatype ()+" for the custom data is not supported. Supported datatypes include char, int, short, long, float and double");
-                        
-                        if (param == null)
-                        	param = new Param ();
-                        
-                        param.setId (fields[iCol].getID ());
-
-                        // if the field is potentially referenced somewhere
-                        // store the params into a table otherwise add it
-                        // directly to the point
-                        if (fields[iCol].getID () != null)
-                        {
-                            param.setId (fields[iCol].getID ());
-                            params.add(param);
-                        }
-                        else
-                        {
-                            // every field needs to have an id -- create one
-                            param.setInternalId ("_customId"+this.customRefCount);
-                            updateCustomRefCount = true;
-                            try {
-								pointList.get( iRow ).addCustomParam (param);
-							} catch (SedNullException exp) {
-								logger.warning(exp.getMessage ());
-							} catch (SedInconsistentException exp) {
-								logger.warning(exp.getMessage ());
-							}
-                        }
-                        
-                    }
-                    if (updateCustomRefCount)
-                        this.customRefCount++;
-
-                    if (fields[iCol].getID () != null)
-                        this.customData.put (fields[iCol].getID (), params);
-                }
-                break;
-            }
-        }
-    }
-
-
-    /**
-     *  Create a DoubleParam from a ParamElement
-     */
-    private DoubleParam newDoubleParam (ParamElement param)
-    {
-        if (param == null)
-            return null;
-        return new DoubleParam (param.getValue(),
-                             param.getName(),
-                             param.getUcd(),
-                             param.getUnit(),
-                             param.getID ());
-
-        
-        
+	double[] dValues = null;
+	float[]  fValues = null;
+	String[] sValues = null;
+
+	if ( invals == null )
+	    return sValues;
+
+	if ( ( invals instanceof double[]) )
+	{
+	    dValues = (double[])invals;
+	    sValues = new String[ dValues.length ];
+	    for ( int ii = 0; ii < dValues.length; ii++ )
+		sValues[ii] = Double.toString( dValues[ii] );
+	}
+	else if ( invals instanceof float[] )
+	{
+	    fValues = (float[])invals;
+	    sValues = new String[ fValues.length ];
+	    for ( int ii = 0; ii < fValues.length; ii++ )
+		sValues[ii] = Float.toString( fValues[ii] );
+	}
+	else if ( invals instanceof String )
+	{
+	    String tmpstr = (String)invals;
+	    sValues = tmpstr.split(IOConstants.LIST_SEPARATOR_PATTERN );
+	}
+	else if ( invals instanceof Double )
+	{
+	    sValues = invals.toString().split(IOConstants.LIST_SEPARATOR_PATTERN );
+	}
+	else
+	    logger.warning ("Unsupported data type for Interval, expected float[], double[], String or Double.");
+
+
+	return sValues;
     }
 
     /**
      *  Create a DoubleParam from StarTable information
      */
-    private DoubleParam newDoubleParam (Object value, ColumnInfo colInfo)
+    private DoubleParam newDoubleParam(Object value, ColumnInfo colInfo)
     {
         DoubleParam param;
     	if (colInfo == null)
     		return null;
     	
         if (value != null)
-            param = new DoubleParam (value.toString (),
-                             colInfo.getName(),
-                             colInfo.getUCD(),
-                             colInfo.getUnitString());
+            param = new DoubleParam(value.toString(),
+				    colInfo.getName(),
+				    colInfo.getUCD(),
+				    colInfo.getUnitString());
         else
-            param = new DoubleParam (SedConstants.DEFAULT_STRING,
-                             colInfo.getName(),
-                             colInfo.getUCD(),
-                             colInfo.getUnitString());
+            param = new DoubleParam(SedConstants.DEFAULT_STRING,
+				    colInfo.getName(),
+				    colInfo.getUCD(),
+				    colInfo.getUnitString());
 
         return param;
     }
 
     /**
-     *  Create an IntParam from a ParamElement
-     */
-    private IntParam newIntParam (ParamElement param)
-    {
-        if (param == null)
-            return null;
-        return new IntParam (param.getValue(),
-                             param.getName(),
-                             param.getUcd(),
-                             param.getUnit(),
-                             param.getID ());
-    }
-
-    /**
      *  Create a IntParam from a StarTable information
      */
-    private IntParam newIntParam (Object value, ColumnInfo colInfo)
+    private IntParam newIntParam(Object value, ColumnInfo colInfo)
     {
         IntParam param;
     	if (colInfo == null)
     		return null;
     	
         if (value != null)
-            param = new IntParam (value.toString (),
-                             colInfo.getName(),
-                             colInfo.getUCD(),
-                             colInfo.getUnitString());
+            param = new IntParam(value.toString (),
+				 colInfo.getName(),
+				 colInfo.getUCD(),
+				 colInfo.getUnitString());
         else
-            param = new IntParam (SedConstants.DEFAULT_STRING,
-                             colInfo.getName(),
-                             colInfo.getUCD(),
-                             colInfo.getUnitString());
+            param = new IntParam(SedConstants.DEFAULT_STRING,
+				 colInfo.getName(),
+				 colInfo.getUCD(),
+				 colInfo.getUnitString());
 
         return param;
     }
 
-
     /**
-     *  Create a TextParam from a ParamElement
+     *  Create a TextParam from a StarTable information
      */
-    private TextParam newTextParam (ParamElement param)
+    private TextParam newTextParam(Object value, ColumnInfo colInfo)
     {
-        if (param == null)
-            return null;
-        return new TextParam (param.getValue(),
-                             param.getName(),
-                             param.getUcd(),
-                             param.getID ());
-    }
-
-
-    /**
-     *  Create an IntervalParam from a ParamElement
-     */
-    private Interval newInterval (ParamElement param)
-    {
-        if (param == null)
-            return null;
-
-        Interval interval = new Interval();
-        String[] values = param.getValue().split( IOConstants.LIST_SEPARATOR_PATTERN );
-        String ucd = param.getUcd();
-        String unit = param.getUnit();
-        
-       
-        interval.setMin (new DoubleParam (values[0], "", ucd, unit));
-        interval.setMax (new DoubleParam (values[1], "", ucd, unit));
-
-        return interval;
-    }
-
-
-    /**
-     *  Create a PositionParam from a ParamElement
-     */
-    private PositionParam newPositionParam ( ParamElement param )
-    {
-
-    	if (param == null)
+        TextParam param;
+    	if (colInfo == null)
     		return null;
     	
-        String pos = param.getValue();
-        String name = param.getName();
-        String ucd = param.getUcd();
-        String unit = param.getUnit();
-        String id = param.getID ();
-
-        if ( pos == null )
-            return null;
-        
-
-
-        //Note that a PositionParamType has no name field so we
-        //store the name in each of the DoubleParamtype.
-        PositionParam newPos = new PositionParam();
-
-        String[] values = pos.split( IOConstants.LIST_SEPARATOR_PATTERN );
-
-        DoubleParam posValues[] = newPos.createValue();
-
-        for ( int ii = 0; ii < values.length; ii++ )
-            posValues[ii] = new DoubleParam( values[ii], name, ucd, unit, id );
-
-        newPos.setValue(posValues);
-
-        return newPos;
+        if (value != null)
+	{
+	    param = new TextParam(value.toString(),
+				  colInfo.getName(),
+				  colInfo.getUCD());
+	}
+        else
+	{
+	    param = new TextParam(null, 
+				  colInfo.getName(),
+				  colInfo.getUCD());
+	}
+        return param;
     }
+
 
     /**
      *  Get the namespace from the VOTable associated with the spectrum schema.
@@ -2837,7 +1351,7 @@ public class VOTableMapper extends SedMapper
     {
         NamedNodeMap map = element.getAttributes();
         String name, value;
-        String namespace = null;
+        String ns = null;
         for (int ii=0; ii<map.getLength  (); ii++)
         {
             DelegatingAttr attr = (DelegatingAttr)map.item(ii);
@@ -2846,34 +1360,167 @@ public class VOTableMapper extends SedMapper
             
             if (name.matches ("^xmlns:.*$") && value.matches ("^.*Spectrum.*\\.xsd$"))
             {
-                if (namespace == null)
-                    namespace = name.replaceFirst ("^.*xmlns:","");
+                if (ns == null)
+                    ns = name.replaceFirst ("^.*xmlns:","");
                 else
                     logger.warning ("Multiple namespace declarations were found for " +
                              SedConstants.SPECTRUM_SCHEMA_VERSION +
                              " while searching for Spectrum*.xsd." +
                              " The following namespace will be used, "+
-                             namespace);
+                             ns);
             }
         }
-        return namespace;
+        return ns;
     }
 
-    /**
-     * Check for fields in this group or any subgroup
+    /** 
+     * Display info from Parameter List to standard out.
      */
-    boolean checkForFields (GroupElement topgroup)
+    private void printParameterList( List<DescribedValue> params )
     {
-        GroupElement[] subgroups = topgroup.getGroups();
-        FieldElement[] fields = topgroup.getFields ();
+	String utype = null;
 
-        if (fields.length > 0)
-            return true;
+	if ( params.isEmpty() )
+	{
+	    System.out.println("INFO: Parameter list is empty.");
+	}
+	else
+	{
+	    System.out.println("INFO: Parameters: " + params.size());
+	    for ( DescribedValue item : params )
+	    {
+		utype = item.getInfo().getUtype();
+		if ( utype == null )
+		    utype = "null - " + item.getInfo().getName();
 
-        for (GroupElement group : subgroups)
-            if (this.checkForFields (group))
-                return true;
-
-        return false;
+		System.out.format("INFO:   utype= %1$-60s %n", utype);
+	    }
+	}
     }
+
+    // ******************** General? ******************************
+    private boolean CharAxisFieldIsSet( CharacterizationAxis axis, int utypeNum )
+    {
+	boolean retval = false;
+
+	try{
+
+	    switch ( utypeNum )
+	    {
+	    case Utypes.SEG_CHAR_CHARAXIS_NAME:
+		retval = axis.isSetName();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_UNIT:
+		retval = axis.isSetUnit();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_UCD:
+		retval = axis.isSetUcd();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_CAL:
+		retval = axis.isSetCalibration();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_RESOLUTION:
+		retval = axis.isSetResolution();
+		break;
+		
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
+		retval = axis.getAccuracy().isSetBinLow();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
+		retval = axis.getAccuracy().isSetBinHigh();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
+		retval = axis.getAccuracy().isSetBinSize();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
+		retval = axis.getAccuracy().isSetStatError();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
+		retval = axis.getAccuracy().isSetStatErrLow();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
+		retval = axis.getAccuracy().isSetStatErrHigh();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
+		retval = axis.getAccuracy().isSetSysError();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
+		retval = axis.getAccuracy().isSetConfidence();
+		break;
+		
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
+		retval = axis.getCoverage().getBounds().isSetExtent();
+		break;
+
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
+		retval = axis.getCoverage().getBounds().getRange().isSetMin();
+		break;
+
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
+		retval = axis.getCoverage().getBounds().getRange().isSetMax();
+		break;
+		
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetBinLow();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetBinHigh();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetBinSize();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetStatError();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetStatErrLow();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetStatErrHigh();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetSysError();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
+		retval = axis.getCoverage().getLocation().getAccuracy().isSetConfidence();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
+		retval = axis.getCoverage().getLocation().isSetResolution();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
+		retval = axis.getCoverage().getLocation().isSetValue();
+		break;
+		
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
+		retval = axis.getCoverage().getSupport().isSetArea();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
+		retval = axis.getCoverage().getSupport().isSetExtent();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
+		retval = axis.getCoverage().getSupport().isSetRange();
+		break;
+		
+	    case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
+		retval = axis.getSamplingPrecision().isSetSampleExtent();
+		break;
+	    case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+		retval = axis.getSamplingPrecision().getSamplingPrecisionRefVal().isSetFillFactor();
+		break;
+		
+	    default:
+		break;
+	    }
+
+	}
+        catch (NullPointerException exp)
+        {
+            retval = false;
+        }
+
+	return retval;
+    }
+
 }  

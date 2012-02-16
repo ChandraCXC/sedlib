@@ -16,6 +16,7 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
 
 /**
  * <p>Java class for accuracy complex type.
@@ -23,7 +24,7 @@ package cfa.vo.sedlib;
  * 
  */
 public class Accuracy
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected DoubleParam binLow;
@@ -398,6 +399,112 @@ public class Accuracy
 
     public boolean isSetConfidence() {
         return (this.confidence!= null);
+    }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isBinLowUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createBinLow();
+	    else
+		value = this.getBinLow();
+	}
+	else if ( Utypes.isBinHighUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createBinHigh();
+	    else
+		value = this.getBinHigh();
+	}
+	else if ( Utypes.isBinSizeUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createBinSize();
+	    else
+		value = this.getBinSize();
+	}
+	else if ( Utypes.isStatErrorUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createStatError();
+	    else
+		value = this.getStatError();
+	}
+	else if ( Utypes.isStatErrorLowUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createStatErrLow();
+	    else
+		value = this.getStatErrLow();
+	}
+	else if ( Utypes.isStatErrorHighUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createStatErrHigh();
+	    else
+		value = this.getStatErrHigh();
+	}
+	else if ( Utypes.isSysErrorUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createSysError();
+	    else
+		value = this.getSysError();
+	}
+	else if ( Utypes.isConfidenceUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createConfidence();
+	    else
+		value = this.getConfidence();
+	}
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isBinLowUtype( utypeNum ) )
+	{
+	    this.setBinLow( (DoubleParam)value );
+	}
+	else if ( Utypes.isBinHighUtype( utypeNum ) )
+	{
+	    this.setBinHigh( (DoubleParam)value );
+	}
+	else if ( Utypes.isBinSizeUtype( utypeNum ) )
+	{
+	    this.setBinSize( (DoubleParam)value );
+	}
+	else if ( Utypes.isStatErrorUtype( utypeNum ) )
+	{
+	    this.setStatError( (DoubleParam)value );
+	}
+	else if ( Utypes.isStatErrorLowUtype( utypeNum ) )
+	{
+	    this.setStatErrLow( (DoubleParam)value );
+	}
+	else if ( Utypes.isStatErrorHighUtype( utypeNum ) )
+	{
+	    this.setStatErrHigh( (DoubleParam)value );
+	}
+	else if ( Utypes.isSysErrorUtype( utypeNum ) )
+	{
+	    this.setSysError( (DoubleParam)value );
+	}
+	else if ( Utypes.isConfidenceUtype( utypeNum ) )
+	{
+	    this.setConfidence( (DoubleParam)value );
+	}
+	return;
     }
 
 }

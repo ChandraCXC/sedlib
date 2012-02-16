@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * 
  */
 public class Segment
-    extends Group
+    extends Group implements IAccessByUtype, ISegment
 {
     static final Logger logger = Logger.getLogger ("cfa.vo.sedlib");
 	
@@ -101,6 +101,7 @@ public class Segment
      *     {@link Target }
      *     
      */
+    @Override
     public Target getTarget() {
         return target;
     }
@@ -112,6 +113,7 @@ public class Segment
      *     {@link Target }
      *
      */
+    @Override
     public Target createTarget() {
         if (this.target == null)
            this.setTarget (new Target ());
@@ -127,10 +129,12 @@ public class Segment
      *     {@link Target }
      *     
      */
+    @Override
     public void setTarget(Target value) {
         this.target = value;
     }
 
+    @Override
     public boolean isSetTarget() {
         return (this.target!= null);
     }
@@ -143,6 +147,7 @@ public class Segment
      *     {@link Characterization }
      *     
      */
+    @Override
     public Characterization getChar() {
         return _char;
     }
@@ -154,6 +159,7 @@ public class Segment
      *     {@link Characterization }
      *
      */
+    @Override
     public Characterization createChar() {
         if (this._char == null)
            this.setChar (new Characterization ());
@@ -169,10 +175,12 @@ public class Segment
      *     {@link Characterization }
      *     
      */
+    @Override
     public void setChar(Characterization value) {
         this._char = value;
     }
 
+    @Override
     public boolean isSetChar() {
         return (this._char!= null);
     }
@@ -185,6 +193,7 @@ public class Segment
      *     {@link CoordSys }
      *     
      */
+    @Override
     public CoordSys getCoordSys() {
         return coordSys;
     }
@@ -196,6 +205,7 @@ public class Segment
      *     {@link CoordSys }
      *
      */
+    @Override
     public CoordSys createCoordSys() {
         if (this.coordSys == null)
            this.setCoordSys (new CoordSys ());
@@ -211,10 +221,12 @@ public class Segment
      *     {@link CoordSys }
      *     
      */
+    @Override
     public void setCoordSys(CoordSys value) {
         this.coordSys = value;
     }
 
+    @Override
     public boolean isSetCoordSys() {
         return (this.coordSys!= null);
     }
@@ -227,6 +239,7 @@ public class Segment
      *     {@link Curation }
      *     
      */
+    @Override
     public Curation getCuration() {
         return curation;
     }
@@ -238,6 +251,7 @@ public class Segment
      *     {@link Curation }
      *
      */
+    @Override
     public Curation createCuration() {
         if (this.curation == null)
            this.setCuration (new Curation ());
@@ -252,10 +266,12 @@ public class Segment
      *     {@link Curation }
      *     
      */
+    @Override
     public void setCuration(Curation value) {
         this.curation = value;
     }
 
+    @Override
     public boolean isSetCuration() {
         return (this.curation!= null);
     }
@@ -268,6 +284,7 @@ public class Segment
      *     {@link DataID }
      *     
      */
+    @Override
     public DataID getDataID() {
         return dataID;
     }
@@ -279,6 +296,7 @@ public class Segment
      *     {@link DataID }
      *
      */
+    @Override
     public DataID createDataID() {
         if (this.dataID == null)
            this.setDataID (new DataID ());
@@ -294,10 +312,12 @@ public class Segment
      *     {@link DataID }
      *     
      */
+    @Override
     public void setDataID(DataID value) {
         this.dataID = value;
     }
 
+    @Override
     public boolean isSetDataID() {
         return (this.dataID!= null);
     }
@@ -310,6 +330,7 @@ public class Segment
      *     {@link DerivedData }
      *     
      */
+    @Override
     public DerivedData getDerived() {
         return derived;
     }
@@ -321,6 +342,7 @@ public class Segment
      *     {@link DerivedData }
      *
      */
+    @Override
     public DerivedData createDerived() {
         if (this.derived == null)
            this.setDerived (new DerivedData ());
@@ -336,10 +358,12 @@ public class Segment
      *     {@link DerivedData }
      *     
      */
+    @Override
     public void setDerived(DerivedData value) {
         this.derived = value;
     }
 
+    @Override
     public boolean isSetDerived() {
         return (this.derived!= null);
     }
@@ -352,6 +376,7 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public TextParam getType() {
         return type;
     }
@@ -363,6 +388,7 @@ public class Segment
      *     {@link TextParam }
      *
      */
+    @Override
     public TextParam createType() {
         if (this.type == null)
            this.setType (new TextParam ());
@@ -378,10 +404,12 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public void setType(TextParam value) {
         this.type = value;
     }
 
+    @Override
     public boolean isSetType() {
         return (this.type!= null);
     }
@@ -392,6 +420,7 @@ public class Segment
      * @return int
      *     
      */
+    @Override
     public int getLength() {
         return data.getLength ();
     }
@@ -404,6 +433,7 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public TextParam getTimeSI() {
         return timeSI;
     }
@@ -415,6 +445,7 @@ public class Segment
      *     {@link TextParam }
      *
      */
+    @Override
     public TextParam createTimeSI() {
         if (this.timeSI == null)
            this.setTimeSI (new TextParam ());
@@ -430,10 +461,12 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public void setTimeSI(TextParam value) {
         this.timeSI = value;
     }
 
+    @Override
     public boolean isSetTimeSI() {
         return (this.timeSI!= null);
     }
@@ -446,6 +479,7 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public TextParam getSpectralSI() {
         return spectralSI;
     }
@@ -457,6 +491,7 @@ public class Segment
      *     {@link TextParam }
      *
      */
+    @Override
     public TextParam createSpectralSI() {
         if (this.spectralSI == null)
            this.setSpectralSI (new TextParam ());
@@ -472,10 +507,12 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public void setSpectralSI(TextParam value) {
         this.spectralSI = value;
     }
 
+    @Override
     public boolean isSetSpectralSI() {
         return (this.spectralSI!= null);
     }
@@ -488,6 +525,7 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public TextParam getFluxSI() {
         return fluxSI;
     }
@@ -499,6 +537,7 @@ public class Segment
      *     {@link TextParam }
      *
      */
+    @Override
     public TextParam createFluxSI() {
         if (this.fluxSI == null)
            this.setFluxSI (new TextParam ());
@@ -514,10 +553,12 @@ public class Segment
      *     {@link TextParam }
      *     
      */
+    @Override
     public void setFluxSI(TextParam value) {
         this.fluxSI = value;
     }
 
+    @Override
     public boolean isSetFluxSI() {
         return (this.fluxSI!= null);
     }
@@ -529,6 +570,7 @@ public class Segment
      *     {@link ArrayOfPoint }
      *     
      */
+    @Override
     public ArrayOfPoint getData() {
         return this.data;
     }
@@ -541,6 +583,7 @@ public class Segment
      *     {@link ArrayOfPoint }
      *
      */
+    @Override
     public ArrayOfPoint createData() {
         if (this.data == null)
            this.setData (new ArrayOfPoint ());
@@ -562,10 +605,12 @@ public class Segment
      *     {@link ArrayOfPoint }
      *     
      */
+    @Override
     public void setData(ArrayOfPoint value) {
         this.data = value;
     }
 
+    @Override
     public boolean isSetData() {
         return (this.data!= null);
     }
@@ -578,6 +623,7 @@ public class Segment
      *     {@link String }
      *     
      */   
+    @Override
     public String getDataModel () {
         return SedConstants.DATAMODEL;
     }
@@ -592,6 +638,7 @@ public class Segment
      *   double[]
      *
      */
+    @Override
     public void setSpectralAxisValues (double values[])
     {
         try { //This statement can't actually throw the exception, since it passes a supported utype
@@ -612,6 +659,7 @@ public class Segment
      * @throws SedNoDataException
      *
      */
+    @Override
     public double[] getSpectralAxisValues () throws SedNoDataException
     {
 
@@ -636,6 +684,7 @@ public class Segment
      * @throws SedNoDataException
      *
      */
+    @Override
     public void setFluxAxisValues (double values[])
     {
         try { //This statement can't actually throw the exception, since it is passing double[]
@@ -656,6 +705,7 @@ public class Segment
      * @throws SedNoDataException
      *
      */
+    @Override
     public double[] getFluxAxisValues () throws SedNoDataException
     {
         double []values = null;
@@ -682,6 +732,7 @@ public class Segment
      * @throws SetNoDataException
      *
      */
+    @Override
     public void setSpectralAxisUnits (String units) throws SedNoDataException
     {
         try { //This code can't actually throw the exception, since we are using a supported utype
@@ -708,6 +759,7 @@ public class Segment
      *
      * @throws SedNoDataException
      */
+    @Override
     public String getSpectralAxisUnits () throws SedNoDataException
     {
         try {//This code can't actually throw the exception, since we are using a supported utype
@@ -737,6 +789,7 @@ public class Segment
      *
      * @throws SedNoDataException
      */
+    @Override
     public void setFluxAxisUnits (String units) throws SedNoDataException
     {
         try {//This code can't actually throw the exception, since we are using a supported utype
@@ -764,6 +817,7 @@ public class Segment
      * @throws SedNoDataException
      *
      */
+    @Override
     public String getFluxAxisUnits () throws SedNoDataException
     {
         try {//This code can't actually throw the exception, since we are using a supported utype
@@ -948,6 +1002,7 @@ public class Segment
      * @throws SedNoDataException, SedInconsistentException, SedNullException
      *
      */
+    @Override
     public void setCustomDataValues (String id, Object values)  
         throws SedNoDataException, SedInconsistentException, SedNullException
     {
@@ -1060,6 +1115,7 @@ public class Segment
      * @throws SedNoDataException, SedNullException
      *
      */
+    @Override
     public void setCustomDataInfo (Field field) throws SedNoDataException, SedNullException
     {
         ArrayOfPoint pointData = this.data;
@@ -1104,6 +1160,7 @@ public class Segment
      * @throws SedException, SedNoDataException, SedNullException, SedInconsistentException
      *
      */
+    @Override
     public void addCustomData (Field field, Object values) 
         throws SedException, SedNoDataException, SedNullException, SedInconsistentException
     {
@@ -1177,6 +1234,7 @@ public class Segment
      * @throws SedNoDataException, SedNullException
      *
      */
+    @Override
     public Object getCustomDataValues (String id) 
         throws SedNoDataException, SedNullException
     {
@@ -1286,6 +1344,7 @@ public class Segment
      * @throws SedNoDataException, SedNullException
      *
      */
+    @Override
     public Field getCustomDataInfo (String id) throws SedNoDataException, SedNullException
     {
 
@@ -1411,6 +1470,7 @@ public class Segment
      * @throws SedNoDataException, SedInconsistentException
      *
      */
+    @Override
     public Field getDataInfo (String utype) throws SedNoDataException, SedInconsistentException
     {
         ArrayOfPoint pointData = this.data;
@@ -1434,6 +1494,7 @@ public class Segment
      * @throws SedInconsistentException, SedNoDataException
      *
      */
+    @Override
     public Field getDataInfo (int utype) throws SedInconsistentException, SedNoDataException
     {
         ArrayOfPoint pointData = (ArrayOfPoint)this.data;
@@ -1462,6 +1523,7 @@ public class Segment
      * @throws SedInconsistentException, SedNoDataException
      *
      */
+    @Override
     public void setDataInfo (Field field, String utype) throws SedInconsistentException, SedNoDataException
     {
         ArrayOfPoint pointData = this.data;
@@ -1490,6 +1552,7 @@ public class Segment
      * @throws SedNoDataException, SedInconsistentException
      *
      */
+    @Override
     public void setDataInfo (Field field, int utype) throws SedNoDataException, SedInconsistentException
     {
         ArrayOfPoint pointData = this.data;
@@ -1594,112 +1657,52 @@ public class Segment
      */
     public List <? extends Param> getMetaParamList (int utype) throws SedInconsistentException
     {
-        List <? extends Param> outParams = new ArrayList<Param> ();
+	Object value = null;
+	//        List <? extends Param> outParams = new ArrayList<Param>();
+        List <? extends Param> outParams = null;
         
         try
         {
-            switch (utype)
-            {
-                case Utypes.SEG_DATAID_COLLECTION:  // fallthrough intended
-                case Utypes.SEG_DATAID_CONTRIBUTOR:
-                {
-                    ArrayList<TextParam>paramList = new ArrayList<TextParam> ();
-                    List<TextParam> params = null;
-                    outParams = paramList;
+	    if ( Utypes.isDataIDUtype( utype ) && 
+		 ( Utypes.isCollectionUtype( utype )|| Utypes.isContributorUtype( utype ) ) )
+	    {
+		value = this.getValueByUtype( utype, false );
+		if ( value != null )
+		{
+		    outParams = ( List<TextParam> )value;
+		}
+	    }
+	    else if ( Utypes.isCharacterizationUtype( utype ) && 
+		      Utypes.isCoverageLocationUtype( utype ) && 
+		      Utypes.isValueUtype( utype ) )
+	    {
+		value = this.getValueByUtype( utype, false );
+		if ( value != null )
+		{
+		    outParams = ( List<DoubleParam> )value;
+		}
 
-                    if (utype == Utypes.SEG_DATAID_COLLECTION)
-                        params = this.getDataID ().getCollection ();
-                    else
-                        params = this.getDataID ().getContributor ();
+	    }
+	    else if ( Utypes.isTargetUtype( utype ) && 
+		      Utypes.isPositionUtype( utype )   )
+	    {
+		value = this.getValueByUtype( utype, false );
+		if ( value != null )
+		{
+		    outParams = ( List<DoubleParam> )value;
+		}
 
-                    if (params != null)
-                    {
-                        paramList.ensureCapacity(params.size ());
-                        for (TextParam pp : params)
-                            paramList.add ((TextParam)pp.clone ());
-                    }
+	    }
 
-                    outParams = paramList;
 
-                }
-                break;
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
-                {
-                    ArrayList<DoubleParam> paramList = new ArrayList<DoubleParam> ();
-                    List<CharacterizationAxis> charAxis = null;
-                    DoubleParam params[];
-                    
-                    outParams = paramList;
-
-                    charAxis = this.getChar ().getCharacterizationAxis ();
-
-                    if (charAxis != null)
-                    {
-
-                        if (charAxis.size () > 1)
-                            throw new SedInconsistentException ("Multiple copies of the Characterization Axis found. It's ambiguous as to which param should be retrieved.");
-
-                        if (charAxis.size () > 0)
-                        {
-                            params = charAxis.get (0).getCoverage ().getLocation ().getValue ();
-                            paramList.ensureCapacity (params.length);
-                            for (DoubleParam pp : params)
-                            {
-                            	if (pp != null)
-                            		paramList.add ((DoubleParam)pp.clone ());
-                            	else
-                            		paramList.add (null);
-                            }
-                        }
-                    }
-
-                    outParams = paramList;
-
-                }
-                break;
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:   // fallthrough intended
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:  // fallthrough intended
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:      // fallthrough intended
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:      // fallthrough intended
-                case Utypes.TARGET_POS:
-                {
-                    ArrayList<DoubleParam> paramList = new ArrayList<DoubleParam>();
-                    DoubleParam params[];
-                    
-                    outParams = paramList;
-
-                    if (utype == Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE)
-                        params = this.getChar ().getSpatialAxis ().getCoverage().getLocation ().getValue ();
-                    else if (utype == Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE)
-                        params = this.getChar ().getSpectralAxis ().getCoverage().getLocation ().getValue ();
-                    else if (utype == Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE)
-                        params = this.getChar ().getFluxAxis ().getCoverage().getLocation ().getValue ();
-                    else if (utype == Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE)
-                        params = this.getChar ().getTimeAxis ().getCoverage().getLocation ().getValue ();
-                    else
-                        params = this.getTarget ().getPos ().getValue ();
-
-                    if (params != null)
-                    {
-                        paramList.ensureCapacity (params.length);
-                        for (DoubleParam pp : params)
-                        {
-                            if (pp != null)
-                                paramList.add ((DoubleParam)pp.clone ());
-                            else
-                                paramList.add (null);
-                        }
-                    }
-
-                }
-                break;
-                default:
-                    throw new SedInconsistentException ("Cannot find a parameter associated with the specified utype, "+Utypes.getName (utype)+".");
-            }
+	    if ( outParams == null )
+		throw new SedInconsistentException ("Cannot find a parameter associated with the specified utype, "+Utypes.getName (utype)+".");
+	    
         }
         catch (NullPointerException exp)
         {
-        	;// return empty list
+	    // return empty list
+	    outParams = new ArrayList<Param>();
         }
 
         return outParams;
@@ -1747,7 +1750,7 @@ public class Segment
      */
     public void setMetaParam (Param param, int utype) throws SedInconsistentException
     {
-        Param sedParam = this.getMetaParam (utype, true);
+        Param sedParam = this.getMetaParam(utype, true);
 
         if (param == null)
             return;
@@ -1818,85 +1821,29 @@ public class Segment
     public void setMetaParamList (List<? extends Param> params, int utype)
          throws SedInconsistentException
     {
-        switch (utype)
-        {
-            case Utypes.SEG_DATAID_COLLECTION:  // fallthrough intended
-            case Utypes.SEG_DATAID_CONTRIBUTOR:
-            {
-                List<TextParam> paramList = null;
+	boolean found = false;
 
-                if (utype == Utypes.SEG_DATAID_COLLECTION)
-                    paramList = this.createDataID ().createCollection ();
-                else
-                    paramList = this.createDataID ().createContributor ();
+	    if ( Utypes.isDataIDUtype( utype ) && 
+		 ( Utypes.isCollectionUtype( utype )|| Utypes.isContributorUtype( utype ) ) )
+	    {
+		found = true;
+	    }
+	    else if ( Utypes.isCharacterizationUtype( utype ) && 
+		      Utypes.isCoverageLocationUtype( utype ) && 
+		      Utypes.isValueUtype( utype ) )
+	    {
+		found = true;
+	    }
+	    else if ( Utypes.isTargetUtype( utype ) && 
+		      Utypes.isPositionUtype( utype )   )
+	    {
+		found = true;
+	    }
 
-                for (Param pp : params)
-                    paramList.add ((TextParam)pp.clone ());
-
-            }
-            break;
-            case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
-            {
-                List<CharacterizationAxis> charAxis = null;
-                DoubleParam paramArray[];
-
-                charAxis = this.createChar ().createCharacterizationAxis ();
-
-
-                if (charAxis.size () > 1)
-                    throw new SedInconsistentException ("Multiple copies of the Characterization Axis found. It's ambiguous as to which param should be retrieved.");
-
-                paramArray = charAxis.get (0).createCoverage ().createLocation ().createValue ();
-                for (int ii=0; ii<params.size (); ii++)
-                {
-                    if (ii == paramArray.length)
-                        break;
-
-                    DoubleParam pp = (DoubleParam)params.get(ii);
-                    if (pp != null)
-                    	paramArray[ii] = (DoubleParam)pp.clone ();
-                    else
-                    	paramArray[ii] = null;
-                }
-
-            }
-            break;
-            case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:   // fallthrough intended
-            case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:  // fallthrough intended
-            case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:      // fallthrough intended
-            case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:      // fallthrough intended
-            case Utypes.TARGET_POS:
-            {
-                DoubleParam paramArray[];
-
-                if (utype == Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE)
-                    paramArray = this.createChar ().createSpatialAxis ().createCoverage ().createLocation ().createValue ();
-                else if (utype == Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE)
-                    paramArray = this.createChar ().createSpectralAxis ().createCoverage ().createLocation ().createValue ();
-                else if (utype == Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE)
-                    paramArray = this.createChar ().createFluxAxis ().createCoverage ().createLocation ().createValue ();
-                else if (utype == Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE)
-                    paramArray = this.createChar ().createTimeAxis ().createCoverage ().createLocation ().createValue ();
-                else
-                    paramArray = this.createTarget().createPos ().createValue ();
-
-                for (int ii=0; ii < params.size (); ii++)
-                {
-                    if (ii == paramArray.length)
-                        break;
-
-                    DoubleParam pp = (DoubleParam)params.get(ii);
-
-                    if (pp != null)
-                        paramArray[ii] = (DoubleParam)pp.clone ();
-                    else
-                        paramArray[ii] = null;
-                    }
-                    }
-            break;
-            default:
+	    if ( found )
+		this.setValueByUtype( utype, params );
+	    else
                 throw new SedInconsistentException ("Cannot find a parameter associated with the specified utype, "+Utypes.getName (utype)+".");
-        }
 
     }
 
@@ -1911,543 +1858,21 @@ public class Segment
 
         try
         {
-            switch (utype)
-            {
-                case Utypes.TYPE:
-                    if (create)
-                        param = this.createType ();
-                    else
-                        param = this.getType ();
-                break;
-                case Utypes.TIMESI:
-                    if (create)
-                        param = this.createTimeSI ();
-                    else
-                        param = this.getTimeSI ();
-                break;
-                case Utypes.SPECTRALSI:
-                    if (create)
-                        param = this.createSpectralSI ();
-                    else
-                        param = this.getSpectralSI ();
-                break;
-                case Utypes.FLUXSI:
-                    if (create)
-                        param = this.createFluxSI ();
-                    else
-                        param = this.getFluxSI ();
-                break;
-                case Utypes.TARGET_NAME:
-                    if (create)
-                        param = this.createTarget ().createName ();
-                    else
-                        param = this.getTarget ().getName ();
-                break;
-                case Utypes.TARGET_DESCRIPTION:
-                    if (create)
-                        param = this.createTarget ().createDescription ();
-                    else
-                        param = this.getTarget ().getDescription ();
-                break;
-                case Utypes.TARGET_CLASS:
-                    if (create)
-                        param = this.createTarget ().createTargetClass ();
-                    else
-                        param = this.getTarget ().getTargetClass ();
-                break;
-                case Utypes.TARGET_SPECTRALCLASS:
-                    if (create)
-                        param = this.createTarget ().createSpectralClass ();
-                    else
-                        param = this.getTarget ().getSpectralClass ();
-                break;
-                case Utypes.TARGET_REDSHIFT:
-                    if (create)
-                        param = this.createTarget ().createRedshift ();
-                    else
-                        param = this.getTarget ().getRedshift ();
-                break;
-                case Utypes.TARGET_VARAMPL:
-                    if (create)
-                        param = this.createTarget ().createVarAmpl ();
-                    else
-                        param = this.getTarget ().getVarAmpl ();
-                break;
-                case Utypes.SEG_CS_SPACEFRAME_EQUINOX:
-                {
-                    List <CoordFrame> coordFrames;
-                    if (create)
-                        coordFrames = this.createCoordSys ().createCoordFrame ();
-                    else
-                        coordFrames = this.getCoordSys ().getCoordFrame ();
+	    Object value = null;
 
-                    if (coordFrames != null)
-                    {
-                        SpaceFrame spaceFrame = null;
-                        
-                        for (CoordFrame coordFrame : coordFrames)
-                        {
-                            if (coordFrame instanceof SpaceFrame)
-                            {
-                                if (spaceFrame != null)
-                                    throw new SedInconsistentException ("Multiple copies of the spaceframe found. It's ambiguous as to which param should be retrieved.");
-                                else
-                                    spaceFrame = (SpaceFrame)coordFrame;
-                            }
-                        }
-                        if (create)
-                        {
-                            if (spaceFrame == null)
-                            {
-                                spaceFrame = new SpaceFrame ();
-                                coordFrames.add (spaceFrame);
-                            }
-                            param = spaceFrame.createEquinox ();
-                        }
-                        else if (spaceFrame != null)
-                            param = spaceFrame.getEquinox ();
-                    }
-                }
-                break;
-                case Utypes.SEG_CS_TIMEFRAME_ZERO:
-                {
-                    List <CoordFrame> coordFrames;
-                    if (create)
-                        coordFrames = this.createCoordSys ().createCoordFrame ();
-                    else
-                        coordFrames = this.getCoordSys ().getCoordFrame ();
-
-                    if (coordFrames != null)
-                    {
-                        TimeFrame timeFrame = null;
-
-                        for (CoordFrame coordFrame : coordFrames)
-                        {
-                            if (coordFrame instanceof TimeFrame)
-                            {
-                                if (timeFrame != null)
-                                    throw new SedInconsistentException ("Multiple copies of the spaceframe found. It's ambiguous as to which param should be retrieved.");
-                                else
-                                    timeFrame = (TimeFrame)coordFrame;
-                            }
-                        }
-                        if (create)
-                        {
-                            if (timeFrame == null)
-                            {
-                                timeFrame = new TimeFrame ();
-                                coordFrames.add (timeFrame);
-                            }
-                            param = timeFrame.createZero ();
-                        }
-                        else if (timeFrame != null)
-                            param = timeFrame.getZero ();
-                    }
-                }
-                break;
-                case Utypes.SEG_CS_SPECTRALFRAME_REDSHIFT:
-                {
-                    List <CoordFrame> coordFrames;
-                    if (create)
-                        coordFrames = this.createCoordSys ().createCoordFrame ();
-                    else
-                        coordFrames = this.getCoordSys ().getCoordFrame ();
-
-                    if (coordFrames != null)
-                    {
-                        SpectralFrame spectralFrame = null;
-
-                        for (CoordFrame coordFrame : coordFrames)
-                        {
-                            if (coordFrame instanceof SpectralFrame)
-                            {
-                                if (spectralFrame != null)
-                                    throw new SedInconsistentException ("Multiple copies of the spaceframe found. It's ambiguous as to which param should be retrieved.");
-                                else
-                                    spectralFrame = (SpectralFrame)coordFrame;
-                            }
-                        }
-                        if (create)
-                        {
-                            if (spectralFrame == null)
-                            {
-                                spectralFrame = new SpectralFrame ();
-                                coordFrames.add (spectralFrame);
-                            }
-                            param = spectralFrame.createRedshift ();
-                        }
-                        else if (spectralFrame != null)
-                            param = spectralFrame.getRedshift ();
-                    }
-                }
-                break;
-                case Utypes.SEG_CURATION_PUBLISHER:
-                    if (create)
-                        param = this.createCuration ().createPublisher ();
-                    else
-                        param = this.getCuration ().getPublisher ();
-                break;
-                case Utypes.SEG_CURATION_REF:
-                    if (create)
-                        param = this.createCuration ().createReference ();
-                    else
-                        param = this.getCuration ().getReference ();
-                break;
-                case Utypes.SEG_CURATION_PUBID:
-                    if (create)
-                        param = this.createCuration ().createPublisherID ();
-                    else
-                        param = this.getCuration ().getPublisherID ();
-                break;
-                case Utypes.SEG_CURATION_PUBDID:
-                    if (create)
-                        param = this.createCuration ().createPublisherDID ();
-                    else
-                        param = this.getCuration ().getPublisherDID ();
-                break;
-                case Utypes.SEG_CURATION_VERSION:
-                    if (create)
-                        param = this.createCuration ().createVersion ();
-                    else
-                        param = this.getCuration ().getVersion ();
-                break;
-                case Utypes.SEG_CURATION_CONTACT_NAME:
-                    if (create)
-                        param = this.createCuration ().createContact ().createName ();
-                    else
-                        param = this.getCuration ().getContact ().getName ();
-                break;
-                case Utypes.SEG_CURATION_CONTACT_EMAIL:
-                    if (create)
-                        param = this.createCuration ().createContact ().createEmail ();
-                    else
-                        param = this.getCuration ().getContact ().getEmail ();
-                break;
-                case Utypes.SEG_CURATION_RIGHTS:
-                    if (create)
-                        param = this.createCuration ().createRights ();
-                    else
-                        param = this.getCuration ().getRights ();
-                break;
-                case Utypes.SEG_CURATION_DATE:
-                    if (create)
-                        param = this.createCuration ().createDate ();
-                    else
-                        param = this.getCuration ().getDate ();
-                break;
-                case Utypes.SEG_DATAID_TITLE:
-                    if (create)
-                        param = this.createDataID ().createTitle ();
-                    else
-                        param = this.getDataID ().getTitle ();
-                break;
-                case Utypes.SEG_DATAID_CREATOR:
-                    if (create)
-                        param = this.createDataID ().createCreator ();
-                    else
-                        param = this.getDataID ().getCreator ();
-                break;
-                case Utypes.SEG_DATAID_DATASETID:
-                    if (create)
-                        param = this.createDataID ().createDatasetID ();
-                    else
-                        param = this.getDataID ().getDatasetID ();
-                break;
-                case Utypes.SEG_DATAID_CREATORDID:
-                    if (create)
-                        param = this.createDataID ().createCreatorDID ();
-                    else
-                        param = this.getDataID ().getCreatorDID ();
-                break;
-                case Utypes.SEG_DATAID_DATE:
-                    if (create)
-                        param = this.createDataID ().createDate ();
-                    else
-                        param = this.getDataID ().getDate ();
-                break;
-                case Utypes.SEG_DATAID_VERSION:
-                    if (create)
-                        param = this.createDataID ().createVersion ();
-                    else
-                        param = this.getDataID ().getVersion ();
-                break;
-                case Utypes.SEG_DATAID_INSTRUMENT:
-                    if (create)
-                        param = this.createDataID ().createInstrument ();
-                    else
-                        param = this.getDataID ().getInstrument ();
-                break;
-                case Utypes.SEG_DATAID_CREATIONTYPE:
-                    if (create)
-                        param = this.createDataID ().createCreationType ();
-                    else
-                        param = this.getDataID ().getCreationType ();
-                break;
-                case Utypes.SEG_DATAID_LOGO:
-                    if (create)
-                        param = this.createDataID ().createLogo ();
-                    else
-                        param = this.getDataID ().getLogo ();
-                break;
-                case Utypes.SEG_DATAID_DATASOURCE:
-                    if (create)
-                        param = this.createDataID ().createDataSource ();
-                    else
-                        param = this.getDataID ().getDataSource ();
-                break;
-                case Utypes.SEG_DATAID_BANDPASS:
-                    if (create)
-                        param = this.createDataID ().createBandpass ();
-                    else
-                        param = this.getDataID ().getBandpass ();
-                break;
-                case Utypes.SEG_DD_SNR:
-                    if (create)
-                        param = this.createDerived ().createSNR ();
-                    else
-                        param = this.getDerived ().getSNR ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_VALUE:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createValue ();
-                    else
-                        param = this.getDerived ().getRedshift ().getValue ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_STATERR:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createStatError ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getStatError ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createConfidence ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getConfidence ();
-                break;
-                case Utypes.SEG_DD_VARAMPL:
-                    if (create)
-                        param = this.createDerived ().createVarAmpl ();
-                    else
-                        param = this.getDerived ().getVarAmpl ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_BINLOW:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createBinLow ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getBinLow ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_BINHIGH:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createBinHigh ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getBinHigh ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_BINSIZE:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createBinSize ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getBinSize ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRLOW:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createStatErrLow ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getStatErrLow ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createStatErrHigh ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getStatErrHigh ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_ACC_SYSERR:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createAccuracy ().createSysError ();
-                    else
-                        param = this.getDerived ().getRedshift ().getAccuracy ().getSysError ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_QUALITY:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createQuality ();
-                    else
-                        param = this.getDerived ().getRedshift ().getQuality ();
-                break;
-                case Utypes.SEG_DD_REDSHIFT_RESOLUTION:
-                    if (create)
-                        param = this.createDerived ().createRedshift ().createResolution ();
-                    else
-                        param = this.getDerived ().getRedshift ().getResolution ();
-                break;
-
-
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_CHARAXIS_CAL:
-                case Utypes.SEG_CHAR_CHARAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
-                {
-
-                    List <CharacterizationAxis> charAxes;
-                    if (create)
-                        charAxes = this.createChar ().createCharacterizationAxis ();
-                    else
-                        charAxes = this.getChar ().getCharacterizationAxis ();
-
-                    if (charAxes != null)
-                    {
-
-                        if (charAxes.size () > 1)
-                            throw new SedInconsistentException ("Multiple copies of the Characterization Axis found. It's ambiguous as to which param should be retrieved.");
-
-                        if (charAxes.size () == 1)
-                            param = getParamFromCharAxis (charAxes.get (0), utype, create);
-                    }
-                }
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_FLUXAXIS_CAL:
-                case Utypes.SEG_CHAR_FLUXAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
-                {
-                    CharacterizationAxis fluxAxis;
-                    if (create)
-                        fluxAxis = this.createChar ().createFluxAxis ();
-                    else
-                        fluxAxis = this.getChar ().getFluxAxis ();
-                    if (fluxAxis != null)
-                        param = getParamFromCharAxis (fluxAxis, utype, create);
-                }
-                break;
-
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_CAL:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
-                {
-                    CharacterizationAxis spectralAxis;
-                    if (create)
-                        spectralAxis = this.createChar ().createSpectralAxis ();
-                    else
-                        spectralAxis = this.getChar ().getSpectralAxis ();
-                    if (spectralAxis != null)
-                        param = getParamFromCharAxis (spectralAxis, utype, create);
-                }
-                break;
-                case Utypes.SEG_CHAR_SPECTRALAXIS_RESPOW:
-                    if (create)
-                        param = this.createChar ().createSpectralAxis ().createResPower ();
-                    else
-                        param = this.getChar ().getSpectralAxis ().getResPower ();
-                break;
-
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_CAL:
-                case Utypes.SEG_CHAR_SPATIALAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
-                {
-                    CharacterizationAxis spatialAxis;
-                    if (create)
-                        spatialAxis = this.createChar ().createSpatialAxis ();
-                    else
-                        spatialAxis = this.getChar ().getSpatialAxis ();
-                    if (spatialAxis != null)
-                        param = getParamFromCharAxis (spatialAxis, utype, create);
-                }
-                break;
+	    value = this.getValueByUtype( utype, create );
+	    if ( value != null )
+	    {
+		if ( value instanceof Param )
+		    param = ( Param )value;
+	    }
+	    else
+	    {
+		// These are not actually valid utypes..
+		switch (utype)
+		{
                 case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE_RA:
-                {
+		{
                     Param []params;
                     if (create)
                         params = this.createChar ().createSpatialAxis ().createCoverage ().createLocation ().createValue ();
@@ -2471,47 +1896,10 @@ public class Segment
                 }
                 break;
 
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_TIMEAXIS_CAL:
-                case Utypes.SEG_CHAR_TIMEAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
-                {
-                    CharacterizationAxis timeAxis;
-                    if (create)
-                        timeAxis = this.createChar ().createTimeAxis ();
-                    else
-                        timeAxis = this.getChar ().getTimeAxis ();
-                    if (timeAxis != null)
-                        param = getParamFromCharAxis (timeAxis, utype, create);
-                }
-                break;
                 default:
                     throw new SedInconsistentException ("Cannot find a parameter associated with the specified utype, "+Utypes.getName (utype)+".");
-            }
+		} // end switch
+	    } // end else
         }
         catch (NullPointerException exp)
         {
@@ -2539,295 +1927,6 @@ public class Segment
         return data.getPoint ();
     }
 
-    protected Param getParamFromCharAxis (CharacterizationAxis axis, int utype, boolean create)
-    {
-        Param param = null;
-        
-        try
-        {
-            switch (utype)
-            {
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
-                    if (create)
-                        param = axis.createCoverage ().createBounds ().createRange ().createMin ();
-                    else
-                        param = axis.createCoverage ().getBounds ().getRange ().getMin ();
-                break;
-
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
-                    if (create)
-                        param = axis.createCoverage ().createBounds ().createRange ().createMax ();
-                    else
-                        param = axis.createCoverage ().getBounds ().getRange ().getMax ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
-                    if (create)
-                        param = axis.createCoverage ().createBounds ().createExtent ();
-                    else
-                        param = axis.createCoverage ().getBounds ().getExtent ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
-                    if (create)
-                        param = axis.createCoverage ().createSupport ().createArea ();
-                    else
-                        param = axis.createCoverage ().getSupport ().getArea ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
-                    if (create)
-                        param = axis.createAccuracy ().createBinSize ();
-                    else
-                        param = axis.getAccuracy ().getBinSize ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERR:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
-                    if (create)
-                        param = axis.createAccuracy ().createStatError ();
-                    else
-                        param = axis.getAccuracy ().getStatError ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
-                    if (create)
-                        param = axis.createAccuracy ().createSysError ();
-                    else
-                        param = axis.getAccuracy ().getSysError ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_CAL:
-                case Utypes.SEG_CHAR_SPATIALAXIS_CAL:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_CAL:
-                case Utypes.SEG_CHAR_TIMEAXIS_CAL:
-                case Utypes.SEG_CHAR_CHARAXIS_CAL:
-                    if (create)
-                        param = axis.createCalibration ();
-                    else
-                        param = axis.getCalibration ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_SPATIALAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_TIMEAXIS_RESOLUTION:
-                case Utypes.SEG_CHAR_CHARAXIS_RESOLUTION:
-                    if (create)
-                        param = axis.createResolution ();
-                    else
-                        param = axis.getResolution ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT:
-                case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
-                    if (create)
-                        param = axis.createSamplingPrecision ().createSampleExtent ();
-                    else
-                        param = axis.getSamplingPrecision ().getSampleExtent ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
-                    if (create)
-                        param = axis.createAccuracy ().createBinLow ();
-                    else
-                        param = axis.getAccuracy ().getBinLow ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
-                    if (create)
-                        param = axis.createAccuracy ().createBinHigh ();
-                    else
-                        param = axis.getAccuracy ().getBinHigh ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
-                    if (create)
-                        param = axis.createAccuracy ().createStatErrLow ();
-                    else
-                        param = axis.getAccuracy ().getStatErrLow ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
-                    if (create)
-                        param = axis.createAccuracy ().createStatErrHigh ();
-                    else
-                        param = axis.getAccuracy ().getStatErrHigh ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
-                    if (create)
-                        param = axis.createAccuracy ().createConfidence ();
-                    else
-                        param = axis.getAccuracy ().getConfidence ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
-                    if (create)
-                        param = axis.createSamplingPrecision ().createSamplingPrecisionRefVal ().createFillFactor ();
-                    else
-                        param = axis.getSamplingPrecision ().getSamplingPrecisionRefVal ().getFillFactor ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
-                    if (create)
-                        param = axis.createCoverage ().createSupport ().createExtent ();
-                    else
-                        param = axis.getCoverage ().getSupport ().getExtent ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createSysError ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getSysError ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createConfidence ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getConfidence ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createBinSize ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getBinSize ();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createBinLow ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getBinLow();
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createBinHigh ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getBinHigh ();
-
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createStatError ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getStatError ();
-
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createStatErrLow ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getStatErrLow ();
-
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createAccuracy ().createStatErrHigh ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getAccuracy ().getStatErrHigh ();
-
-                break;
-                case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
-                case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
-                    if (create)
-                        param = axis.createCoverage ().createLocation ().createResolution ();
-                    else
-                        param = axis.getCoverage ().getLocation ().getResolution ();
-                break;
-            }
-
-        }
-        catch (NullPointerException exp)
-        {
-            param = null;
-        }
-
-        return param;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -2841,25 +1940,24 @@ public class Segment
 
 
         try {
-                /*
-                 * if the spectralAxis values are different then the segments are different
-                 */
-                if (!Arrays.equals(this.getSpectralAxisValues(), other.getSpectralAxisValues())) {
-                    return false;
-                }
+	    /*
+	     * if the spectralAxis values are different then the segments are different
+	     */
+	    if (!Arrays.equals(this.getSpectralAxisValues(), other.getSpectralAxisValues())) {
+		return false;
+	    }
 
-                /*
-                 * if the fluxAxis values are different then the segments are different
-                 */
-                if (!Arrays.equals(this.getFluxAxisValues(), other.getFluxAxisValues())) {
-                    return false;
-                }
+	    /*
+	     * if the fluxAxis values are different then the segments are different
+	     */
+	    if (!Arrays.equals(this.getFluxAxisValues(), other.getFluxAxisValues())) {
+		return false;
+	    }
 
-
-            } catch (Exception ex) {
-                Logger.getLogger(Sed.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            }
+	} catch (Exception ex) {
+	    Logger.getLogger(Sed.class.getName()).log(Level.SEVERE, null, ex);
+	    return false;
+	}
 
 
         return true;
@@ -3062,5 +2160,133 @@ public class Segment
         return valid;
     }
 
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create ) throws SedInconsistentException
+    {
+	Object value = null;
+
+	if ( Utypes.isCharacterizationUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createChar().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getChar().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isCoordSysUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createCoordSys().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getCoordSys().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isCurationUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createCuration().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getCuration().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isDataIDUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createDataID().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getDataID().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isDerivedUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createDerived().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getDerived().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isTargetUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createTarget().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getTarget().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isFluxSIUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createFluxSI();
+	    else
+		value = this.getFluxSI();
+	}
+	else if ( Utypes.isSpectralSIUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createSpectralSI();
+	    else
+		value = this.getSpectralSI();
+	}
+	else if ( Utypes.isTimeSIUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createTimeSI();
+	    else
+		value = this.getTimeSI();
+	}
+	else if ( Utypes.isTypeUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createType();
+	    else
+		value = this.getType();
+	}
+	
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value ) throws SedInconsistentException
+    {
+	if ( Utypes.isCharacterizationUtype( utypeNum ) )
+	{
+	    this.createChar().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isCoordSysUtype( utypeNum ) )
+	{
+	    this.createCoordSys().setValueByUtype( utypeNum, value );
+	}	
+	else if ( Utypes.isCurationUtype( utypeNum ) )
+	{
+	    this.createCuration().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isDataIDUtype( utypeNum ) )
+	{
+	    this.createDataID().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isDerivedUtype( utypeNum ) )
+	{
+	    this.createDerived().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isTargetUtype( utypeNum ) )
+	{
+	    this.createTarget().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isFluxSIUtype( utypeNum ) )
+	{
+	    this.setFluxSI( (TextParam)value );
+	}
+	else if ( Utypes.isSpectralSIUtype( utypeNum ) )
+	{
+	    this.setSpectralSI( (TextParam)value );
+	}
+	else if ( Utypes.isTimeSIUtype( utypeNum ) )
+	{
+	    this.setTimeSI( (TextParam)value );
+	}
+	else if ( Utypes.isTypeUtype( utypeNum ) )
+	{
+	    this.setType( (TextParam)value );
+	}
+	return;
+    }
 }
 

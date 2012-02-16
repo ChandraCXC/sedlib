@@ -21,12 +21,15 @@ import java.util.List;
 
 import java.util.logging.Logger;
 
+import cfa.vo.sedlib.common.Utypes;
+import cfa.vo.sedlib.common.SedInconsistentException;
 
 /**
  * <p>Java class for coordSys complex type.
  * 
  */
-public class CoordSys extends Group {
+public class CoordSys extends Group  implements IAccessByUtype
+{
 
     protected List<CoordFrame> coordFrame;
     protected String id;
@@ -51,17 +54,7 @@ public class CoordSys extends Group {
         {
         	coordSys.idref = null;
         	Logger.getLogger(Sed.class.getName()).severe("IDRef from CoordFrame is not cloneable");
-/*            try
-            {
-                coordSys.idref = this.idref.clone ();
-            }
-            catch (CloneNotSupportedException e)
-            {
-                Logger.getLogger(Sed.class.getName()).log(Level.SEVERE, null, e);
-            }
-            */
         }
-
 
         return coordSys;
     }
@@ -244,5 +237,231 @@ public class CoordSys extends Group {
     public boolean isSetHref() {
         return (this.href!= null);
     }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create ) throws SedInconsistentException
+    {
+	CoordFrame frame = null;
+	Object value = null;
+
+	if ( Utypes.isSpaceFrameUtype( utypeNum ) )
+	{
+	    if ( create )
+		this.createCoordFrame();
+
+	    if ( this.coordFrame != null )
+	    {
+		frame = this.findFrame( "SpaceFrame" );
+		if ( create && (frame == null) )
+		{
+		    frame =  new SpaceFrame();
+		    this.coordFrame.add( frame );
+		}
+	    }
+	}
+	else if ( Utypes.isSpectralFrameUtype( utypeNum ) )
+	{
+	    if ( create )
+		this.createCoordFrame();
+
+	    if ( this.coordFrame != null )
+	    {
+		frame = this.findFrame( "SpectralFrame" );
+		if ( create && (frame == null) )
+		{
+		    frame =  new SpectralFrame();
+		    this.coordFrame.add( frame );
+		}
+	    }
+	}
+	else if ( Utypes.isRedshiftFrameUtype( utypeNum ) )
+	{
+	    if ( create )
+		this.createCoordFrame();
+
+	    if ( this.coordFrame != null )
+	    {
+		frame = this.findFrame( "RedshiftFrame" );
+		if ( create && (frame == null) )
+		{
+		    frame =  new RedshiftFrame();
+		    this.coordFrame.add( frame );
+		}
+	    }
+	}
+	else if ( Utypes.isTimeFrameUtype( utypeNum ) )
+	{
+	    if ( create )
+		this.createCoordFrame();
+
+	    if ( this.coordFrame != null )
+	    {
+		frame = this.findFrame( "TimeFrame" );
+		if ( create && (frame == null) )
+		{
+		    frame =  new TimeFrame();
+		    this.coordFrame.add( frame );
+		}
+	    }
+	}
+	else if ( Utypes.isGenericFrameUtype( utypeNum ) )
+	{
+	    if ( create )
+		this.createCoordFrame();
+
+	    if ( this.coordFrame != null )
+	    {
+		frame = this.findFrame( "CoordFrame" );
+		if ( create && (frame == null) )
+		{
+		    frame =  new TimeFrame();
+		    this.coordFrame.add( frame );
+		}
+	    }
+	}
+	else if ( Utypes.isIdUtype( utypeNum ) )
+	{
+	    if ( this.isSetId() )
+		value = this.getId();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    if ( this.isSetUcd() )
+		value = this.getUcd();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isTypeUtype( utypeNum ) )
+	{
+	    if ( this.isSetType() )
+		value = this.getType();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isHrefUtype( utypeNum ) )
+	{
+	    if ( this.isSetHref() )
+		value = this.getHref();
+	    else
+		value = new String();
+	}
+
+	if ( frame != null )
+	    value = frame.getValueByUtype( utypeNum, create );
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value ) throws SedInconsistentException
+    {
+	CoordFrame frame = null;
+
+	if ( Utypes.isSpaceFrameUtype( utypeNum ) )
+	{
+	    this.createCoordFrame();
+
+	    frame = this.findFrame( "SpaceFrame" );
+	    if ( frame == null )
+	    {
+		frame =  new SpaceFrame();
+		this.coordFrame.add( frame );
+	    }
+	}
+	else if ( Utypes.isSpectralFrameUtype( utypeNum ) )
+	{
+	    this.createCoordFrame();
+
+	    frame = this.findFrame( "SpectralFrame" );
+	    if ( frame == null )
+	    {
+		frame =  new SpectralFrame();
+		this.coordFrame.add( frame );
+	    }
+	}
+	else if ( Utypes.isTimeFrameUtype( utypeNum ) )
+	{
+	    this.createCoordFrame();
+
+	    frame = this.findFrame( "TimeFrame" );
+	    if ( frame == null )
+	    {
+		frame =  new TimeFrame();
+		this.coordFrame.add( frame );
+	    }
+	}
+	else if ( Utypes.isRedshiftFrameUtype( utypeNum ) )
+	{
+	    this.createCoordFrame();
+
+	    frame = this.findFrame( "RedshiftFrame" );
+	    if ( frame == null )
+	    {
+		frame =  new RedshiftFrame();
+		this.coordFrame.add( frame );
+	    }
+	}
+	else if ( Utypes.isGenericFrameUtype( utypeNum ) )
+	{
+	    this.createCoordFrame();
+
+	    frame = this.findFrame( "CoordFrame" );
+	    if ( frame == null )
+	    {
+		frame =  new CoordFrame();
+		this.coordFrame.add( frame );
+	    }
+	}
+	else if ( Utypes.isIdUtype( utypeNum ) )
+	{
+	    this.setId( (String)value );
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    this.setUcd( (String)value );
+	}
+	else if ( Utypes.isTypeUtype( utypeNum ) )
+	{
+	    this.setType( (String)value );
+	}
+	else if ( Utypes.isHrefUtype( utypeNum ) )
+	{
+	    this.setHref( (String)value );
+	}
+
+	if ( frame != null )
+	    frame.setValueByUtype( utypeNum, value );
+
+	return;
+    }
+
+    private CoordFrame findFrame( String type ) throws SedInconsistentException
+    {
+	CoordFrame frame = null;
+
+	if ( this.coordFrame == null )
+	    return frame;
+
+	for ( CoordFrame item : this.coordFrame )
+	{
+	    if ( item.getClass().getSimpleName().equals( type ) )
+	    {
+		if ( frame != null )
+		    throw new SedInconsistentException ("Multiple copies of " + type + " found. It's ambiguous as to which param should be retrieved.");
+		else
+		    frame = item;
+	    }
+	}
+
+	return frame;
+    }
+
 
 }

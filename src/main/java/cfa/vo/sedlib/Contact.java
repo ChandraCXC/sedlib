@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for contact complex type.
  * 
  * 
  */
 public class Contact
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected TextParam name;
@@ -125,5 +127,50 @@ public class Contact
     public boolean isSetEmail() {
         return (this.email!= null);
     }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createName();
+	    else
+		value = this.getName();
+	}
+	else if ( Utypes.isEmailUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createEmail();
+	    else
+		value = this.getEmail();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    this.setName( (TextParam)value );
+	}
+	else if ( Utypes.isEmailUtype( utypeNum ) )
+	{
+	    this.setEmail( (TextParam)value );
+	}
+
+	return;
+    }
+
+
 
 }

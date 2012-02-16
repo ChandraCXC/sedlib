@@ -100,7 +100,8 @@ public class VOTableSerializer implements ISedSerializer
     // NOTE: for now always use spectrum namespace. In the future
     // we'll probably want to allow namespace to be set by the 
     // segment type. 
-    protected String namespace = "spec";
+    // NOTE: Step 1.. associate namespace with utypes.
+    protected String namespace = VOTableKeywords.getNamespace();
 
     protected String baseId = "ID_"; // used to setup field ids
     protected int refCount = 0; // a counter for each field
@@ -152,19 +153,18 @@ public class VOTableSerializer implements ISedSerializer
         VODocument voDocument = new VODocument();
         VOElement root = (VOElement) voDocument.createElement(VOTableKeywords._VOTABLE);
 
-
-        String namespaceDeclaration=null;
-
-        this.namespace = sed.getNamespace ();
-
-        if ( this.namespace != null && !this.namespace.equals( "" ) )
+	// Check if SED is overriding the default namespace.
+	String ns = sed.getNamespace();
+        if ( ns != null && !ns.equals( "" ) )
         {
-            // Replace the trailing colon (it is suppossed to be there)
-            // because it doesn't go in the 'xmlns' attribute.
-            namespaceDeclaration = this.namespace.replaceFirst( ":$", "" );
-
-            namespaceDeclaration = "xmlns:" + namespaceDeclaration;
+	    this.namespace = ns;
         }
+
+	// Replace the trailing colon (it is suppossed to be there)
+	// because it doesn't go in the 'xmlns' attribute.
+        String namespaceDeclaration=null;
+	namespaceDeclaration = this.namespace.replaceFirst( ":$", "" );
+	namespaceDeclaration = "xmlns:" + namespaceDeclaration;
 
         String[] nameArray = {"version",
                                 "xmlns",

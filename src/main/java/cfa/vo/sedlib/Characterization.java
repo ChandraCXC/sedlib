@@ -19,6 +19,10 @@ package cfa.vo.sedlib;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import cfa.vo.sedlib.common.Utypes;
+import cfa.vo.sedlib.common.SedInconsistentException;
+
 import cfa.vo.sedlib.common.ValidationError;
 import cfa.vo.sedlib.common.ValidationErrorEnum;
 
@@ -30,7 +34,7 @@ import cfa.vo.sedlib.common.ValidationErrorEnum;
  * 
  */
 public class Characterization
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected CharacterizationAxis spatialAxis;
@@ -472,4 +476,119 @@ public class Characterization
         return errorList.isEmpty ();
     }
 
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create ) throws SedInconsistentException
+    {
+	CharacterizationAxis axis = null;
+	Object value = null;
+
+	if ( Utypes.isCharAxisUtype( utypeNum ) )
+	{
+	    List <CharacterizationAxis> charAxes = null;
+	    if (create)
+		charAxes = this.createCharacterizationAxis();
+	    else
+		charAxes = this.getCharacterizationAxis();
+
+	    if (charAxes != null)
+            {
+		if (charAxes.size() > 1)
+		    throw new SedInconsistentException ("Multiple copies of the Characterization Axis found. It's ambiguous as to which param should be retrieved.");
+		if ( create && charAxes.isEmpty() )
+		    charAxes.add( new CharacterizationAxis() );
+		
+		if (charAxes.size() == 1)
+		    axis = charAxes.get(0);
+	    }
+	}
+	else if ( Utypes.isFluxAxisUtype( utypeNum ) )
+	{
+	    if (create)
+		axis = this.createFluxAxis();
+	    else
+		axis = this.getFluxAxis();
+	}
+	else if ( Utypes.isSpatialAxisUtype( utypeNum ) )
+	{
+	    if (create)
+		axis = this.createSpatialAxis();
+	    else
+		axis = this.getSpatialAxis();
+	}
+	else if ( Utypes.isSpectralAxisUtype( utypeNum ) )
+	{
+	    if (create)
+		axis = this.createSpectralAxis();
+	    else
+		axis = this.getSpectralAxis();
+	}
+	else if ( Utypes.isTimeAxisUtype( utypeNum ) )
+	{
+	    if (create)
+		axis = this.createTimeAxis();
+	    else
+		axis = this.getTimeAxis();
+	}
+
+        try
+        {
+	    if ( axis != null)
+		value = axis.getValueByUtype( utypeNum, create );
+        }
+        catch (NullPointerException exp)
+        {
+            value = null;
+        }
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value ) throws SedInconsistentException
+    {
+	CharacterizationAxis axis = null;
+
+	if ( Utypes.isCharAxisUtype( utypeNum ) )
+	{
+	    List <CharacterizationAxis> charAxes = null;
+	    charAxes = this.createCharacterizationAxis();
+
+	    if (charAxes != null)
+            {
+		if ( charAxes.size() > 1 )
+		    throw new SedInconsistentException ("Multiple copies of the Characterization Axis found. It's ambiguous as to which param should be retrieved.");
+
+		if ( charAxes.isEmpty() )
+		    charAxes.add( new CharacterizationAxis() );
+		
+		if ( charAxes.size() == 1 )
+		    axis = charAxes.get(0);
+	    }
+	}
+	else if ( Utypes.isFluxAxisUtype( utypeNum ) )
+	{
+	    axis = this.createFluxAxis();
+	}
+	else if ( Utypes.isSpatialAxisUtype( utypeNum ) )
+	{
+	    axis = this.createSpatialAxis();
+	}
+	else if ( Utypes.isSpectralAxisUtype( utypeNum ) )
+	{
+	    axis = this.createSpectralAxis();
+	}
+	else if ( Utypes.isTimeAxisUtype( utypeNum ) )
+	{
+	    axis = this.createTimeAxis();
+	}
+
+	if ( axis != null )
+	    axis.setValueByUtype( utypeNum, value );
+
+	return;
+    }
 }

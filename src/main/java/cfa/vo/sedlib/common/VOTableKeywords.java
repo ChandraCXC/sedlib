@@ -66,19 +66,21 @@ public class VOTableKeywords extends Utypes{
 
 
     /**
-     * Gets the string representation of a utype enumeration. The
-     * namespace is removed from the utype if one exists.
+     * Gets the string representation of a utype enumeration, 
+     * prepends the provided namespace.
      *
      */
     static public String getName (int utype, String namespace)
     {
     	if (namespace != null)
-            namespace = namespace + ":";
+	{
+	    if ( !namespace.endsWith(":") )
+		namespace = namespace + ":";
+	}
         else
             namespace = "";
 
         return namespace+name[utype];
-
     }
 
     /**

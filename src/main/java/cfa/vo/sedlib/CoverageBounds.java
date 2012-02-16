@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for coverageBounds complex type.
  * 
  * 
  */
 public class CoverageBounds
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected DoubleParam extent;
@@ -125,5 +127,58 @@ public class CoverageBounds
     public boolean isSetRange() {
         return (this.range!= null);
     }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isExtentUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createExtent();
+	    else
+		value = this.getExtent();
+	}
+	else if ( Utypes.isMinUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createRange().createMin();
+	    else
+		value = this.getRange().getMin();
+	}
+	else if ( Utypes.isMaxUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createRange().createMax();
+	    else
+		value = this.getRange().getMax();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isExtentUtype( utypeNum ) )
+	{
+            this.setExtent( (DoubleParam)value );
+	}
+	else if ( Utypes.isMinUtype( utypeNum ) )
+	{
+            this.createRange().setMin( (DoubleParam)value );
+	}
+	else if ( Utypes.isMaxUtype( utypeNum ) )
+	{
+            this.createRange().setMax( (DoubleParam)value );
+	}
+	return;
+    }
+
 
 }

@@ -16,6 +16,8 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for spectralFrame complex type.
  * 
@@ -80,6 +82,46 @@ public class SpectralFrame
 
     public boolean isSetRedshift() {
         return (this.redshift!= null);
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createRedshift();
+	    else
+		value = this.getRedshift();
+	}
+	else
+	{
+	    value = super.getValueByUtype( utypeNum, create );
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    this.setRedshift( (DoubleParam)value );
+	}
+	else
+	{
+	    super.setValueByUtype( utypeNum, value );
+	}
+
+	return;
     }
 
 }

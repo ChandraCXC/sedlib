@@ -16,17 +16,19 @@
 
 package cfa.vo.sedlib;
 
-import cfa.vo.sedlib.common.ValidationError;
-import cfa.vo.sedlib.common.ValidationErrorEnum;
 import java.util.List;
 import java.util.ArrayList;
+
+import cfa.vo.sedlib.common.Utypes;
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
 
 /**
  * <p>Java class for target complex type.
  * 
  */
 public class Target
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected TextParam name;
@@ -388,6 +390,168 @@ public class Target
         }
 
         return valid;
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createName();
+	    else
+		value = this.getName();
+	}
+	else if ( Utypes.isDescriptionUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createDescription();
+	    else
+		value = this.getDescription();
+	}
+	else if ( Utypes.isTargetClassUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createTargetClass();
+	    else
+		value = this.getTargetClass();
+	}
+	else if ( Utypes.isSpectralClassUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createSpectralClass();
+	    else
+		value = this.getSpectralClass();
+	}
+	else if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createRedshift();
+	    else
+		value = this.getRedshift();
+	}
+	else if ( Utypes.isPositionUtype( utypeNum ) )
+	{
+	    ArrayList<DoubleParam> paramList = new ArrayList<DoubleParam>();
+	    DoubleParam params[];
+                    
+	    value = paramList;
+
+	    if ( create )
+	    {
+		params = this.createPos().createValue();
+		// MCD NOTE: The create method should return an array with Params.
+		int n = 0;
+		for ( int ii=0; ii < params.length; ii++ )
+		    if ( params[ii] != null ){ n++;}
+
+		if ( n == 0 )
+		{
+		    // empty (new) array returned, fill with DoubleParams
+		    for ( int ii=0; ii < params.length; ii++ )
+			params[ii] = new DoubleParam();
+		}
+	    }
+	    else
+	    {
+		params = this.getPos().getValue();
+	    }
+
+	    if (params != null)
+	    {
+		paramList.ensureCapacity(params.length);
+		for (DoubleParam pp : params)
+		{
+		    if (pp != null)
+			paramList.add((DoubleParam)pp.clone());
+		    else
+			paramList.add(null);
+		}
+	    }
+
+	}
+	else if ( Utypes.isVarAmplitudeUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createVarAmpl();
+	    else
+		value = this.getVarAmpl();
+	}
+	
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    this.setName( (TextParam)value );
+	}
+	else if ( Utypes.isDescriptionUtype( utypeNum ) )
+	{
+	    this.setDescription( (TextParam)value );
+	}
+	else if ( Utypes.isTargetClassUtype( utypeNum ) )
+	{
+	    this.setTargetClass( (TextParam)value );
+	}
+	else if ( Utypes.isSpectralClassUtype( utypeNum ) )
+	{
+	    this.setSpectralClass( (TextParam)value );
+	}
+	else if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    this.setRedshift( (DoubleParam)value );
+	}
+	else if ( Utypes.isPositionUtype( utypeNum ) )
+	{
+	    // expects an ArrayList, convert to array of Param
+	    List<DoubleParam> paramList = (List<DoubleParam>)value;
+	    DoubleParam params[];
+
+	    // get current value array
+	    params = this.createPos().createValue();
+	    if ( paramList == null )
+	    {
+		// null input values initializes with empty params
+		// (from SetMetaParamList)
+		for ( int ii=0; ii < params.length; ii++ )
+		    params[ii] = new DoubleParam();
+	    }
+	    else
+	    {
+		// copy list content to value array
+		for (int ii=0; ii < paramList.size(); ii++)
+		{
+		    if (ii == params.length)
+			break;
+			
+		    DoubleParam item = (DoubleParam)paramList.get(ii);
+		    if ( item != null)
+		    {
+			params[ii] = (DoubleParam)item.clone();
+		    }
+		    else
+		    {
+			params[ii] = null;
+		    }
+		}
+	    }
+	    //	    this.setPos( (PositionParam)value );
+	}
+	else if ( Utypes.isVarAmplitudeUtype( utypeNum ) )
+	{
+	    this.setVarAmpl( (DoubleParam)value );
+	}
+	return;
     }
 
 }

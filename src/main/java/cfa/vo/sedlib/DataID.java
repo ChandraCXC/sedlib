@@ -19,13 +19,14 @@ package cfa.vo.sedlib;
 import java.util.ArrayList;
 import java.util.List;
 
+import cfa.vo.sedlib.common.Utypes;
 
 /**
  * <p>Java class for dataID complex type.
  * 
  */
 public class DataID
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected TextParam title;
@@ -615,6 +616,232 @@ public class DataID
 
     public boolean isSetDataSource() {
         return (this.dataSource!= null);
+    }
+
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isBandpassUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createBandpass();
+	    else
+		value = this.getBandpass();
+	}
+	else if ( Utypes.isCollectionUtype( utypeNum ) )
+	{
+	    ArrayList<TextParam>paramList = new ArrayList<TextParam> ();
+	    List<TextParam> params = null;
+	    if (create)
+		params = this.createCollection();
+	    else
+		params = this.getCollection();
+
+	    if (params != null)
+	    {
+		paramList.ensureCapacity(params.size());
+		for (TextParam pp : params)
+		    paramList.add( (TextParam)pp.clone() );
+	    }
+
+	    value = paramList;
+	}
+	else if ( Utypes.isContributorUtype( utypeNum ) )
+	{
+	    ArrayList<TextParam>paramList = new ArrayList<TextParam> ();
+	    List<TextParam> params = null;
+	    if (create)
+		params = this.createContributor();
+	    else
+		params = this.getContributor();
+
+	    if (params != null)
+	    {
+		paramList.ensureCapacity(params.size());
+		for (TextParam pp : params)
+		    paramList.add( (TextParam)pp.clone() );
+	    }
+	    value = paramList;
+	}
+	else if ( Utypes.isCreationTypeUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createCreationType();
+	    else
+		value = this.getCreationType();
+	}
+	else if ( Utypes.isCreatorUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createCreator();
+	    else
+		value = this.getCreator();
+	}
+	else if ( Utypes.isCreatorDIDUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createCreatorDID();
+	    else
+		value = this.getCreatorDID();
+	}
+	else if ( Utypes.isDatasetIDUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createDatasetID();
+	    else
+		value = this.getDatasetID();
+	}
+	else if ( Utypes.isDataSourceUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createDataSource();
+	    else
+		value = this.getDataSource();
+	}
+	else if ( Utypes.isDateUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createDate ();
+	    else
+		value = this.getDate ();
+	}
+	else if ( Utypes.isInstrumentUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createInstrument ();
+	    else
+		value = this.getInstrument ();
+	}
+	else if ( Utypes.isLogoUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createLogo ();
+	    else
+		value = this.getLogo ();
+	}
+	else if ( Utypes.isTitleUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createTitle ();
+	    else
+		value = this.getTitle ();
+	}
+	else if ( Utypes.isVersionUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createVersion();
+	    else
+		value = this.getVersion();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isBandpassUtype( utypeNum ) )
+	{
+	    this.setBandpass( (TextParam)value );
+	}
+	else if ( Utypes.isCollectionUtype( utypeNum ) )
+	{
+	    List<TextParam> params    = null;
+	    List<TextParam> paramList = null;
+	    paramList = this.createCollection();
+
+	    // We want to replace the current contents with the provided values,
+	    // so clear the list of any existing records.
+	    paramList.clear();
+
+	    if ( value instanceof TextParam )
+	    {
+		params = new ArrayList<TextParam>();
+		params.add( ((TextParam)value) );
+	    }
+	    else
+		params = (List<TextParam>)value;
+
+	    if ( params != null )
+	    {
+		for ( TextParam item : params)
+		    paramList.add( (TextParam)item.clone() );
+	    }
+	}	
+	else if ( Utypes.isContributorUtype( utypeNum ) )
+	{
+	    List<TextParam> params    = null;
+	    List<TextParam> paramList = null;
+	    paramList = this.createContributor();
+
+	    // We want to replace the current contents with the provided values,
+	    // so clear the list of any existing records.
+	    paramList.clear();
+
+	    if ( value instanceof TextParam )
+	    {
+		params = new ArrayList<TextParam>();
+		params.add( ((TextParam)value) );
+	    }
+	    else
+		params = (List<TextParam>)value;
+
+	    if ( params != null )
+	    {
+		for ( TextParam item : params)
+		    paramList.add( (TextParam)item.clone() );
+	    }
+	}
+	else if ( Utypes.isCreationTypeUtype( utypeNum ) )
+	{
+	    this.setCreationType( (TextParam)value );
+	}
+	else if ( Utypes.isCreatorUtype( utypeNum ) )
+	{
+	    this.setCreator( (TextParam)value );
+	}
+	else if ( Utypes.isCreatorDIDUtype( utypeNum ) )
+	{
+	    this.setCreatorDID( (TextParam)value );
+	}
+	else if ( Utypes.isDatasetIDUtype( utypeNum ) )
+	{
+	    this.setDatasetID( (TextParam)value );
+	}
+	else if ( Utypes.isDataSourceUtype( utypeNum ) )
+	{
+	    this.setDataSource( (TextParam)value );
+	}
+	else if ( Utypes.isDateUtype( utypeNum ) )
+	{
+	    this.setDate ( (DateParam)value );
+	}
+	else if ( Utypes.isInstrumentUtype( utypeNum ) )
+	{
+	    this.setInstrument ( (TextParam)value );
+	}
+	else if ( Utypes.isLogoUtype( utypeNum ) )
+	{
+	    this.setLogo ( (TextParam)value );
+	}
+	else if ( Utypes.isTitleUtype( utypeNum ) )
+	{
+	    this.setTitle ( (TextParam)value );
+	}
+	else if ( Utypes.isVersionUtype( utypeNum ) )
+	{
+	    this.setVersion( (TextParam)value );
+	}
+
+	return;
     }
 
 }

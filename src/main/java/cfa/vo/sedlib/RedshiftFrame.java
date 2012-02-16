@@ -16,6 +16,8 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for redshiftFrame complex type.
  * 
@@ -53,6 +55,46 @@ public class RedshiftFrame
 
     public boolean isSetDopplerDefinition() {
         return (this.dopplerDefinition!= null);
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isDopplerDefinitionUtype( utypeNum ) )
+	{
+	    if ( this.isSetDopplerDefinition() )
+		value = this.getDopplerDefinition();
+	    else
+		value = new String();
+	}
+	else
+	{
+	    value = super.getValueByUtype( utypeNum, create );
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isDopplerDefinitionUtype( utypeNum ) )
+	{
+	    this.setDopplerDefinition( (String)value );
+	}
+	else
+	{
+	    super.setValueByUtype( utypeNum, value );
+	}
+
+	return;
     }
 
 }

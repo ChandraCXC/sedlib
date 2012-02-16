@@ -45,7 +45,7 @@ import cfa.vo.sedlib.common.ValidationError;
  * 
  */
 
-public class Sed implements Cloneable
+public class Sed implements Cloneable, ISed
 {
 
     protected List<Segment> segmentList = new ArrayList<Segment>();
@@ -85,6 +85,7 @@ public class Sed implements Cloneable
      *
      * @throws SedInconsistentException
      */
+    @Override
     public void addSegment (Segment segment) throws SedInconsistentException, SedNoDataException
     {
         this.addSegment (segment, this.getNumberOfSegments());
@@ -103,6 +104,7 @@ public class Sed implements Cloneable
      *
      * @throws SedInconsistentException
      */
+    @Override
     public void addSegment (Segment segment, int offset) throws SedInconsistentException, SedNoDataException
     {
 
@@ -113,69 +115,7 @@ public class Sed implements Cloneable
                 throw new SedInconsistentException ("Incompatible quantities");
         } else {
             segmentList.add (offset, segment);
-        }
-
-//        String ucd = null;
-//        String unit = null;
-//        List<Point> points;
-//
-//        // loop through the segments to find a ucd or unit
-//        for (Segment currSegment : this.segmentList)
-//        {
-//            points = currSegment.getPointsFromData ();
-//            if (points == null)
-//                continue;
-//
-//            // loop through all the points in the data and try to find
-//            // a ucd and unit value
-//            for (Point point : points)
-//            {
-//                if (point.isSetFluxAxis () && point.getFluxAxis ().isSetValue ())
-//                {
-//                    if (point.getFluxAxis ().getValue ().isSetUcd ())
-//                        ucd = point.getFluxAxis ().getValue ().getUcd ();
-//                    if (point.getFluxAxis ().getValue ().isSetUcd ())
-//                        unit = point.getFluxAxis ().getValue ().getUnit ();
-//                }
-//
-//                // these should all be the same so all we need it for one point
-//                if ((ucd != null) && (unit != null))
-//                    break;
-//            }
-//
-//            // these should all be the same so all we need it for one point
-//            if ((ucd != null) && (unit != null))
-//                break;
-//        }
-//
-//        // go through the points for the input segment and verify that the ucd
-//        // and units are the same and match the existing qualities
-//        points = segment.getPointsFromData ();
-//        if (points != null)
-//        {
-//            String currUcd;
-//            String currUnit;
-//            for (Point point : points)
-//            {
-//                if (point.isSetFluxAxis () && point.getFluxAxis ().isSetValue ())
-//                {
-//                    currUcd = point.getFluxAxis ().getValue ().getUcd ();
-//                    currUnit = point.getFluxAxis ().getValue ().getUnit ();
-//
-//                    // if the default ucd and unit are null -- we still
-//                    // should verify all the pionts have the same ucd and unit
-//                    if (ucd == null)
-//                        ucd = currUcd;
-//
-//                    if (unit == null)
-//                        unit = currUnit;
-//
-//                    if ((ucd != null) && (currUcd != null) && !ucd.equalsIgnoreCase(currUcd))
-//                        throw new SedInconsistentException ("The current flux axis ucd, "+ucd+", does not match the incoming ucd, "+currUcd);
-//                }
-//            }
-//        }
-        
+        }        
     }
 
 
@@ -189,6 +129,7 @@ public class Sed implements Cloneable
      *
      * @throws SedInconsistentException
      */
+    @Override
     public void addSegment (List<Segment> segments) throws SedInconsistentException, SedNoDataException
     {
         this.addSegment (segments, this.getNumberOfSegments());
@@ -206,6 +147,7 @@ public class Sed implements Cloneable
      *
      * @throws SedInconsistentException
      */
+    @Override
     public void addSegment (List<Segment> segments, int offset) throws SedInconsistentException, SedNoDataException
     {
         for (int ii=0; ii<segments.size (); ii++)
@@ -219,6 +161,7 @@ public class Sed implements Cloneable
      *   int
      *   
      */
+    @Override
     public void removeSegment (int segment)
     {
         if ((this.segmentList == null) || (this.segmentList.isEmpty ())) {
@@ -239,6 +182,7 @@ public class Sed implements Cloneable
      * @return int
      *
      */
+    @Override
     public int getNumberOfSegments ()
     {
         return this.segmentList.size ();
@@ -252,6 +196,7 @@ public class Sed implements Cloneable
      *    {@link Segment}
      *
      */
+    @Override
     public Segment getSegment (int segment)
     {
         return this.segmentList.get (segment);
@@ -266,6 +211,7 @@ public class Sed implements Cloneable
      *     {@link String }
      *
      */
+    @Override
     public void setNamespace (String namespace)
     {
         this.namespace = namespace;
@@ -278,11 +224,13 @@ public class Sed implements Cloneable
      *     {@link String }
      *
      */
+    @Override
     public String getNamespace ()
     {
         return this.namespace;
     }
 
+    @Override
     public boolean isSetNamespace()
     {
         return (this.namespace!= null);
@@ -306,6 +254,7 @@ public class Sed implements Cloneable
      * 
      * @throws SedInconsistentException
      */
+    @Override
     public Sed filterSed (double start, double end, String unit) throws SedInconsistentException
 
     {
@@ -326,6 +275,7 @@ public class Sed implements Cloneable
      * 
      * @throws SedInconsistentException
      */
+    @Override
     public Sed filterSed (RangeParam rangeParam) throws SedInconsistentException
     {
         List<RangeParam> rangeParamList = new ArrayList<RangeParam> (1);
@@ -347,6 +297,7 @@ public class Sed implements Cloneable
      * 
      * @throws SedInconsistentException
      */
+    @Override
     public Sed filterSed (List<RangeParam> rangeParamList) throws SedInconsistentException
     {
         ListIterator<Segment> segIter;
@@ -526,6 +477,7 @@ rmat.FITS are supported.
      *
      *
      */
+    @Override
     public void write( OutputStream os, SedFormat format ) throws SedInconsistentException, SedWritingException, IOException
     {
 
@@ -551,6 +503,7 @@ rmat.FITS are supported.
      *
      *
      */
+    @Override
     public void write( String filename, SedFormat format ) throws SedInconsistentException, SedWritingException, IOException
     {
 
@@ -645,7 +598,7 @@ rmat.FITS are supported.
     public boolean validate (List<ValidationError> errors)
     {
         boolean valid = true;
-        for (Segment segment : this.segmentList)
+   	for (Segment segment : this.segmentList)
             valid &= segment.validate (errors);
 
         return valid;

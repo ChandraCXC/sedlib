@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for coverage complex type.
  * 
  * 
  */
 public class Coverage
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected CoverageLocation location;
@@ -170,6 +172,60 @@ public class Coverage
 
     public boolean isSetSupport() {
         return (this.support!= null);
+    }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+
+	if ( Utypes.isCoverageBoundsUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createBounds().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getBounds().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isCoverageLocationUtype( utypeNum ))
+	{
+	    if ( create )
+		value = this.createLocation().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getLocation().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isCoverageSupportUtype( utypeNum ))
+	{
+	    if ( create )
+		value = this.createSupport().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getSupport().getValueByUtype( utypeNum, create );
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isCoverageBoundsUtype( utypeNum ) )
+	{
+	    this.createBounds().setValueByUtype( utypeNum , value);
+	}
+	else if ( Utypes.isCoverageLocationUtype( utypeNum ) )
+	{
+	    this.createLocation().setValueByUtype( utypeNum, value);
+	}
+	else if ( Utypes.isCoverageSupportUtype( utypeNum ) )
+	{
+	    this.createSupport().setValueByUtype( utypeNum, value );
+	}
+
+	return;
     }
 
 }

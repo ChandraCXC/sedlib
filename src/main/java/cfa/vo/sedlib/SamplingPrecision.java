@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for samplingPrecision complex type.
  * 
  * 
  */
 public class SamplingPrecision
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected SamplingPrecisionRefVal samplingPrecisionRefVal;
@@ -125,6 +127,46 @@ public class SamplingPrecision
 
     public boolean isSetSampleExtent() {
         return (this.sampleExtent!= null);
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isSamplingPrecisionRefValUtype( utypeNum ) )
+	{
+            value = this.createSamplingPrecisionRefVal().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isSampleExtentUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createSampleExtent();
+	    else
+		value = this.getSampleExtent();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isSamplingPrecisionRefValUtype( utypeNum ) )
+	{
+            this.createSamplingPrecisionRefVal().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isSampleExtentUtype( utypeNum ) )
+	{
+            this.setSampleExtent( (DoubleParam)value );
+	}
+
+	return;
     }
 
 }

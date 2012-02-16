@@ -16,6 +16,9 @@
 
 package cfa.vo.sedlib;
 
+
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for spaceFrame complex type.
  * 
@@ -80,6 +83,46 @@ public class SpaceFrame
 
     public boolean isSetEquinox() {
         return (this.equinox!= null);
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isEquinoxUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createEquinox();
+	    else
+		value = this.getEquinox();
+	}
+	else
+	{
+	    value = super.getValueByUtype( utypeNum, create );
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isEquinoxUtype( utypeNum ) )
+	{
+	    this.setEquinox( (DoubleParam)value );
+	}
+	else
+	{
+	    super.setValueByUtype( utypeNum, value );
+	}
+
+	return;
     }
 
 }

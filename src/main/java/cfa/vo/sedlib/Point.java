@@ -27,7 +27,7 @@ import cfa.vo.sedlib.common.ValidationErrorEnum;
  * 
  * 
  */
-public class Point extends Group {
+public class Point extends Group implements IPoint {
 
     protected SedCoord timeAxis;
     protected SedCoord spectralAxis;
@@ -59,6 +59,7 @@ public class Point extends Group {
      *     {@link SedCoord }
      *     
      */
+    @Override
     public SedCoord getTimeAxis() {
         return timeAxis;
     }
@@ -70,6 +71,7 @@ public class Point extends Group {
      *     {@link SedCoord }
      *
      */
+    @Override
     public SedCoord createTimeAxis() {
         if (this.timeAxis == null)
            this.setTimeAxis (new SedCoord ());
@@ -85,10 +87,12 @@ public class Point extends Group {
      *     {@link SedCoord }
      *     
      */
+    @Override
     public void setTimeAxis(SedCoord value) {
         this.timeAxis = value;
     }
 
+    @Override
     public boolean isSetTimeAxis() {
         return (this.timeAxis!= null);
     }
@@ -101,6 +105,7 @@ public class Point extends Group {
      *     {@link SedCoord }
      *     
      */
+    @Override
     public SedCoord getSpectralAxis() {
         return spectralAxis;
     }
@@ -112,6 +117,7 @@ public class Point extends Group {
      *     {@link SedCoord }
      *
      */
+    @Override
     public SedCoord createSpectralAxis() {
         if (this.spectralAxis == null)
            this.setSpectralAxis (new SedCoord ());
@@ -127,10 +133,12 @@ public class Point extends Group {
      *     {@link SedCoord }
      *     
      */
+    @Override
     public void setSpectralAxis(SedCoord value) {
         this.spectralAxis = value;
     }
 
+    @Override
     public boolean isSetSpectralAxis() {
         return (this.spectralAxis!= null);
     }
@@ -143,6 +151,7 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *     
      */
+    @Override
     public SedQuantity getFluxAxis() {
         return fluxAxis;
     }
@@ -154,6 +163,7 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *
      */
+    @Override
     public SedQuantity createFluxAxis() {
         if (this.fluxAxis == null)
            this.setFluxAxis (new SedQuantity ());
@@ -169,10 +179,12 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *     
      */
+    @Override
     public void setFluxAxis(SedQuantity value) {
         this.fluxAxis = value;
     }
 
+    @Override
     public boolean isSetFluxAxis() {
         return (this.fluxAxis!= null);
     }
@@ -185,6 +197,7 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *     
      */
+    @Override
     public SedQuantity getBackgroundModel() {
         return backgroundModel;
     }
@@ -196,6 +209,7 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *
      */
+    @Override
     public SedQuantity createBackgroundModel() {
         if (this.backgroundModel == null)
            this.setBackgroundModel (new SedQuantity ());
@@ -211,10 +225,12 @@ public class Point extends Group {
      *     {@link SedQuantity }
      *     
      */
+    @Override
     public void setBackgroundModel(SedQuantity value) {
         this.backgroundModel = value;
     }
 
+    @Override
     public boolean isSetBackgroundModel() {
         return (this.backgroundModel!= null);
     }

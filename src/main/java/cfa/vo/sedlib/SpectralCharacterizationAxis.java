@@ -16,6 +16,8 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for spectralCharacterizationAxis complex type.
  * 
@@ -70,4 +72,37 @@ public class SpectralCharacterizationAxis
         return (this.resPower!= null);
     }
 
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isResolvingPowerUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createResPower();
+	    else
+		value = this.getResPower();
+	}
+	else
+	    value = super.getValueByUtype( utypeNum, create );
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isResolvingPowerUtype( utypeNum ) )
+	{
+	    this.setResPower( (DoubleParam)value );
+	}
+	else 
+	    super.setValueByUtype( utypeNum, value );
+
+	return;
+    }
 }

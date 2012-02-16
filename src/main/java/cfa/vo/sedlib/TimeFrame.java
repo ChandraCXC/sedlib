@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for timeFrame complex type.
  * 
  * 
  */
 public class TimeFrame
-    extends CoordFrame
+    extends CoordFrame implements IAccessByUtype
 {
 
     protected DoubleParam zero;
@@ -80,6 +82,45 @@ public class TimeFrame
 
     public boolean isSetZero() {
         return (this.zero!= null);
+    }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isZeroUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createZero();
+	    else
+		value = this.getZero();
+	}
+	else
+	{
+	    value = super.getValueByUtype( utypeNum, create );
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isZeroUtype( utypeNum ) )
+	{
+	    this.setZero( (DoubleParam)value );
+	}
+	else
+	{
+	    super.setValueByUtype( utypeNum, value );
+	}
+
+	return;
     }
 
 }

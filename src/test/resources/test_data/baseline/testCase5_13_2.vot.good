@@ -9,9 +9,9 @@
     <TABLE utype="spec:Segment">
       <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
       <GROUP utype="spec:Spectrum.Data">
-        <FIELDref ref="idA"/>
         <FIELDref ref="idC"/>
         <FIELDref ref="idB"/>
+        <FIELDref ref="idA"/>
         <GROUP utype="spec:Spectrum.Data.TimeAxis">
           <FIELDref ref="ID_0"/>
           <FIELDref ref="ID_1"/>
@@ -71,9 +71,9 @@
           </GROUP>
         </GROUP>
       </GROUP>
-      <FIELD ID="idA" datatype="double" name="nameA"/>
       <FIELD ID="idC" arraysize="*" datatype="char" name="nameC"/>
       <FIELD ID="idB" datatype="int" name="nameB" ucd="unitB" unit="ucdB"/>
+      <FIELD ID="idA" datatype="double" name="nameA"/>
       <FIELD ID="ID_0" datatype="double" name="timeValue" ucd="timeValueUcd" unit="timeValueUnit" utype="spec:Spectrum.Data.TimeAxis.Value"/>
       <FIELD ID="ID_1" datatype="double" name="timeResol" ucd="timeResolUcd" unit="timeResolUnit" utype="spec:Spectrum.Data.TimeAxis.Resolution"/>
       <FIELD ID="ID_2" datatype="double" name="timeBinLow" ucd="TBD" unit="TBD" utype="spec:Spectrum.Data.TimeAxis.Accuracy.BinLow"/>
@@ -119,10 +119,10 @@
       <DATA>
         <TABLEDATA>
           <TR>
-            <TD>11.1</TD>
             <TD>ABC_test</TD>
             <TD>
             </TD>
+            <TD>11.1</TD>
             <TD>0.101</TD>
             <TD>0.102</TD>
             <TD>0.108</TD>
@@ -167,9 +167,9 @@
             <TD>0.404</TD>
           </TR>
           <TR>
-            <TD>NaN</TD>
             <TD>DEF_test</TD>
             <TD>12</TD>
+            <TD>NaN</TD>
             <TD>1.101</TD>
             <TD>1.102</TD>
             <TD>1.108</TD>
@@ -214,10 +214,10 @@
             <TD>1.404</TD>
           </TR>
           <TR>
-            <TD>13.3</TD>
             <TD>
             </TD>
             <TD>13</TD>
+            <TD>13.3</TD>
             <TD>2.101</TD>
             <TD>2.102</TD>
             <TD>2.108</TD>

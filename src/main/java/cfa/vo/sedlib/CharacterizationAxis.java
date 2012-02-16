@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for characterizationAxis complex type.
  * 
  * 
  */
 public class CharacterizationAxis
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected CoordSys coordSystem;
@@ -398,5 +400,129 @@ public class CharacterizationAxis
     public boolean isSetUnit() {
         return (this.unit!= null);
     }
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isSamplingPrecisionUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createSamplingPrecision().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getSamplingPrecision().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isCoverageUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createCoverage().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getCoverage().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isAccuracyUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createAccuracy().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getAccuracy().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isResolutionUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createResolution();
+	    else
+		value = this.getResolution();
+	}
+	else if ( Utypes.isCalibrationUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createCalibration();
+	    else
+		value = this.getCalibration();
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    if ( this.isSetUcd() )
+		value = this.getUcd();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isUnitUtype( utypeNum ) )
+	{
+	    if ( this.isSetUnit() )
+		value = this.getUnit();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    if ( create && !this.isSetName() )
+		this.setName( new String() );
+
+	    if ( this.isSetName() )
+	    {
+		// MCD NOTE: using DoubleParam here because we want to be able
+		// to assign a unit value for cases where users define ucd and
+		// unit along with the name 
+		value = new DoubleParam( this.getName() );
+	    }
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isSamplingPrecisionUtype( utypeNum ) )
+	{
+	    this.createSamplingPrecision().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isCoverageUtype( utypeNum ) )
+	{
+	    this.createCoverage().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isAccuracyUtype( utypeNum ) )
+	{
+	    this.createAccuracy().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isResolutionUtype( utypeNum ) )
+	{
+	    this.setResolution( (DoubleParam)value );
+	}
+	else if ( Utypes.isCalibrationUtype( utypeNum ) )
+	{
+	    this.setCalibration( (TextParam)value );
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    this.setUcd( (String)value );
+	}
+	else if ( Utypes.isUnitUtype( utypeNum ) )
+	{
+	    this.setUnit( (String)value );
+	}
+	else if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    if ( value instanceof DoubleParam )
+	    {
+		this.setName( ((DoubleParam)value).getValue() );
+		if ( ((DoubleParam)value).getUnit() != null )
+		    this.setUnit( ((DoubleParam)value).getUnit() );
+		if ( ((DoubleParam)value).getUcd() != null )
+		    this.setUcd( ((DoubleParam)value).getUcd() );
+	    }
+	    else
+		this.setName( (String)value );
+	}
+
+	return;
+    }
+
+
 
 }

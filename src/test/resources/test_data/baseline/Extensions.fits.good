@@ -1,11 +1,11 @@
-XTENSION= 'BINTABLE'           / Java FITS: Wed Mar 30 16:29:17 EDT 2011        
+XTENSION= 'BINTABLE'           / Java FITS: Thu Feb 16 13:55:27 EST 2012        
 BITPIX  =                    8                                                  
 NAXIS   =                    2 / Dimensionality                                 
-NAXIS1  =                  158                                                  
+NAXIS1  =                  108                                                  
 NAXIS2  =                    1                                                  
 PCOUNT  =                    0                                                  
 GCOUNT  =                    1                                                  
-TFIELDS =                   10                                                  
+TFIELDS =                    6                                                  
 VOCLASS = 'Spectrum-1.0'                                                        
 VOSEGT  = 'Photometry'                                                          
 OBJECT  = '3C 279  '                                                            
@@ -14,9 +14,12 @@ DEC_TARG=           -5.7893119 / [deg]
 TITLE   = 'Photometric Data'                                                    
 AUTHOR  = 'NASA/IPAC Extragalactic Database (NED)'                              
 CRETYPE = 'Derived '                                                            
+P1      = 'blah    '                                                            
 P3      =                0.102                                                  
 P6      = 'test2   '                                                            
-P1      = 'blah    '                                                            
+PARAM   = 'target subgroup param'                                               
+P2      = 'blah    '                                                            
+CHISQ   =                 4.01                                                  
 FLUXNAME= 'col5    '                                                            
 FLUXUNIT= 'Jy      '                                                            
 TTYPE1  = 'col5    '                                                            
@@ -25,44 +28,28 @@ TUNIT1  = 'Jy      '
 TTYPE2  = 'p5      '                                                            
 TUTYP2  = 'Spectrum.Data.FluxAxis.Quality'                                      
 TUCD2   = 'meta.code.qual;phot.flux.density;em.*'                               
-TTYPE3  = 'DataFluxUcd'                                                         
-TTYPE4  = 'DataFluxUnit'                                                        
-TTYPE5  = 'col4    '                                                            
+TTYPE3  = 'col4    '                                                            
+TUNIT3  = 'Jy      '                                                            
+TTYPE4  = 'col3    '                                                            
+TTYPE5  = 'col2    '                                                            
 TUNIT5  = 'Jy      '                                                            
 TTYPE6  = 'DBref   '                                                            
-TTYPE7  = 'p2      '                                                            
-TTYPE8  = 'chisq   '                                                            
-TTYPE9  = 'p6      '                                                            
-TTYPE10 = 'col2    '                                                            
-TUNIT10 = 'Jy      '                                                            
 TFORM1  = '2D      '                                                            
 TDIM1   = '(2)     '                                                            
 TFORM2  = '2J      '                                                            
 TDIM2   = '(2)     '                                                            
-TFORM3  = '50A     '                                                            
-TDIM3   = '(25,2)  '                                                            
-TFORM4  = '4A      '                                                            
-TDIM4   = '(2,2)   '                                                            
+TFORM3  = '2D      '                                                            
+TDIM3   = '(2)     '                                                            
+TFORM4  = '38A     '                                                            
+TDIM4   = '(19,2)  '                                                            
 TFORM5  = '2D      '                                                            
 TDIM5   = '(2)     '                                                            
 TFORM6  = '14A     '                                                            
 TDIM6   = '(7,2)   '                                                            
-TFORM7  = '8A      '                                                            
-TDIM7   = '(4,2)   '                                                            
-TFORM8  = '2D      '                                                            
-TDIM8   = '(2)     '                                                            
-TFORM9  = '10A     '                                                            
-TDIM9   = '(5,2)   '                                                            
-TFORM10 = '2D      '                                                            
-TDIM10  = '(2)     '                                                            
 END                                                                             
 1.9e-11  1.9e-11  
 1  1  
-phot.flux.density;em.freq  phot.flux.density;em.freq  
-Jy  Jy  
 1.48e-24  1.52e-14  
-E77.293  G87.544  
-blah  blah  
-4.01  4.01  
-test2  test2  
+1996ApJ...461..698H  2006ApJ...001..698H  
 1.8e-11  1.89e-11  
+E77.293  G87.544  

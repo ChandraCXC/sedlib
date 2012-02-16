@@ -16,13 +16,15 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for derivedData complex type.
  * 
  * 
  */
 public class DerivedData
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected DoubleParam snr;
@@ -171,5 +173,60 @@ public class DerivedData
     public boolean isSetRedshift() {
         return (this.redshift!= null);
     }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createRedshift().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getRedshift().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isSNRUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createSNR();
+	    else
+		value = this.getSNR();
+	}
+	else if ( Utypes.isVarAmplitudeUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createVarAmpl();
+	    else
+		value = this.getVarAmpl();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isRedshiftUtype( utypeNum ) )
+	{
+	    this.createRedshift().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isSNRUtype( utypeNum ) )
+	{
+	    this.setSNR( (DoubleParam)value );
+	}
+	else if ( Utypes.isVarAmplitudeUtype( utypeNum ) )
+	{
+	    this.setVarAmpl( (DoubleParam)value );
+	}
+
+	return;
+    }
+
 
 }

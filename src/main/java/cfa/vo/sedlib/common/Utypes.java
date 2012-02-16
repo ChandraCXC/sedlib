@@ -30,8 +30,11 @@ import java.util.HashMap;
 
 public class Utypes
 {
-    static protected final int max_enum = 362; // an easy way to let sub classes extend the enumerations
+    // an easy way to let sub classes extend the enumerations
+    static protected final int max_enum = 362; 
 
+    // Assigned namespace
+    static protected final String namespace = "spec:";
 
     //Enumerations
     static public final int   INVALID_UTYPE    =  -1;
@@ -869,18 +872,83 @@ public class Utypes
 
     }
 
+    // **********************************************************************
+    // Namespace Methods
+    // **********************************************************************
+
+    /**
+     * Gets the namespace assigned to the set of Utypes
+     *
+     */
+    static public String getNamespace()
+    {
+        return namespace;
+    }
+
+    // **********************************************************************
+    // UType Methods
+    // **********************************************************************
+
+    /**
+     * Gets the number of utypes.
+     *
+     */
+    static public int getNumberOfUtypes ()
+    {
+        return max_enum;
+    }
+
+    /**
+     * Gets the utype enumeration from string name.
+     * If namespace is present, will compare against internal namespace value.
+     * 
+     * Returns INVALID_UTYPE if 
+     *   - input name is null
+     *   - namespace is present but does not match
+     *   - if utype name is not found.
+     *
+     */
+    static public int getUtypeNum(String name)
+    {
+    	Integer utypeEnum;
+	String ns   = null;
+	String body = null;
+
+        if (name == null)
+            return INVALID_UTYPE;
+
+        String[] parts = name.split(":");
+        if (parts.length == 1)
+	    body = parts[0].toLowerCase();
+        else
+	{
+	    ns   = parts[0].toLowerCase().concat(":");
+	    body = parts[1].toLowerCase();
+
+	    // check namespace match 
+	    if ( ! ns.equals( namespace ) )
+		return INVALID_UTYPE;
+	}
+
+        utypeEnum = nameMap.get( body );
+    	if (utypeEnum == null)
+    	    return INVALID_UTYPE;
+    	
+    	return utypeEnum;
+    }
+
     /**
      * Gets the utype enumeration from string name.
      *
      */
-    static public int getUtypeFromString (String name)
+    static public int getUtypeFromString(String name)
     {
     	Integer utypeEnum;
 
         if (name == null)
             return INVALID_UTYPE;
 
-        utypeEnum = nameMap.get (name.toLowerCase ());
+        utypeEnum = nameMap.get(name.toLowerCase());
     	if (utypeEnum == null)
     	    return INVALID_UTYPE;
     	
@@ -897,6 +965,65 @@ public class Utypes
         return name[utype];
     }
 
+    /**
+     * Compare the string name of the utype with its enumerated counter part.
+     *
+     */
+     static public boolean compare (String utypeName, int utype)
+     {
+         int utypeEnum = getUtypeFromString (utypeName);
+         return utypeEnum == utype;
+     }
+
+    /**
+     * Compares string version the utypes. Case is ignored.
+     *
+     */
+    static public boolean compareUtypes (String utype1, String utype2)
+    {
+        return utype1.equalsIgnoreCase (utype2);
+    }
+
+    /**
+     *  Returns the last part of the utype. This includes whatever follows
+     *  the last '.'.
+     */
+    static public String getLastPartOfUtype( String utype )
+    {
+        if ( utype == null )
+        {
+            return null;
+        }
+
+        String[] parts = utype.split( "[.]" );
+
+        return parts[ parts.length - 1 ];
+    }
+
+    /**
+     *  Retrieve an enumeration which is the combination of 
+     *  of two inputs. The first argument is the base of the 
+     *  new enumeration. The second argument is the desired
+     *  end.
+     */
+    static public int mergeUtypes (int baseUtype, int suffixUtype) 
+    {
+        String baseUtypeName = name[baseUtype];
+        String suffixUtypeName = name[suffixUtype];
+        String newUtypeName = name[baseUtype];
+
+        String[] baseParts = baseUtypeName.split( "[.]" );
+        String[] suffixParts = suffixUtypeName.split ( "[.]" );
+
+        for (int ii=baseParts.length; ii < suffixParts.length; ii++)
+           newUtypeName = newUtypeName.concat ("."+suffixParts[ii]);
+
+        return getUtypeFromString (newUtypeName);
+    }
+
+    // **********************************************************************
+    // UCD Methods
+    // **********************************************************************
 
     /**
      * Override wild card sections of the ucd with a valid value. Currently only
@@ -951,71 +1078,1674 @@ public class Utypes
         return ucd[utype];
     }
 
-    /**
-     * Compares string version the utypes. Case is ignored.
-     *
-     */
-    static public boolean compareUtypes (String utype1, String utype2)
+
+    //  ********************************************************************************
+    //  Boolean checks for utype classification.
+    //  These are getting consolidated here, and should be improved as the Utype 
+    //  interface evolves.
+    //  ********************************************************************************
+
+    //  ********************************************************************************
+    //   Model Nodes
+    //  ********************************************************************************
+    static public boolean isCharacterizationUtype( int utypeNum )
     {
-        return utype1.equalsIgnoreCase (utype2);
+	boolean retval = false;
+
+	if ( ( isCharAxisUtype( utypeNum ) ) ||
+	     ( isFluxAxisUtype( utypeNum ) ) ||
+	     ( isSpatialAxisUtype( utypeNum ) ) ||
+	     ( isSpectralAxisUtype( utypeNum ) ) ||
+	     ( isTimeAxisUtype( utypeNum ) )
+	   )
+	{
+	    retval = true;
+	}
+
+	return retval;
+    }
+    static public boolean isCharAxisUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_NAME:
+	case Utypes.SEG_CHAR_CHARAXIS_UNIT:
+	case Utypes.SEG_CHAR_CHARAXIS_UCD:
+	case Utypes.SEG_CHAR_CHARAXIS_CAL:
+	case Utypes.SEG_CHAR_CHARAXIS_RESOLUTION:
+
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
+
+	case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
+	case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+
+	return retval;
+    }
+    static public boolean isFluxAxisUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_FLUXAXIS_NAME:
+	case Utypes.SEG_CHAR_FLUXAXIS_UNIT:
+	case Utypes.SEG_CHAR_FLUXAXIS_UCD:
+	case Utypes.SEG_CHAR_FLUXAXIS_CAL:
+	case Utypes.SEG_CHAR_FLUXAXIS_RESOLUTION:
+
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
+
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:
+
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_RANGE:
+
+	case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT:
+	case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+
+	return retval;
+    }
+    static public boolean isSpatialAxisUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+ 	case Utypes.SEG_CHAR_SPATIALAXIS_NAME:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UCD:
+	case Utypes.SEG_CHAR_SPATIALAXIS_CAL:
+	case Utypes.SEG_CHAR_SPATIALAXIS_RESOLUTION:
+
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
+
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:
+
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_RANGE:
+
+	case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+
+	return retval;
+    }
+    static public boolean isSpectralAxisUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+ 	case Utypes.SEG_CHAR_SPECTRALAXIS_NAME:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UCD:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_CAL:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_RESPOW:
+
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
+
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:
+
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_RANGE:
+
+	case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+
+	return retval;
+    }
+    static public boolean isTimeAxisUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+ 	case Utypes.SEG_CHAR_TIMEAXIS_NAME:
+	case Utypes.SEG_CHAR_TIMEAXIS_UNIT:
+	case Utypes.SEG_CHAR_TIMEAXIS_UCD:
+	case Utypes.SEG_CHAR_TIMEAXIS_CAL:
+	case Utypes.SEG_CHAR_TIMEAXIS_RESOLUTION:
+
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
+
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:
+
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_RANGE:
+
+	case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT:
+	case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+
+	return retval;
     }
 
-    /**
-     *  Returns the last part of the utype. This includes whatever follows
-     *  the last '.'.
-     */
-    static public String getLastPartOfUtype( String utype )
+    static public boolean isAccuracyUtype( int utypeNum )
     {
-        if ( utype == null )
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINLOW:
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINHIGH:
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINSIZE:
+	case Utypes.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERR:
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERRLOW:
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
+	case Utypes.SEG_DD_REDSHIFT_ACC_SYSERR:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+    static public boolean isContactUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CURATION_CONTACT_NAME:
+	case Utypes.SEG_CURATION_CONTACT_EMAIL:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isCoordSysUtype( int utypeNum )
+    {
+	boolean retval = false;
+
+	if ( isSpaceFrameUtype( utypeNum )    ||
+	     isSpectralFrameUtype( utypeNum ) ||
+	     isTimeFrameUtype( utypeNum )     ||
+	     isRedshiftFrameUtype( utypeNum ) ||
+	     isGenericFrameUtype( utypeNum )
+	   )
+	{
+	    retval = true;
+	}
+	else if ( ( utypeNum ==  Utypes.SEG_CS_ID )   ||
+		  ( utypeNum ==  Utypes.SEG_CS_UCD )  ||
+		  ( utypeNum ==  Utypes.SEG_CS_TYPE ) ||
+		  ( utypeNum ==  Utypes.SEG_CS_HREF ) )
+	{
+	    retval = true;
+	}
+	return retval;
+    }
+    static public boolean isCoverageUtype( int utypeNum )
+    {
+	boolean retval = false;
+
+	if ( isCoverageBoundsUtype( utypeNum ) ||
+	     isCoverageLocationUtype( utypeNum ) ||
+	     isCoverageSupportUtype( utypeNum ) )
+	{
+	    retval = true; 
+	}
+	return retval;
+    }
+
+    static public boolean isCoverageBoundsUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+    static public boolean isCoverageLocationUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
+	    
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isCoverageSupportUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_RANGE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+    static public boolean isCurationUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CURATION_DATE:
+	case Utypes.SEG_CURATION_PUBLISHER:
+	case Utypes.SEG_CURATION_PUBID:
+	case Utypes.SEG_CURATION_PUBDID:
+	case Utypes.SEG_CURATION_REF:
+	case Utypes.SEG_CURATION_RIGHTS:
+	case Utypes.SEG_CURATION_VERSION:
+	case Utypes.SEG_CURATION_CONTACT_NAME:
+	case Utypes.SEG_CURATION_CONTACT_EMAIL:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+    static public boolean isDataIDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_DATAID_BANDPASS:
+	case Utypes.SEG_DATAID_COLLECTION:
+	case Utypes.SEG_DATAID_CONTRIBUTOR:
+	case Utypes.SEG_DATAID_CREATIONTYPE:
+	case Utypes.SEG_DATAID_CREATOR:
+	case Utypes.SEG_DATAID_CREATORDID:
+	case Utypes.SEG_DATAID_DATASETID:
+	case Utypes.SEG_DATAID_DATASOURCE:
+	case Utypes.SEG_DATAID_DATE:
+	case Utypes.SEG_DATAID_INSTRUMENT:
+	case Utypes.SEG_DATAID_LOGO:
+	case Utypes.SEG_DATAID_TITLE:
+	case Utypes.SEG_DATAID_VERSION:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isGenericFrameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CS_GENFRAME_ID:
+	case Utypes.SEG_CS_GENFRAME_UCD:
+	case Utypes.SEG_CS_GENFRAME_NAME:
+	case Utypes.SEG_CS_GENFRAME_REFPOS:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isRedshiftFrameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CS_REDFRAME_ID:
+	case Utypes.SEG_CS_REDFRAME_UCD:
+	case Utypes.SEG_CS_REDFRAME_NAME:
+	case Utypes.SEG_CS_REDFRAME_REFPOS:
+	case Utypes.SEG_CS_REDFRAME_DOPPLERDEF:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+    static public boolean isSamplingPrecisionUtype( int utypeNum )
+    {
+	boolean retval = false;
+
+	if (( utypeNum == Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT ) ||
+	    ( utypeNum == Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT ) || 
+	    ( utypeNum == Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT ) || 
+	    ( utypeNum == Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT ) || 
+	    ( utypeNum == Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT )
+	   )
+	{
+		retval = true;
+
+	}
+	else if ( isSamplingPrecisionRefValUtype( utypeNum ) )
+	{
+	    retval = true;
+	}
+	return retval;
+    }
+
+    static public boolean isSamplingPrecisionRefValUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( isFillFactorUtype( utypeNum ) )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isSpaceFrameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CS_SPACEFRAME_ID:
+	case Utypes.SEG_CS_SPACEFRAME_UCD:
+	case Utypes.SEG_CS_SPACEFRAME_NAME:
+	case Utypes.SEG_CS_SPACEFRAME_REFPOS:
+	case Utypes.SEG_CS_SPACEFRAME_EQUINOX:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isSpectralFrameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CS_SPECTRALFRAME_ID:
+	case Utypes.SEG_CS_SPECTRALFRAME_UCD:
+	case Utypes.SEG_CS_SPECTRALFRAME_NAME:
+	case Utypes.SEG_CS_SPECTRALFRAME_REFPOS:
+	case Utypes.SEG_CS_SPECTRALFRAME_REDSHIFT:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isTargetUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.TARGET_NAME:
+	case Utypes.TARGET_DESCRIPTION:
+	case Utypes.TARGET_CLASS:
+	case Utypes.TARGET_SPECTRALCLASS:
+	case Utypes.TARGET_REDSHIFT:
+	case Utypes.TARGET_VARAMPL:
+        case Utypes.TARGET_POS:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+
+	return retval;
+    }
+    static public boolean isTimeFrameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CS_TIMEFRAME_ID:
+	case Utypes.SEG_CS_TIMEFRAME_UCD:
+	case Utypes.SEG_CS_TIMEFRAME_NAME:
+	case Utypes.SEG_CS_TIMEFRAME_REFPOS:
+	case Utypes.SEG_CS_TIMEFRAME_ZERO:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+
+
+
+    //  ********************************************************************************
+    //   Model Leaves
+    //  ********************************************************************************
+
+    static public boolean isAreaUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_AREA:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_AREA:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isBandpassUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_BANDPASS )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isBinHighUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINHIGH:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINHIGH:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINHIGH:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isBinLowUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINLOW:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINLOW:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINLOW:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isBinSizeUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_BINSIZE:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_BINSIZE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_BINSIZE:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_BINSIZE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isCalibrationUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_CAL:
+	case Utypes.SEG_CHAR_FLUXAXIS_CAL:
+	case Utypes.SEG_CHAR_SPATIALAXIS_CAL:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_CAL:
+	case Utypes.SEG_CHAR_TIMEAXIS_CAL:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isCollectionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_COLLECTION )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isContributorUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_CONTRIBUTOR )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isCreationTypeUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_CREATIONTYPE )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isCreatorUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_CREATOR )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isCreatorDIDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_CREATORDID )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isConfidenceUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_CONFIDENCE:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_CONFIDENCE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_CONFIDENCE:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isDatasetIDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_DATASETID )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isDataSourceUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_DATASOURCE )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isDateUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_DATE )
+	    retval = true;
+	else if ( utypeNum ==  Utypes.SEG_DATAID_DATE )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isDerivedUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+                case Utypes.SEG_DD_SNR:
+                case Utypes.SEG_DD_VARAMPL:
+                case Utypes.SEG_DD_REDSHIFT_QUALITY:
+                case Utypes.SEG_DD_REDSHIFT_RESOLUTION:
+                case Utypes.SEG_DD_REDSHIFT_VALUE:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERR:
+                case Utypes.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINLOW:
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINHIGH:
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINSIZE:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRLOW:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
+                case Utypes.SEG_DD_REDSHIFT_ACC_SYSERR:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isDescriptionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_DESCRIPTION )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isDopplerDefinitionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CS_REDFRAME_DOPPLERDEF )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isEmailUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_CONTACT_EMAIL )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isExtentUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_EXTENT:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_EXTENT:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_EXTENT:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isEquinoxUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum == Utypes.SEG_CS_SPACEFRAME_EQUINOX )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isFillFactorUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPPRECREFVAL_FILL:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isFluxSIUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum == Utypes.FLUXSI )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isHrefUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CS_HREF )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isIdUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( ( utypeNum ==  Utypes.SEG_CS_ID ) ||
+	     ( utypeNum ==  Utypes.SEG_CS_SPACEFRAME_ID ) ||
+	     ( utypeNum ==  Utypes.SEG_CS_SPECTRALFRAME_ID ) ||
+	     ( utypeNum ==  Utypes.SEG_CS_TIMEFRAME_ID ) ||
+	     ( utypeNum ==  Utypes.SEG_CS_REDFRAME_ID ) ||
+	     ( utypeNum ==  Utypes.SEG_CS_GENFRAME_ID )
+	    )
+	{
+	    retval = true;
+	}
+
+	return retval;
+    }
+    static public boolean isInstrumentUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_INSTRUMENT )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isLogoUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_LOGO )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isMaxUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MAX:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MAX:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_STOP:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_STOP:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_STOP:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isMinUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_MIN:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_MIN:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_BOUNDS_START:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_BOUNDS_START:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isNameUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_NAME:
+	case Utypes.SEG_CHAR_FLUXAXIS_NAME:
+	case Utypes.SEG_CHAR_SPATIALAXIS_NAME:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_NAME:
+	case Utypes.SEG_CHAR_TIMEAXIS_NAME:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_CS_GENFRAME_NAME:
+	case Utypes.SEG_CS_REDFRAME_NAME:
+	case Utypes.SEG_CS_SPACEFRAME_NAME:
+	case Utypes.SEG_CS_SPECTRALFRAME_NAME:
+	case Utypes.SEG_CS_TIMEFRAME_NAME:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_CURATION_CONTACT_NAME:
+	    retval = true;
+	    break;
+
+	case Utypes.TARGET_NAME:
+	    retval = true;
+	    break;
+
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isPositionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_POS )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isPublisherUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_PUBLISHER )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isPublisherDIDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_PUBDID )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isPublisherIDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_PUBID )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isQualityUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DD_REDSHIFT_QUALITY )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isRangeUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_SUPPORT_RANGE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_SUPPORT_RANGE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isRedshiftUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_REDSHIFT )
+	    retval = true;
+	else if ( utypeNum == Utypes.SEG_CS_SPECTRALFRAME_REDSHIFT )
+	    retval = true;
+	else
+	{
+	    switch ( utypeNum )
+	    {
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINLOW:
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINHIGH:
+                case Utypes.SEG_DD_REDSHIFT_ACC_BINSIZE:
+                case Utypes.SEG_DD_REDSHIFT_ACC_CONFIDENCE:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERR:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRLOW:
+                case Utypes.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
+                case Utypes.SEG_DD_REDSHIFT_ACC_SYSERR:
+                case Utypes.SEG_DD_REDSHIFT_QUALITY:
+                case Utypes.SEG_DD_REDSHIFT_RESOLUTION:
+                case Utypes.SEG_DD_REDSHIFT_VALUE:
+		retval = true;
+		break;
+	    default:
+		break;
+	    }
+	}	    
+
+	return retval;
+    }
+    static public boolean isReferenceUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_REF )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isReferencePositionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( ( utypeNum ==  Utypes.SEG_CS_SPACEFRAME_REFPOS )   ||
+	     ( utypeNum ==  Utypes.SEG_CS_SPECTRALFRAME_REFPOS )||
+	     ( utypeNum ==  Utypes.SEG_CS_TIMEFRAME_REFPOS )    ||
+	     ( utypeNum ==  Utypes.SEG_CS_REDFRAME_REFPOS )     ||
+	     ( utypeNum ==  Utypes.SEG_CS_GENFRAME_REFPOS )
+	   )
+	{
+	    retval = true;
+	}
+
+	return retval;
+    }
+    static public boolean isResolutionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_RESOLUTION:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_RESOLUTION:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_CHAR_CHARAXIS_RESOLUTION:
+	case Utypes.SEG_CHAR_FLUXAXIS_RESOLUTION:
+	case Utypes.SEG_CHAR_SPATIALAXIS_RESOLUTION:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_RESOLUTION:
+	case Utypes.SEG_CHAR_TIMEAXIS_RESOLUTION:
+	    retval = true;
+	    break;
+
+	case Utypes.SEG_DD_REDSHIFT_RESOLUTION:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isResolvingPowerUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CHAR_SPECTRALAXIS_RESPOW )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isRightsUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_RIGHTS )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isSampleExtentUtype( int utypeNum )
+    {
+        boolean retval = false;
+        switch ( utypeNum )
         {
-            return null;
+        case Utypes.SEG_CHAR_CHARAXIS_SAMPPREC_SAMPEXT:
+        case Utypes.SEG_CHAR_FLUXAXIS_SAMPPREC_SAMPEXT:
+        case Utypes.SEG_CHAR_SPATIALAXIS_SAMPPREC_SAMPEXT:
+        case Utypes.SEG_CHAR_SPECTRALAXIS_SAMPPREC_SAMPEXT:
+        case Utypes.SEG_CHAR_TIMEAXIS_SAMPPREC_SAMPEXT:
+            retval = true;
+            break;
+        default:
+            break;
         }
-
-        String[] parts = utype.split( "[.]" );
-
-        return parts[ parts.length - 1 ];
+        return retval;
     }
-
-    /**
-     *  Retrieve an enumeration which is the combination of 
-     *  of two inputs. The first argument is the base of the 
-     *  new enumeration. The second argument is the desired
-     *  end.
-     */
-    static public int mergeUtypes (int baseUtype, int suffixUtype) 
+    static public boolean isSNRUtype( int utypeNum )
     {
-        String baseUtypeName = name[baseUtype];
-        String suffixUtypeName = name[suffixUtype];
-        String newUtypeName = name[baseUtype];
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DD_SNR )
+	    retval = true;
 
-        String[] baseParts = baseUtypeName.split( "[.]" );
-        String[] suffixParts = suffixUtypeName.split ( "[.]" );
-
-        for (int ii=baseParts.length; ii < suffixParts.length; ii++)
-           newUtypeName = newUtypeName.concat ("."+suffixParts[ii]);
-
-        return getUtypeFromString (newUtypeName);
+	return retval;
     }
-
-    /**
-     * Gets the number of utypes.
-     *
-     */
-    static public int getNumberOfUtypes ()
+    static public boolean isSpectralClassUtype( int utypeNum )
     {
-        return max_enum;
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_SPECTRALCLASS )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isSpectralSIUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SPECTRALSI )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isStatErrorUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERR:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERR:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERR:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isStatErrorHighUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRHIGH:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRHIGH:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRHIGH:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERRHIGH:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isStatErrorLowUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_STATERRLOW:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_STATERRLOW:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_STATERRLOW:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_STATERRLOW:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isSysErrorUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_ACC_SYSERR:
+
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_ACC_SYSERR:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_ACC_SYSERR:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_ACC_SYSERR:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isTargetClassUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_CLASS )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isTimeSIUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum == Utypes.TIMESI )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isTitleUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_DATAID_TITLE )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isTypeUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.TYPE:
+	    retval = true;
+	    break;
+	case Utypes.SEG_CS_TYPE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isUCDUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_UCD:
+	case Utypes.SEG_CHAR_FLUXAXIS_UCD:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UCD:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UCD:
+	case Utypes.SEG_CHAR_TIMEAXIS_UCD:
+	    retval = true;
+	    break;
+	case Utypes.SEG_CS_UCD:
+	    retval = true;
+	    break;
+	case Utypes.SEG_CS_GENFRAME_UCD:
+	case Utypes.SEG_CS_REDFRAME_UCD:
+	case Utypes.SEG_CS_SPACEFRAME_UCD:
+	case Utypes.SEG_CS_SPECTRALFRAME_UCD:
+	case Utypes.SEG_CS_TIMEFRAME_UCD:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isUnitUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_UNIT:
+	case Utypes.SEG_CHAR_FLUXAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPATIALAXIS_UNIT:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_UNIT:
+	case Utypes.SEG_CHAR_TIMEAXIS_UNIT:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isValueUtype( int utypeNum )
+    {
+	boolean retval = false;
+	switch ( utypeNum )
+	{
+	case Utypes.SEG_CHAR_CHARAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_FLUXAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_SPATIALAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_SPECTRALAXIS_COV_LOC_VALUE:
+	case Utypes.SEG_CHAR_TIMEAXIS_COV_LOC_VALUE:
+	    retval = true;
+	    break;
+	case Utypes.SEG_DD_REDSHIFT_VALUE:
+	    retval = true;
+	    break;
+	default:
+	    break;
+	}
+	return retval;
+    }
+    static public boolean isVarAmplitudeUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.TARGET_VARAMPL )
+	    retval = true;
+	else if ( utypeNum == Utypes.SEG_DD_VARAMPL )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isVersionUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CURATION_VERSION )
+	    retval = true;
+	else if ( utypeNum ==  Utypes.SEG_DATAID_VERSION )
+	    retval = true;
+
+	return retval;
+    }
+    static public boolean isZeroUtype( int utypeNum )
+    {
+	boolean retval = false;
+	if ( utypeNum ==  Utypes.SEG_CS_TIMEFRAME_ZERO )
+	    retval = true;
+
+	return retval;
     }
 
-    /**
-     * Compare the string name of the utype with its enumerated counter part.
-     *
-     */
-     static public boolean compare (String utypeName, int utype)
-     {
-         int utypeEnum = getUtypeFromString (utypeName);
-         return utypeEnum == utype;
-     }
+    // *******************************************************************************
 
+
+    // Template
+//    static public boolean is<Group>Utype( int utypeNum )
+//    {
+//	boolean retval = false;
+//	switch ( utypeNum )
+//	{
+//	    retval = true;
+//	    break;
+//	default:
+//	    break;
+//	}
+//	return retval;
+//    }
 }
 
 

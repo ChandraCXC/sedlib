@@ -16,10 +16,12 @@
 
 package cfa.vo.sedlib;
 
-import cfa.vo.sedlib.common.ValidationError;
-import cfa.vo.sedlib.common.ValidationErrorEnum;
 import java.util.List;
 import java.util.ArrayList;
+
+import cfa.vo.sedlib.common.Utypes;
+import cfa.vo.sedlib.common.ValidationError;
+import cfa.vo.sedlib.common.ValidationErrorEnum;
 
 /**
  * <p>Java class for curation complex type.
@@ -27,7 +29,7 @@ import java.util.ArrayList;
  * 
  */
 public class Curation
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected TextParam publisher;
@@ -438,6 +440,110 @@ public class Curation
         return valid;
     }
 
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isContactUtype( utypeNum ) )
+	{
+	    value = this.createContact().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isDateUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createDate();
+	    else
+		value = this.getDate();
+	}
+	else if ( Utypes.isPublisherUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createPublisher();
+	    else
+		value = this.getPublisher();
+	}
+	else if ( Utypes.isPublisherIDUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createPublisherID();
+	    else
+		value = this.getPublisherID();
+	}
+	else if ( Utypes.isPublisherDIDUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createPublisherDID();
+	    else
+		value = this.getPublisherDID();
+	}
+	else if ( Utypes.isReferenceUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createReference();
+	    else
+		value = this.getReference();
+	}
+	else if ( Utypes.isRightsUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createRights();
+	    else
+		value = this.getRights();
+	}
+	else if ( Utypes.isVersionUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createVersion();
+	    else
+		value = this.getVersion();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isContactUtype( utypeNum ) )
+	{
+	    this.createContact().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isDateUtype( utypeNum ) )
+	{
+	    this.setDate( (DateParam)value );
+	}
+	else if ( Utypes.isPublisherUtype( utypeNum ) )
+	{
+	    this.setPublisher( (TextParam)value );
+	}
+	else if ( Utypes.isPublisherIDUtype( utypeNum ) )
+	{
+	    this.setPublisherID( (TextParam)value );
+	}
+	else if ( Utypes.isPublisherDIDUtype( utypeNum ) )
+	{
+	    this.setPublisherDID( (TextParam)value );
+	}
+	else if ( Utypes.isReferenceUtype( utypeNum ) )
+	{
+	    this.setReference( (TextParam)value );
+	}
+	else if ( Utypes.isRightsUtype( utypeNum ) )
+	{
+	    this.setRights( (TextParam)value );
+	}
+	else if ( Utypes.isVersionUtype( utypeNum ) )
+	{
+	    this.setVersion( (TextParam)value );
+	}
+
+	return;
+    }
 
 
 }

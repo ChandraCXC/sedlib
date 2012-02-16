@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sedType xmlns="http://www.ivoa.net/xml/Spectrum/Spectrum-1.01.xsd" xmlns:ns2="http://www.w3.org/1999/xlink">
-    <BaseSegment>
-        <ArrayOfFlatPoint>
-            <Point F_Qual="100011" F="100.1" SP_Res="900.21" SP_BinL="100.31" SP="100.2"/>
-            <Point F_Qual="200011" F="200.1" SP_Res="900.21" SP_BinL="200.31" SP="200.2"/>
-        </ArrayOfFlatPoint>
-    </BaseSegment>
-</sedType>

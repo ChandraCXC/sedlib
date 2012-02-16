@@ -956,7 +956,7 @@ public class FitsSerializer implements ISedSerializer
         {
             if (param.isSetName ())
                 this.addSedParam (param, header, param.getName ());
-            else if (param.isSetId ())
+            else if (param.isSetId())
                 this.addSedParam (param, header, param.getId ());
             else if (param.isSetInternalId ())
                 this.addSedParam (param, header, param.getInternalId ());

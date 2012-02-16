@@ -16,13 +16,16 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * Simplification of STC version: RefPos is string
  * 
  * <p>Java class for coordFrame complex type.
  * 
  */
-public class CoordFrame extends Group {
+public class CoordFrame extends Group implements IAccessByUtype
+{
 
     protected String name;
     protected String referencePosition;
@@ -141,5 +144,71 @@ public class CoordFrame extends Group {
     public boolean isSetUcd() {
         return (this.ucd!= null);
     }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isIdUtype( utypeNum ) )
+	{
+	    if ( this.isSetId() )
+		value = this.getId();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    if ( this.isSetName() )
+		value = this.getName();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    if ( this.isSetUcd() )
+		value = this.getUcd();
+	    else
+		value = new String();
+	}
+	else if ( Utypes.isReferencePositionUtype( utypeNum ) )
+	{
+	    if ( this.isSetReferencePosition() )
+		value = this.getReferencePosition();
+	    else
+		value = new String();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isIdUtype( utypeNum ) )
+	{
+	    this.setId( (String)value );
+	}
+	else if ( Utypes.isNameUtype( utypeNum ) )
+	{
+	    this.setName( (String)value );
+	}
+	else if ( Utypes.isUCDUtype( utypeNum ) )
+	{
+	    this.setUcd( (String)value );
+	}
+	else if ( Utypes.isReferencePositionUtype( utypeNum ) )
+	{
+	    this.setReferencePosition( (String)value );
+	}
+
+	return;
+    }
+
 
 }

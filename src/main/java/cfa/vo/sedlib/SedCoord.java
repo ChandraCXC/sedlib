@@ -16,6 +16,8 @@
 
 package cfa.vo.sedlib;
 
+import cfa.vo.sedlib.common.Utypes;
+
 /**
  * <p>Java class for sedCoord complex type.
  * 
@@ -42,8 +44,8 @@ public class SedCoord
             return getResolution();
         }
 
-        setValue(new DoubleParam());
-        return getValue();
+	setResolution(new DoubleParam());
+	return getResolution();
     }
 
     @Override
@@ -60,5 +62,57 @@ public class SedCoord
     }
 
 
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isAccuracyUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createAccuracy().getValueByUtype( utypeNum, create );
+	    else
+		value = this.getAccuracy().getValueByUtype( utypeNum, create );
+	}
+	else if ( Utypes.isValueUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createValue();
+	    else
+		value = this.getValue();
+	}
+	else if ( Utypes.isResolutionUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createResolution();
+	    else
+		value = this.getResolution();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+
+	if ( Utypes.isAccuracyUtype( utypeNum ) )
+	{
+	    this.createAccuracy().setValueByUtype( utypeNum, value );
+	}
+	else if ( Utypes.isValueUtype( utypeNum ) )
+	{
+	    this.setValue( (DoubleParam)value );
+	}
+	else if ( Utypes.isResolutionUtype( utypeNum ) )
+	{
+	    this.setResolution( (DoubleParam)value );
+	}
+
+	return;
+    }
 
 }

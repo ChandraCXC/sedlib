@@ -22,7 +22,7 @@ package cfa.vo.sedlib;
  * 
  */
 public abstract class AbstractSedCoord<V, R>
-    extends Group implements Cloneable
+    extends Group implements Cloneable, IAccessByUtype
 {
 
     private V value;

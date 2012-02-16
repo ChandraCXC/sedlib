@@ -44,7 +44,8 @@ public enum ValidationErrorEnum
     MISSING_DATA_SPECTRALAXIS_VALUE ("Missing required Data.SpectralAxis.Value"),
     INVALID_SEGMENT_TYPE ("Invalid Segment type found. Expected the value to be Photometry, or Spectrum or TimeSeries"),
     INVALID_RESOURCE_UTYPE ("Invalid Resource utype found. Expected the value to be Sed."),
-    INVALID_TABLE_UTYPE ("Invalid Table utype found. Expected the value to be Spectrum.");
+    INVALID_TABLE_UTYPE ("Invalid Table utype found. Expected the value to be Spectrum."),
+    EMPTY_SED ("SED is empty.");
 
     
     protected String errorMessage = "";

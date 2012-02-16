@@ -16,9 +16,10 @@
 
 package cfa.vo.sedlib;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
+import cfa.vo.sedlib.common.Utypes;
 
 /**
  * <p>Java class for coverageSupport complex type.
@@ -26,7 +27,7 @@ import java.util.List;
  * 
  */
 public class CoverageSupport
-    extends Group
+    extends Group implements IAccessByUtype
 {
 
     protected SkyRegion area;
@@ -168,6 +169,61 @@ public class CoverageSupport
 
     public void setRange(List<Interval> range) {
         this.range = range;
+    }
+
+
+    // ********************************************************************************
+    //   Utype interface.
+    // ********************************************************************************
+    @Override
+    public Object getValueByUtype( int utypeNum, boolean create )
+    {
+	Object value = null;
+
+	if ( Utypes.isAreaUtype( utypeNum ) )
+	{
+	    if (create)
+		value = this.createArea();
+	    else
+		value = this.getArea();
+	}
+	else if ( Utypes.isExtentUtype( utypeNum ) )
+	{
+	    if ( create )
+		value = this.createExtent();
+	    else
+		value = this.getExtent();
+	}
+	else if ( Utypes.isRangeUtype( utypeNum ) )
+	{
+	    // make a new interval to put on the list
+	    // MCD NOTE: NOT A GOOD interface.. this is what createRange should do,
+	    //           with a different method for manipulating the list (createRanges)
+	    this.createRange();
+	    value = new Interval();
+	}
+
+	return value;
+    }
+
+    @Override
+    public void setValueByUtype( int utypeNum, Object value )
+    {
+	if ( Utypes.isAreaUtype( utypeNum ) )
+	{
+	    this.setArea( (SkyRegion)value );
+	}
+	else if ( Utypes.isExtentUtype( utypeNum ) )
+	{
+	    this.setExtent( (DoubleParam)value );
+	}
+	else if ( Utypes.isRangeUtype( utypeNum ) )
+	{
+	    // Add range to list.
+	    this.createRange().add( (Interval)value );
+	}
+
+	return;
     }
 
 }

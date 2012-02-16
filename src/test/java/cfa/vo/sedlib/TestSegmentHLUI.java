@@ -39,6 +39,7 @@ import cfa.vo.sedlib.io.SedFormat;
 import cfa.vo.testtools.SedLibTestUtils;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class TestSegmentHLUI extends SedTestBase
@@ -680,6 +681,7 @@ public class TestSegmentHLUI extends SedTestBase
                 if (listUtypes.contains (utype))
                 {
 
+		    List<TextParam> newlist = null;
                     List<? extends Param> paramList;
 
                     if (useString)
@@ -709,6 +711,22 @@ public class TestSegmentHLUI extends SedTestBase
                             iparam.setUnit (iparam.getUnit ()+"_int");
                             iparam.setUcd (iparam.getUcd ()+"_int");
                         }
+			else if ( Utypes.isCollectionUtype( utype ) ||
+				  Utypes.isContributorUtype( utype ) )
+			{
+			    // These are lists which must be added to.  The 'set' method
+			    // now correctly clears the list to replace the content with 
+			    // the new content ( aka 'set' ), so to make the test pass as
+			    // before, we need to append to the current list.
+			    if ( newlist == null )
+				newlist = new ArrayList<TextParam>();
+
+			    TextParam tp = new TextParam();
+                            tp.setValue(param.getValue () + "text" );
+                            tp.setName(param.getName ()+"_text");
+                            tp.setUcd(param.getUcd ()+"_text");
+			    newlist.add( tp );
+			}
                         else
                         {
                             param.setValue (param.getValue () + "text" );
@@ -716,6 +734,11 @@ public class TestSegmentHLUI extends SedTestBase
                             param.setUcd (param.getUcd ()+"_text");
                         }
                     }
+
+		    if ( newlist != null )
+			for ( TextParam param : newlist )
+			    ((List<TextParam>)paramList).add( param );
+
 
                     if (useString)
                         segment.setMetaParamList (paramList, utypeName);
