@@ -140,7 +140,7 @@ public class Segment
     }
 
     /**
-     * Gets the value of the char property.
+     * Gets the value of the characterization property.
      * 
      * @return
      *     either null or
@@ -153,7 +153,7 @@ public class Segment
     }
 
     /**
-     * Creates _char property if one does not exist.
+     * Creates the characterization property if one does not exist.
      *
      * @return
      *     {@link Characterization }
@@ -168,7 +168,7 @@ public class Segment
 
 
     /**
-     * Sets the value of the char property.
+     * Sets the value of the characterization property.
      * 
      * @param value
      *     allowed object is
@@ -630,9 +630,9 @@ public class Segment
 
     
     /**
-     * Sets the values of the spectral axis. The first n values of the
-     * are set in the spectral axis. If the array is larger then the
-     * number of points, then the extra values are ignored.
+     * Sets the values of the spectral axis.
+     * If the provided values array is larger then the number of points,
+     * new points are created to hold the extra values.
      *
      * @param values
      *   double[]
@@ -649,9 +649,9 @@ public class Segment
     }
 
     /**
-     * Gets the values of the spectral axis. If no data exists then
-     * SedNoDataExeption is thrown. For points where the spectral axis is not set
-     * a NaN value is used.
+     * Gets the values of the spectral axis. 
+     * If no data exists then SedNoDataExeption is thrown.
+     * For points where the spectral axis is not set a NaN value is used.
      *
      * @return 
      *    double[]
@@ -674,9 +674,9 @@ public class Segment
     }
 
     /**
-     * Sets the values of the flux axis. The first n values of the array
-     * are set in the flux axis. If the array is larger then the
-     * number of points, the extra values are ignored.
+     * Sets the values of the flux axis.
+     * If the provided values array is larger then the number of points,
+     * new points are created to hold the extra values.
      *
      * @param values
      *   double[]
@@ -695,9 +695,9 @@ public class Segment
     }
 
     /**
-     * Gets the values of the flux axis. If no data exists then
-     * SedNoDataException is thrown. For points where the flux axis is not set
-     * a NaN value is used.
+     * Gets the values of the flux axis. 
+     * If no data exists then SedNoDataException is thrown.
+     * For points where the flux axis is not set a NaN value is used.
      *
      * @return 
      *   either double[]
@@ -723,13 +723,13 @@ public class Segment
 
 
     /**
-     * Sets the units of the spectral axis. If there are no data
-     * a SedNoDataException is thrown.
+     * Sets the units of the spectral axis. 
+     * If there are no data a SedNoDataException is thrown.
      *
      * @param units
      *    {@link String}
      *
-     * @throws SetNoDataException
+     * @throws SedNoDataException
      *
      */
     @Override
@@ -751,8 +751,8 @@ public class Segment
     }
 
     /**
-     * Gets the units of the spectral axis. If no data exists then
-     * SedNoDataException is thrown
+     * Gets the units of the spectral axis.
+     * If no data exists then a SedNoDataException is thrown
      *
      * @return
      *    {@link String}
@@ -808,8 +808,8 @@ public class Segment
     }
 
     /**
-     * Gets the units of the flux axis. If no data exists then
-     * a SedNoDataException is thrown.
+     * Gets the units of the flux axis. 
+     * If no data exists then a SedNoDataException is thrown.
      *
      * @return
      *    {@link String}
@@ -957,14 +957,11 @@ public class Segment
 
 
     /**
-     * Gets the values of the specified utype. If no data exists then
-     * SedNoDataException is thrown. For points where the axis is not set
-     * a default value is used; for doubles its NaN for ints its -9999.
-     *
-     * If the utype is not supported a SedInconsistentException is thrown.
-     *
-     * If no data are found a SedNoDataException is thrown.
-     *
+     * Gets the values of the specified utype.
+     * If no data exists then SedNoDataException is thrown. For points where
+     * the axis is not set a default value is used;
+     *    + NaN for double type values
+     *    + -9999 for int type values
      *
      * If the utype is not supported a SedInconsistentException is thrown.
      *
@@ -992,9 +989,9 @@ public class Segment
     }
 
     /**
-     * Sets the values of the custom data id. The first n values of the
-     * are set in the spectral axis. If the array is larger then the
-     * number of points, then the extra values are ignored.
+     * Sets the values of the custom data id.
+     * If the array is larger then the number of points, then the points array
+     * is grown to accommodate them.
      *
      * @param values
      *   Valid values are double[], float[], int[], short[], long[] or String[]
@@ -1101,13 +1098,14 @@ public class Segment
     }
 
     /**
-     * Sets the parameter info of the specified custom parameters. The field id
-     * is used to determine which parameter should be changed. The specified field
-     * will replace all information on each point except for the value. If no data
-     * exists for the specified id on a particular point the point will be ignored.
-     * Creates new data custom data parameters to each point for a given field id.
-     * If the point already has a data parameter with the given id, parameter
-     * information will be replaced by the new information.
+     * Sets the parameter info of the specified custom parameter on each point
+     * of the Segment.
+     * The 'id' property of the input Field is used to identify the custom
+     * parameter to update.  All Field properties of the matching custom 
+     * parameters will be replaced.
+     *
+     * If a particular pont does not contain a custom parameter with the
+     * specified id, no action will occur.
      *
      * @param field
      *   {@link Field}
@@ -1220,16 +1218,22 @@ public class Segment
 
 
     /**
-     * Gets the values of the specified custom data id. If no data exists
-     * a SedException will be thrown. For points where the axis is not set
-     * a default value is used; for doubles its NaN for ints its -9999 and
-     * empty strings for strings.
+     * Gets the values of the specified custom data parameter.
+     * The values of the custom parameter matching the input id, are accumulated
+     * into a data array and returned.  For points where no matching custom
+     * parameter is found, a default value is used:
+     *    +   NaN for double type
+     *    + -9999 for int type
+     *    + empty strings for string type
+     *
+     * If no Points are defined, a SedException will be thrown.
+     *
      * @param id
      *   {@link String}
      *
      * @return 
-     *   either null or double[] or int[] depending on the data. The
-     *   arrays will be cast to an Object.
+     *   null if no points contain the specified custom parameter.
+     *   Object cast of double[], int[], or string[] depending on the data.
      *
      * @throws SedNoDataException, SedNullException
      *
@@ -1382,15 +1386,14 @@ public class Segment
 
 
     /**
-     * Gets the values of the specified utype. If no data exists then
-     * SedNoDataException is thrown. For points where the axis is not set
-     * a default value is used; for doubles its NaN for ints its -9999.
+     * Gets the values of properties identified by the specified utype.
+     * It is expected that the properties are under the Data node of the
+     * Spectral model.  For points where the axis is not set
+     * a default value is used:
+     *    +   NaN for double types
+     *    + -9999 for int types
      *
-     * If the utype is not supported a SedInconsistentException is thrown.
-     *
-     * If no data are found a SedNoDataException is thrown.
-     *
-     *
+     * If no Point data exists, a SedNoDataException is thrown.
      * If the utype is not supported a SedInconsistentException is thrown.
      *
      * @param utype
@@ -1415,8 +1418,11 @@ public class Segment
 
 
     /**
-     * Sets the values of the specified axis. If more values exist then points,
-     * new points will be created to accomodate the extra values.
+     * Sets the values of properties identified by the specified utype.
+     * It is expected that the properties are under the Data node of the
+     * Spectral model.
+     * If more values exist then points, new points will be created to
+     * accommodate the extra values.
      *
      * If the utype is not supported a SedInconsistentException is thrown.
      *
@@ -1425,7 +1431,7 @@ public class Segment
      * @param utype
      *   {@link String}
      *
-     * @throws SedNoDataException, SedInconsistentException 
+     * @throws SedInconsistentException 
      *
      */
     public void setDataValues (Object values, String utype) throws SedInconsistentException
@@ -1437,8 +1443,11 @@ public class Segment
 
 
     /**
-     * Sets the values of the specified axis. If more values exist then points,
-     * new points will be created to accomodate the extra values.
+     * Sets the values of properties identified by the specified utype.
+     * It is expected that the properties are under the Data node of the
+     * Spectral model.
+     * If more values exist then points, new points will be created to 
+     * accommodate the extra values.
      *
      * If the utype is not supported a SedInconsistentException is thrown
      *
@@ -1447,7 +1456,7 @@ public class Segment
      * @param utype
      *   int
      *
-     * @throws SedException
+     * @throws SedInconsistentException
      *
      */
     public void setDataValues (Object values, int utype) throws SedInconsistentException
@@ -1459,8 +1468,11 @@ public class Segment
 
 
     /**
-     * Gets the parameter info of the specified axis. If no data exists then
-     * SedNoDataException is thrown.
+     * Gets the parameter info of the specified Data property.
+     *
+     * If no Point data exists, a SedNoDataException is thrown.
+     * If the utype is not supported a SedInconsistentException is thrown
+     *
      * @param utype
      *   {@link String}
      *
@@ -1483,8 +1495,11 @@ public class Segment
 
 
     /**
-     * Gets the parameter info of the specified axis. If no data exists then
-     * SedNoDataException is thrown.
+     * Gets the parameter info of the specified Data property.
+     *
+     * If no Point data exists, a SedNoDataException is thrown.
+     * If the utype is not supported a SedInconsistentException is thrown
+     *
      * @param utype
      *   int
      *
@@ -1507,12 +1522,13 @@ public class Segment
 
 
     /**
-     * Sets the parameter info of the specified axis. The specfied field
-     * will replace all information on each point except for the value. If no data
-     * exists for the specified utype on a particular point the point will be ignored.
+     * Sets the parameter info of the specified Data property.
+     * The Field information will be updated for each point.
      *
-     * If no data are found, a SedNoDataException is thrown.
+     * If a particular point does not define the indicated utype,
+     * no update will occur.
      *
+     * If no Point data is defined, a SedNoDataException is thrown.
      * If utype is not supported, a SedInconsistentException is thrown.
      *
      * @param field
@@ -1536,13 +1552,14 @@ public class Segment
 
 
     /**
-     * Sets the parameter info of the specified axis. The specfied field
-     * will replace all information on each point except for the value. If no data
-     * exists for the specified utype on a particular point the point will be ignored.
+     * Sets the parameter info of the specified Data property.
+     * The Field information will be updated for each point.
      *
-     * If there are no points to set, a SedNoDataException is thrown.
+     * If a particular point does not define the indicated utype,
+     * no update will occur.
      *
-     * If the utype is not supported a SedInconsistentException is thrown.
+     * If no Point data is defined, a SedNoDataException is thrown.
+     * If utype is not supported, a SedInconsistentException is thrown.
      *
      * @param field
      *   {@link Field}
@@ -1565,8 +1582,8 @@ public class Segment
 
 
     /**
-     * Gets the parameter of the specified utype. The returned param will
-     * be a copy of the one in the segment. To update the segment use
+     * Gets the parameter identified by the specified utype.
+     * The returned param will be a copy of the one in the segment. To update the segment use
      * <code>setMetaParam</code>. If no param exists then null is returned.
      * @param utype
      *   {@link String}
