@@ -1,4 +1,4 @@
-XTENSION= 'BINTABLE'           / Java FITS: Thu Feb 16 13:55:27 EST 2012        
+XTENSION= 'BINTABLE'           / Java FITS: Tue May 29 16:06:12 EDT 2012        
 BITPIX  =                    8                                                  
 NAXIS   =                    2 / Dimensionality                                 
 NAXIS1  =                  108                                                  
@@ -22,8 +22,10 @@ P2      = 'blah    '
 CHISQ   =                 4.01                                                  
 FLUXNAME= 'col5    '                                                            
 FLUXUNIT= 'Jy      '                                                            
+FLUX_UCD= 'phot.flux.density;em.freq'                                           
 TTYPE1  = 'col5    '                                                            
 TUTYP1  = 'Spectrum.Data.FluxAxis.Value'                                        
+TUCD1   = 'phot.flux.density;em.freq'                                           
 TUNIT1  = 'Jy      '                                                            
 TTYPE2  = 'p5      '                                                            
 TUTYP2  = 'Spectrum.Data.FluxAxis.Quality'                                      

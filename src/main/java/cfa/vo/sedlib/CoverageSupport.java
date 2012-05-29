@@ -222,8 +222,6 @@ public class CoverageSupport
 	    // Add range to list.
 	    this.createRange().add( (Interval)value );
 	}
-
-	return;
     }
 
 }

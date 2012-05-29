@@ -165,8 +165,6 @@ public class CoverageLocation
 		}
 	    }
 	}
-
-	return;
     }
 
 }

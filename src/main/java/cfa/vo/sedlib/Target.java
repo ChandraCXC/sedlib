@@ -551,7 +551,6 @@ public class Target
 	{
 	    this.setVarAmpl( (DoubleParam)value );
 	}
-	return;
     }
 
 }

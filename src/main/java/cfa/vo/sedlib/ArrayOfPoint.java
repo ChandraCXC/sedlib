@@ -241,6 +241,74 @@ public class ArrayOfPoint implements Cloneable
     }
 
 
+
+    public void setDataAttribute(Object values, int utype) throws SedInconsistentException
+    {
+
+        String []sValues = null;
+        int length = 0;
+
+        if (this.point == null)
+            this.createPoint ();
+
+        if (values instanceof String[])
+        {
+       	    sValues = (String[])values;
+            length = sValues.length;
+        }
+        else
+            throw new SedInconsistentException ("Unknown input data type. The input is expected to be a String array");
+
+        for (int ii=0; ii<length; ii++)
+        {
+            Point pnt;
+            Param param = null;
+            if (this.point.size () == ii)
+            {
+                pnt = new Point ();
+                this.point.add(pnt);
+            }
+            else
+                pnt  = this.point.get(ii);
+
+            if ( (utype == Utypes.SEG_DATA_FLUXAXIS_UNIT) || (utype == Utypes.SEG_DATA_FLUXAXIS_UCD ) )
+            {
+		param = this.getDataParam(Utypes.SEG_DATA_FLUXAXIS_VALUE, pnt, false);
+            }
+            else if ( (utype == Utypes.SEG_DATA_SPECTRALAXIS_UNIT) || (utype == Utypes.SEG_DATA_SPECTRALAXIS_UCD) )
+            {
+		param = this.getDataParam(Utypes.SEG_DATA_SPECTRALAXIS_VALUE, pnt, false);
+            }
+            else if ((utype == Utypes.SEG_DATA_TIMEAXIS_UNIT) || (utype == Utypes.SEG_DATA_TIMEAXIS_UCD))
+            {
+                param = this.getDataParam (Utypes.SEG_DATA_TIMEAXIS_VALUE, pnt, false);
+            }
+            else if ((utype == Utypes.SEG_DATA_BGM_UNIT) || (utype == Utypes.SEG_DATA_BGM_UCD))
+            {
+		param = this.getDataParam (Utypes.SEG_DATA_BGM_VALUE, pnt, false);
+            }
+
+            if ( param != null )
+            {
+              if ( (utype == Utypes.SEG_DATA_FLUXAXIS_UNIT)     ||
+                   (utype == Utypes.SEG_DATA_SPECTRALAXIS_UNIT) ||
+                   (utype == Utypes.SEG_DATA_TIMEAXIS_UNIT)     ||
+                   (utype == Utypes.SEG_DATA_BGM_UNIT) )
+              {
+                ((DoubleParam)param).setUnit( sValues[ii]);
+              }
+              else if ( (utype == Utypes.SEG_DATA_FLUXAXIS_UCD)     ||
+                        (utype == Utypes.SEG_DATA_SPECTRALAXIS_UCD) ||
+                        (utype == Utypes.SEG_DATA_TIMEAXIS_UCD)     ||
+                        (utype == Utypes.SEG_DATA_BGM_UCD))
+              {
+                param.setUcd( sValues[ii]);
+              }
+            }
+        }
+    }
+
+
     /**
      * Sets the values of the specified utype.
      *
@@ -301,13 +369,12 @@ public class ArrayOfPoint implements Cloneable
 
             // if it's an integer
             if (iValues != null)
-            	param.setValue (Integer.toString (iValues[ii]));
+              param.setValue (Integer.toString (iValues[ii]));
             // if it's a double
             else if (dValues != null)
-            	param.setValue (Double.toString (dValues[ii]));
+               param.setValue (Double.toString (dValues[ii]));
             else
-            	param.setValue (sValues[ii]);
-
+               param.setValue (sValues[ii]);
 
         }
     }

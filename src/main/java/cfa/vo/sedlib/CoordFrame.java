@@ -160,28 +160,28 @@ public class CoordFrame extends Group implements IAccessByUtype
 	    if ( this.isSetId() )
 		value = this.getId();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isNameUtype( utypeNum ) )
 	{
 	    if ( this.isSetName() )
 		value = this.getName();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isUCDUtype( utypeNum ) )
 	{
 	    if ( this.isSetUcd() )
 		value = this.getUcd();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isReferencePositionUtype( utypeNum ) )
 	{
 	    if ( this.isSetReferencePosition() )
 		value = this.getReferencePosition();
 	    else
-		value = new String();
+		value = "";
 	}
 
 	return value;
@@ -206,8 +206,6 @@ public class CoordFrame extends Group implements IAccessByUtype
 	{
 	    this.setReferencePosition( (String)value );
 	}
-
-	return;
     }
 
 

@@ -764,14 +764,20 @@ public class Segment
     {
         try {//This code can't actually throw the exception, since we are using a supported utype
             Field field = null;
+            String unit = null;
 
             field = this.getDataInfo (Utypes.SEG_DATA_SPECTRALAXIS_VALUE);
-            field = this.getDataInfo (Utypes.SEG_DATA_SPECTRALAXIS_VALUE);
-
             if (field == null)
                 throw new SedNoDataException("No Spectral Axis found.");
-        
-            return field.getUnit ();
+
+            unit = field.getUnit();
+            if ( unit == null )
+            {
+                // Char provides default for Data.SpectralAxis.Units
+                unit = (String)this.getValueByUtype(Utypes.SEG_CHAR_SPECTRALAXIS_UNIT, false);
+            }
+            return unit;
+
         } catch(SedInconsistentException ex) {
             Logger.getLogger(Segment.class.getName()).log(Level.SEVERE, null, ex);
             return "";
@@ -823,10 +829,16 @@ public class Segment
         try {//This code can't actually throw the exception, since we are using a supported utype
 
             Field field = null;
+            String unit = null;
 
-            field = this.getDataInfo (Utypes.SEG_DATA_FLUXAXIS_VALUE);
-
-            return field.getUnit ();
+            field = this.getDataInfo(Utypes.SEG_DATA_FLUXAXIS_VALUE);
+            unit = field.getUnit();
+            if (unit == null )
+            {
+                // Char provides default for Data.FluxAxis.Units
+                unit = (String)this.getValueByUtype(Utypes.SEG_CHAR_FLUXAXIS_UNIT, false);
+            }
+            return unit;
 
         } catch(SedInconsistentException ex) {
             Logger.getLogger(Segment.class.getName()).log(Level.SEVERE, null, ex);
@@ -2155,20 +2167,17 @@ public class Segment
 
         }
 
-        if (this.isSetType ())
+        if ( this.isSetType() && this.type.isSetValue() )
         {
-            if (this.type.isSetValue ())
+            String val = type.getValue().toLowerCase();
+            if (!val.startsWith("photometry") &&
+                !val.startsWith("spectrum") &&
+                !val.startsWith("timeseries"))
             {
-                String val = type.getValue ().toLowerCase ();
-                if (!val.startsWith ("photometry") &&
-                    !val.startsWith ("spectrum") &&
-                    !val.startsWith ("timeseries"))
-                {
-                    valid = false;
-                    error = new ValidationError (ValidationErrorEnum.INVALID_SEGMENT_TYPE);
-                    error.addNote ("Value found "+val);
-                    errors.add (error);
-                }
+                valid = false;
+                error = new ValidationError(ValidationErrorEnum.INVALID_SEGMENT_TYPE);
+                error.addNote("Value found "+val);
+                errors.add(error);
             }
         }
 
@@ -2303,7 +2312,6 @@ public class Segment
 	{
 	    this.setType( (TextParam)value );
 	}
-	return;
     }
 }
 

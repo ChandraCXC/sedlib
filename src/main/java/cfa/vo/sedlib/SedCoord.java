@@ -111,8 +111,6 @@ public class SedCoord
 	{
 	    this.setResolution( (DoubleParam)value );
 	}
-
-	return;
     }
 
 }

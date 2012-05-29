@@ -119,8 +119,6 @@ public class SedQuantity
 	{
 	    super.setValueByUtype( utypeNum, value );
 	}
-
-	return;
     }
 
 

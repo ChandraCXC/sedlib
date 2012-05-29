@@ -103,16 +103,17 @@ public class RangeParam
      *     {@link String }
      *
      */
-    public void setValue(String value) {
-        super.setValue (value.toString ());
+    public void setValue(String value) 
+    {
+        super.setValue( value.toString() );
 
-        if (value != null)
+        if ( ! value.isEmpty() )
         {
-            String[] values = value.split (" ");
+            String[] values = value.split(" ");
 
             try
             {
-                this.min = Double.parseDouble (values[0]);
+                this.min = Double.parseDouble(values[0]);
             }
             catch (Exception e)
             {
@@ -123,7 +124,7 @@ public class RangeParam
             {
                 try
                 {
-                    this.max = Double.parseDouble (values[1]);
+                    this.max = Double.parseDouble(values[1]);
                 }
                 catch (Exception e)
                 {
@@ -225,6 +226,26 @@ public class RangeParam
 
     public boolean isSetMax() {
         return this.max != null;
+    }
+
+
+    /**
+     * equals operator to compare two RangeParams
+     *
+     */
+    @Override
+    public boolean equals (Object other)
+    {
+        boolean compValue = super.equals(other);
+        final RangeParam param = (RangeParam) other;
+
+        if (compValue)
+        {
+            compValue = ((this.min == param.min)&&
+			 (this.max == param.max));
+        }
+
+        return compValue;
     }
 
 

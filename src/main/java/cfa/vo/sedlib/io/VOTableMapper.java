@@ -138,6 +138,12 @@ public class VOTableMapper extends SedMapper
                 }
             }
         }
+
+	if ( this.verbose )
+	{
+	    System.out.println("INFO: Found SED Resource");
+	    System.out.println("INFO:");
+	}
         
         VOElement[] tables = resource.getChildrenByName (VOTableKeywords._TABLE);
         TableElement te;
@@ -167,6 +173,12 @@ public class VOTableMapper extends SedMapper
                     }
                 }
             }
+
+	    if ( this.verbose )
+	    {
+		System.out.println("INFO: Extracting Segment");
+		System.out.println("INFO:");
+	    }
 
 	    // Extract segment from Table.
 	    // NOTE: This will attempt to interpret the Table even if it does 
@@ -604,6 +616,7 @@ public class VOTableMapper extends SedMapper
         Object   values  = null;
         double[] dValues = null;
         int[]    iValues = null;
+        String[] sValues = null;
 	String   strval  = null;
 
 	String utype  = null;
@@ -634,7 +647,6 @@ public class VOTableMapper extends SedMapper
 	    if ( (utypeNum < utypes.SEG_DATA ) || ( utypeNum > utypes.SEG_DATA_BGM_ACC_CONFIDENCE ) )
 		continue;
 
-
 	    // Recognized column, define array of values.
 	    Class dataClass = item.getInfo().getContentClass();
 
@@ -658,20 +670,45 @@ public class VOTableMapper extends SedMapper
 		}
 		values = dValues;
 	    }
-
-	    // Assign values for this column to Points
-	    try
+            else if (dataClass == String.class)
 	    {
+		sValues = new String[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    sValues[iRow] = item.getValue().toString();
+		}
+		values = sValues;
+	    }
+
+            if ( (utypeNum == utypes.SEG_DATA_FLUXAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_FLUXAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UNIT) || (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_TIMEAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_TIMEAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_BGM_UNIT)          || (utypeNum == utypes.SEG_DATA_BGM_UCD) )
+            {
+	      try
+	      {
+		points.setDataAttribute( values, utypeNum );
+	      }
+	      catch (SedInconsistentException exp)
+	      {
+		throw new SedParsingException("Problem setting Data Attribute for " + utype);
+              }
+            }
+            else
+            {
+                // Assign values for this column to Points
+	      try
+	      {
 		points.setDataValues( values, utypeNum );
-	    }
-	    catch (SedInconsistentException exp)
-	    {
+	      }
+	      catch (SedInconsistentException exp)
+	      {
 		throw new SedParsingException("Problem setting Data values for " + utype);
-	    }
+	      }
 
-	    // Define Field info. for this column
-	    try
-	    {
+	      // Define Field info. for this column
+	      try
+	      {
 		Field field = new Field (item.getInfo().getName(),
 					 item.getInfo().getUCD(), 
 					 item.getInfo().getUnitString(), 
@@ -686,14 +723,15 @@ public class VOTableMapper extends SedMapper
 		}
 
 		points.setDataInfo( field, utypeNum );
-	    }
-	    catch (SedException exp)
-	    {
+	      }
+	      catch (SedException exp)
+	      {
 		throw new SedParsingException("Problem setting field info for " + utype);
-	    }
-	}
-
-	return;
+	      }
+            }
+            itr.remove();
+        }
+        return;
     }
 
 

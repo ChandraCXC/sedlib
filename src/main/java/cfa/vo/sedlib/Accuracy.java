@@ -504,7 +504,6 @@ public class Accuracy
 	{
 	    this.setConfidence( (DoubleParam)value );
 	}
-	return;
     }
 
 }

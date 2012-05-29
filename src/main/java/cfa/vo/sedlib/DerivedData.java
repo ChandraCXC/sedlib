@@ -224,8 +224,6 @@ public class DerivedData
 	{
 	    this.setVarAmpl( (DoubleParam)value );
 	}
-
-	return;
     }
 
 

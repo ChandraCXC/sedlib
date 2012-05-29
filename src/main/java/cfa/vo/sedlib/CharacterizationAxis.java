@@ -449,19 +449,19 @@ public class CharacterizationAxis
 	    if ( this.isSetUcd() )
 		value = this.getUcd();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isUnitUtype( utypeNum ) )
 	{
 	    if ( this.isSetUnit() )
 		value = this.getUnit();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isNameUtype( utypeNum ) )
 	{
 	    if ( create && !this.isSetName() )
-		this.setName( new String() );
+		this.setName( "" );
 
 	    if ( this.isSetName() )
 	    {
@@ -519,8 +519,6 @@ public class CharacterizationAxis
 	    else
 		this.setName( (String)value );
 	}
-
-	return;
     }
 
 

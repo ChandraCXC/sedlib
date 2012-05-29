@@ -192,11 +192,8 @@ public class Group implements Cloneable {
 
         for (Param param : this.customParams)
         {
-            if (param.header.isSetId ())
-            {
-                if (paramId.equals (param.header.getId ()))
-                    returnParam = param;
-            }
+            if (param.header.isSetId() && paramId.equals(param.header.getId()) )
+              returnParam = param;
         }
 
         if (returnParam == null)

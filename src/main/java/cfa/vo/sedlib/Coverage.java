@@ -225,7 +225,6 @@ public class Coverage
 	    this.createSupport().setValueByUtype( utypeNum, value );
 	}
 
-	return;
     }
 
 }

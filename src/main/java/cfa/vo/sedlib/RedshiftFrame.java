@@ -72,7 +72,7 @@ public class RedshiftFrame
 	    if ( this.isSetDopplerDefinition() )
 		value = this.getDopplerDefinition();
 	    else
-		value = new String();
+		value = "";
 	}
 	else
 	{
@@ -93,8 +93,6 @@ public class RedshiftFrame
 	{
 	    super.setValueByUtype( utypeNum, value );
 	}
-
-	return;
     }
 
 }

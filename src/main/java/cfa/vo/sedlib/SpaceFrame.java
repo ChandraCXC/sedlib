@@ -121,8 +121,6 @@ public class SpaceFrame
 	{
 	    super.setValueByUtype( utypeNum, value );
 	}
-
-	return;
     }
 
 }

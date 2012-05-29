@@ -109,7 +109,6 @@ public class SamplingPrecisionRefVal
 	{
             this.setFillFactor( (DoubleParam)value );
 	}
-	return;
     }
 
 }

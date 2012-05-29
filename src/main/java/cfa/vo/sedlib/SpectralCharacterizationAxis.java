@@ -103,6 +103,5 @@ public class SpectralCharacterizationAxis
 	else 
 	    super.setValueByUtype( utypeNum, value );
 
-	return;
     }
 }

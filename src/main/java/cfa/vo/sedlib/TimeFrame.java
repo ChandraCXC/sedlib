@@ -119,8 +119,6 @@ public class TimeFrame
 	{
 	    super.setValueByUtype( utypeNum, value );
 	}
-
-	return;
     }
 
 }

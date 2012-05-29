@@ -22,8 +22,6 @@
       <PARAM datatype="double" name="p3" value="0.102"/>
       <PARAM arraysize="*" datatype="char" name="p6" value="test2"/>
       <PARAM arraysize="*" datatype="char" name="PARAM" value="target subgroup param"/>
-      <PARAM arraysize="*" datatype="char" name="DataFluxUcd" value="phot.flux.density;em.freq"/>
-      <PARAM arraysize="*" datatype="char" name="DataFluxUnit" value="Jy"/>
       <PARAM arraysize="*" datatype="char" name="p2" value="blah"/>
       <PARAM datatype="double" name="chisq" value="4.01"/>
       <GROUP utype="spec:Spectrum.Data">
@@ -32,7 +30,7 @@
         <FIELDref ref="col2"/>
         <FIELDref ref="ID_1"/>
         <GROUP utype="spec:Spectrum.Data.FluxAxis">
-          <PARAM ID="col5" datatype="double" name="col5" unit="Jy" utype="spec:Spectrum.Data.FluxAxis.Value" value="1.9E-11"/>
+          <PARAM ID="col5" datatype="double" name="col5" ucd="phot.flux.density;em.freq" unit="Jy" utype="spec:Spectrum.Data.FluxAxis.Value" value="1.9E-11"/>
           <PARAM ID="ID_0" datatype="int" name="p5" ucd="meta.code.qual;phot.flux.density;em.*" utype="spec:Spectrum.Data.FluxAxis.Quality" value="1"/>
         </GROUP>
       </GROUP>

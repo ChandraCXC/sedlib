@@ -840,8 +840,6 @@ public class DataID
 	{
 	    this.setVersion( (TextParam)value );
 	}
-
-	return;
     }
 
 }

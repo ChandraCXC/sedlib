@@ -167,8 +167,6 @@ public class Contact
 	{
 	    this.setEmail( (TextParam)value );
 	}
-
-	return;
     }
 
 

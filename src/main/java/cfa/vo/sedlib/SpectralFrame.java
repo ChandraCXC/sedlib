@@ -120,8 +120,6 @@ public class SpectralFrame
 	{
 	    super.setValueByUtype( utypeNum, value );
 	}
-
-	return;
     }
 
 }

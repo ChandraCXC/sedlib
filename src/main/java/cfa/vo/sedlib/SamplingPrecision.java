@@ -165,8 +165,6 @@ public class SamplingPrecision
 	{
             this.setSampleExtent( (DoubleParam)value );
 	}
-
-	return;
     }
 
 }

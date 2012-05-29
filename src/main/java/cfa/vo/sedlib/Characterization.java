@@ -306,7 +306,6 @@ public class Characterization
     public boolean validate (List<ValidationError> errors)
     {
         List<ValidationError> errorList = new ArrayList<ValidationError> ();
-        ValidationError error;
         String message;
 
         if (this.isSetFluxAxis ())
@@ -589,6 +588,5 @@ public class Characterization
 	if ( axis != null )
 	    axis.setValueByUtype( utypeNum, value );
 
-	return;
     }
 }

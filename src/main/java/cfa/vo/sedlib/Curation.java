@@ -541,8 +541,6 @@ public class Curation
 	{
 	    this.setVersion( (TextParam)value );
 	}
-
-	return;
     }
 
 

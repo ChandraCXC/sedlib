@@ -329,28 +329,28 @@ public class CoordSys extends Group  implements IAccessByUtype
 	    if ( this.isSetId() )
 		value = this.getId();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isUCDUtype( utypeNum ) )
 	{
 	    if ( this.isSetUcd() )
 		value = this.getUcd();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isTypeUtype( utypeNum ) )
 	{
 	    if ( this.isSetType() )
 		value = this.getType();
 	    else
-		value = new String();
+		value = "";
 	}
 	else if ( Utypes.isHrefUtype( utypeNum ) )
 	{
 	    if ( this.isSetHref() )
 		value = this.getHref();
 	    else
-		value = new String();
+		value = "";
 	}
 
 	if ( frame != null )
@@ -439,7 +439,6 @@ public class CoordSys extends Group  implements IAccessByUtype
 	if ( frame != null )
 	    frame.setValueByUtype( utypeNum, value );
 
-	return;
     }
 
     private CoordFrame findFrame( String type ) throws SedInconsistentException

@@ -177,7 +177,6 @@ public class CoverageBounds
 	{
             this.createRange().setMax( (DoubleParam)value );
 	}
-	return;
     }
 
 
