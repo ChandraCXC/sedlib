@@ -488,6 +488,7 @@ public class VOTableMapper extends SedMapper
         Object   values  = null;
         double[] dValues = null;
         int[]    iValues = null;
+        String[] sValues = null;
 	String   strval  = null;
 
 	String utype = null;
@@ -528,6 +529,17 @@ public class VOTableMapper extends SedMapper
 		continue;
 	    }
 
+            if ( (utypeNum == utypes.SEG_DATA_FLUXAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_FLUXAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UNIT) || (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_TIMEAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_TIMEAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_BGM_UNIT)          || (utypeNum == utypes.SEG_DATA_BGM_UCD) )
+            {
+		// DataAxis attribute defined as column, handle separately in order to override any info
+		// which may be provided along with the Value.
+		continue;
+	    }
+
+
 	    // MCD NOTE: At this point, the item could be ANY recognized utype.
 	    // would like a further screen for PointLevel only.. to catch utypes
 	    // which are not supposed to vary perPoint...
@@ -554,6 +566,15 @@ public class VOTableMapper extends SedMapper
 		    dValues[iRow] = Double.valueOf(strval).doubleValue(); //  throws NumberFormatException
 		}
 		values = dValues;
+	    }
+            else if (dataClass == String.class)
+	    {
+		sValues = new String[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    sValues[iRow] = starTable.getCell( iRow, iCol ).toString();
+		}
+		values = sValues;
 	    }
 
 	    // Assign values for this column to Points
@@ -584,6 +605,41 @@ public class VOTableMapper extends SedMapper
 	    {
 		throw new SedParsingException("Problem setting field info for " + utype);
 	    }
+	}
+   
+        // Handle any Axis Attributes defined as columns.
+        // These should override any value which may have been provided in the serialization 
+	// of the value itself, through the unit/ucd VOTable element attribute.
+	// (that is why this is in a separate loop.)
+        for ( int iCol = 0; iCol < ncols; iCol++ )
+        {
+            ColumnInfo infoCol = starTable.getColumnInfo(iCol);
+
+            utype = infoCol.getUtype();
+	    utypeNum = utypes.getUtypeNum( utype );
+
+            if ( (utypeNum == utypes.SEG_DATA_FLUXAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_FLUXAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UNIT) || (utypeNum == utypes.SEG_DATA_SPECTRALAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_TIMEAXIS_UNIT)     || (utypeNum == utypes.SEG_DATA_TIMEAXIS_UCD) ||
+                 (utypeNum == utypes.SEG_DATA_BGM_UNIT)          || (utypeNum == utypes.SEG_DATA_BGM_UCD) )
+            {
+		// DataAxis Attributes are only string type.
+		sValues = new String[ nrows ];
+		for (int iRow=0; iRow < nrows; iRow++)
+		{
+		    sValues[iRow] = starTable.getCell( iRow, iCol ).toString();
+		}
+		values = sValues;
+
+		try
+		{
+		    points.setDataAttribute( values, utypeNum );
+		}
+		catch (SedInconsistentException exp)
+		{
+		    throw new SedParsingException("Problem setting Data Attribute for " + utype);
+		}
+            }
 	}
      
     }
