@@ -176,7 +176,8 @@ public class VOTableMapper extends SedMapper
 
 	    if ( this.verbose )
 	    {
-		System.out.println("INFO: Extracting Segment");
+		System.out.println("INFO:==============================");
+		System.out.println("INFO: Extracting Segment " + tblIdx );
 		System.out.println("INFO:");
 	    }
 
@@ -314,6 +315,8 @@ public class VOTableMapper extends SedMapper
 	{
 	    System.out.println("INFO:");
 	    System.out.println("INFO: Point Level Data Processed: ");
+	    System.out.println("INFO:");
+	    System.out.println("INFO: Process Point Level Parameters... ");
 	}
 
 	// Point level constants
@@ -721,8 +724,15 @@ public class VOTableMapper extends SedMapper
 		dValues = new double[ nrows ];
 		for (int iRow=0; iRow < nrows; iRow++)
 		{
-		    strval = item.getValue().toString();
-		    dValues[iRow] = Double.valueOf(strval).doubleValue(); //  throws NumberFormatException
+		    if ( item.getValue() == null )
+		    {
+			dValues[iRow] = Double.NaN;
+		    }
+		    else
+		    {
+			strval = item.getValue().toString();
+			dValues[iRow] = Double.valueOf(strval).doubleValue(); //  throws NumberFormatException
+		    }
 		}
 		values = dValues;
 	    }
