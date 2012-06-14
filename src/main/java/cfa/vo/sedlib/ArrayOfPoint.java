@@ -215,33 +215,20 @@ public class ArrayOfPoint implements Cloneable
     }
 
     /**
-     * Sets the values of the specified utype.
+     * Sets the attribute of the specified utype.
      *
-     * If the input datatype is not String[], double[] or int[] a SedInconsistentException is thrown.
-     *
-     * If the utype is not supported, a SedInconsistentException is thrown.
+     * If the input datatype is not String[] a SedInconsistentException is thrown.
+     * used for assigning Data axis UCD or Unit using the attribute specific UType.
+     * (e.g. Data.SpectralAxis.UCD )
      *
      * @param values
-     *   either a double[] or int[] depending on the data.
+     *   a string[].
      * @param utype
-     *   {@link String}
+     *   int
      *
      * @throws SedInconsistentException
      *
      */
-    public void setDataValues (Object values, String utype) throws SedInconsistentException
-    {
-
-        int utypeEnum = Utypes.getUtypeFromString (utype);
-
-        if (utypeEnum == Utypes.INVALID_UTYPE)
-            throw new SedInconsistentException ("The utype, "+utype+", is not supported. There is no parameter associated with this utype.");
-
-        this.setDataValues (values, utypeEnum);
-    }
-
-
-
     public void setDataAttribute(Object values, int utype) throws SedInconsistentException
     {
 
@@ -306,6 +293,33 @@ public class ArrayOfPoint implements Cloneable
               }
             }
         }
+    }
+
+
+    /**
+     * Sets the values of the specified utype.
+     *
+     * If the input datatype is not String[], double[] or int[] a SedInconsistentException is thrown.
+     *
+     * If the utype is not supported, a SedInconsistentException is thrown.
+     *
+     * @param values
+     *   either a double[] or int[] depending on the data.
+     * @param utype
+     *   {@link String}
+     *
+     * @throws SedInconsistentException
+     *
+     */
+    public void setDataValues (Object values, String utype) throws SedInconsistentException
+    {
+
+        int utypeEnum = Utypes.getUtypeFromString (utype);
+
+        if (utypeEnum == Utypes.INVALID_UTYPE)
+            throw new SedInconsistentException ("The utype, "+utype+", is not supported. There is no parameter associated with this utype.");
+
+        this.setDataValues (values, utypeEnum);
     }
 
 

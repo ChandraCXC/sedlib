@@ -193,7 +193,7 @@ public class VOTableMapper extends SedMapper
 	      // Or null if the table not supported
 	      // MCD NOTE: Throw/Catch Exception.
 
-		sed.addSegment (segment);
+		sed.addSegment(segment);
 	    }
         }
         if ((!sed.validate(validationErrors)) || (validationErrors.size() > 0))
@@ -686,6 +686,7 @@ public class VOTableMapper extends SedMapper
 
         ArrayOfPoint points = seg.getData();
 	int nrows = seg.getLength();
+	if ( nrows == 0 ){ nrows = 1; } /* first Point..  */
 
 	while( itr.hasNext() )
 	{
