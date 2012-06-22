@@ -448,12 +448,23 @@ public class CompleteObjects
     {
 	List<Param> result = new Vector<Param>();
         PositionParam pos = new PositionParam ();
+	DoubleParam key = null;
         DoubleParam[] d = new DoubleParam[2];
         d[0] = new DoubleParam( 233.737917, "TargetPos", null, "deg" );
         d[1] = new DoubleParam( 23.503330, "TargetPos", null, "deg" );
         pos.setValue(d);
 
 	result.add( new DoubleParam( 3.14159, "pi", "TBD", "TBD") );
+	result.add( new DoubleParam( "bob", "baddbl1", "meta.id", "") );
+	result.add( new DoubleParam( "bob", "baddbl2", "meta.id", "", "ID1z2b") );
+	key = new DoubleParam( "" );
+	key.setName("baddbl3");
+	key.setUcd("meta.id");
+	result.add( key );
+	key = new DoubleParam( "", "baddbl4", "meta.id", "" );
+	key.setValue("");
+	result.add( key );
+
 	result.add( new IntParam( 7, "daysofweek", "TBD", "TBD") );
 	result.add( new TextParam( "Galaxy", "TargetType", "TBD" ) );
 	result.add( new DateParam( "2011-01-04T22:01:59", "camdate", "TBD" ) );

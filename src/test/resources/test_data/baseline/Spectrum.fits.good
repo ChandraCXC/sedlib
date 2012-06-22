@@ -1,4 +1,4 @@
-XTENSION= 'BINTABLE'           / Java FITS: Mon Aug 29 14:30:56 EDT 2011        
+XTENSION= 'BINTABLE'           / Java FITS: Fri Jun 22 11:09:29 EDT 2012        
 BITPIX  =                    8                                                  
 NAXIS   =                    2 / Dimensionality                                 
 NAXIS1  =                  984                                                  
@@ -180,6 +180,7 @@ DER_Z   =                  0.0
 DER_ZERR=                  0.0                                                  
 DER_ZCNF=                  0.0                                                  
 PI      =              3.14159 / [TBD]                                          
+BADDBL4                                                                         
 CAMDATE = '2011-01-04T22:01:59'                                                 
 AGE     = '1.8     '           / [Gyr]                                          
 SKY_RES =                  0.0                                                  

@@ -73,7 +73,6 @@ public class DoubleParam
         {
             this.value = null;
         }
-
     }
 
     public DoubleParam (Double value)
@@ -140,10 +139,17 @@ public class DoubleParam
      *
      */
     @Override
-    public Object getCastValue() {
-        if (this.value != null)
-            return new Double(this.value);
-        return null;
+    public Object getCastValue() 
+    {
+	String strval = this.value;
+
+        if ( strval == null )
+	    return null;
+
+	if ( strval.isEmpty() )
+	    strval = "NaN";
+
+	return new Double( strval );
     }
 
     @Override

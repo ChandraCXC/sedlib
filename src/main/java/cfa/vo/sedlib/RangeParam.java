@@ -241,8 +241,7 @@ public class RangeParam
 
         if (compValue)
         {
-            compValue = ((this.min == param.min)&&
-			 (this.max == param.max));
+            compValue = ( this.min.equals(param.min) && this.max.equals(param.max) );
         }
 
         return compValue;

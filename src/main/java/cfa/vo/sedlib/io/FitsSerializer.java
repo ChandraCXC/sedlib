@@ -1438,14 +1438,22 @@ public class FitsSerializer implements ISedSerializer
      */
     private void finalizeAddSedParam(DoubleParam param, Header header, String keyword) throws HeaderCardException
     {
-        // extract the units from the parameter
         String comment = null;
-        if (param.isSetUnit ())
-            comment =  "[" + param.getUnit () + "]";
 
-        double value = ((Double)param.getCastValue ());
+        // extract the units from the parameter
+        if ( param.isSetUnit() && !param.getUnit().isEmpty() )
+            comment =  "[" + param.getUnit() + "]";
 
-        header.addValue(keyword, value, comment);
+        Double value = (Double)param.getCastValue();
+
+	/* MCD TEMP NOTE:
+	   Need to handle NaN values specifically.
+	   This FITS module will actually a NaN keyword value, which is not legal FITS.
+	*/
+	if ( value.isNaN() )
+	    header.addValue(keyword, null, comment);
+	else
+	    header.addValue(keyword, value.doubleValue(), comment);
     }
 
     /**
@@ -1492,7 +1500,8 @@ public class FitsSerializer implements ISedSerializer
     {
         if (!param.isSetValue ())
         {
-            logger.log (Level.WARNING, "The keyword, {0}, parameter does not have a value set. The keyword will be ignored.", keyword);
+	    String msg = String.format("The parameter '%1$s', does not have a value set and will be ignored.", keyword );
+            logger.log (Level.WARNING, msg);
             return;
         }
 
@@ -1515,8 +1524,8 @@ public class FitsSerializer implements ISedSerializer
         }
         catch (HeaderCardException exp)
         {
-//    	    throw new SedWritingException ("Failed to add keyword,"+keyword+", with value "+param.getValue ()+" to header.", exp);
-	    logger.log(Level.WARNING, "Failed to add keyword,{0}, with value {1} to header. The following fits exception was given \"{2}\".", new Object[]{keyword, param.getValue(), exp.getMessage()});
+	    String msg = String.format("Failed to add keyword '%1$s' to header; value = XX%2$sXX. FITS exception msg = \"%3$s\".", keyword, param.getValue(), exp.getMessage());
+	    logger.log(Level.WARNING, msg );
         }
     }
 

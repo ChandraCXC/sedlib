@@ -9,6 +9,10 @@
     <TABLE utype="spec:Segment">
       <PARAM arraysize="*" datatype="char" name="DataModel" utype="spec:Spectrum.DataModel" value="Spectrum-1.0"/>
       <PARAM datatype="double" name="pi" ucd="TBD" unit="TBD" value="3.14159"/>
+      <PARAM datatype="double" name="baddbl1" ucd="meta.id" unit=""/>
+      <PARAM datatype="double" name="baddbl2" ucd="meta.id" unit=""/>
+      <PARAM datatype="double" name="baddbl3" ucd="meta.id"/>
+      <PARAM datatype="double" name="baddbl4" ucd="meta.id" unit="" value=""/>
       <PARAM datatype="int" name="daysofweek" ucd="TBD" unit="TBD" value="7"/>
       <PARAM arraysize="*" datatype="char" name="TargetType" ucd="TBD" value="Galaxy"/>
       <PARAM arraysize="*" datatype="char" name="camdate" ucd="TBD" value="2011-01-04T22:01:59"/>

@@ -35,6 +35,9 @@ import junit.framework.TestSuite;
 
 import cfa.vo.sedlib.io.SedFormat;
 
+import java.util.List;
+import java.util.HashMap;
+
 /**
    Tests Sedlib ability to create, read and write the Params objects
 */	
@@ -90,10 +93,6 @@ public class TestParamsIO extends SedTestBase
 	/* Create SED with one (empty) segment */
 	m_sed = EmptyObjects.createSED( 1 );
 
-	/* Set Spectrum namespace 
-	m_sed.setNamespace( "spec:" );
-*/
-
 	/* Get the Segment */
 	Segment segment = m_sed.getSegment(0);
 	assertNotNull( "Failed to create SEGMENT: " , segment );
@@ -106,8 +105,8 @@ public class TestParamsIO extends SedTestBase
 	/* Write SED with Params to file in each of the supported formats */
 	for (SedFormat format : SedFormat.values())
 	{
-if (format == SedFormat.XML)
-   continue;
+	    if (format == SedFormat.XML)
+		continue;
 
 	    m_fname = "Params." + format.exten();
 	    rc = writeSED( format , tu.mkOutFileName( m_fname ), m_sed );
@@ -123,6 +122,68 @@ if (format == SedFormat.XML)
 	    if ( (rc == 0 ) && (!keep) )
 		tu.cleanupFiles( m_fname );
 	}
+    }
+
+    /**
+     *  Tests Param object's getCastValue() behavior.
+     *  <p>
+     *  Load file containing a fully defined Params object, 
+     *  extract values using getCastValue method and compare to 
+     *  known values.
+     */
+    public void testParams_getCast()
+    {
+	String testName = "testParams_getCast";
+		System.out.println("   run "+testName+"()");
+
+	SedFormat format = SedFormat.VOT;
+	m_fname = "Params." + format.exten();
+
+	/* Read input file */
+	m_sed = readSED( format, tu.mkInFileName( m_fname ) );
+	assertNotNull( testName + ": Document load failed - " + m_fname, m_sed );
+
+	/* Set up expected value list */
+	HashMap<String,String> goodVals = new HashMap<String,String>();
+	goodVals.put( "pi", "3.14159" );
+	goodVals.put( "baddbl1", "NaN" );
+	goodVals.put( "baddbl2", "NaN" );
+	goodVals.put( "baddbl3", "NaN" );
+	goodVals.put( "baddbl4", "NaN" );
+	goodVals.put( "daysofweek", "7" );
+	goodVals.put( "TargetType", "Galaxy" );
+	goodVals.put( "camdate", "2011-01-04T22:01:59" );
+	goodVals.put( "age", "1.8" );
+	goodVals.put( "TargetPosA", "233.737917" );
+	goodVals.put( "TargetPosB", "23.50333" );
+
+	List<? extends Param> params;
+	String strval;
+	String pname;
+	String suffix = "A";
+
+	/* Get params list from segment */
+	params = m_sed.getSegment(0).getCustomParams();
+
+	rc = 0;
+        for (int ii=0; ii<params.size(); ii++)
+	{
+	    pname = params.get(ii).getName();
+
+	    if ( pname.equals("TargetPos") )
+	    {
+		/* there are 2 of them.. need to separate */
+		pname = pname.concat( suffix );
+		suffix = "B";
+	    }
+
+            strval = params.get(ii).getCastValue().toString();
+	    if ( ! strval.equals( goodVals.get( pname ) ) )
+		rc = 1;
+
+	    assertEquals( testName + ": Param " + pname + " Failed Value check.", 0, rc );
+        }
+
     }
 
     /**
