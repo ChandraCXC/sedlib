@@ -1688,72 +1688,94 @@ public class FitsSerializer implements ISedSerializer
         ArrayOfPoint data;
         List<Point> pointList;
         String spectralAxisName = null;
+        String spectralAxisUCD = null;
 
-        if (!segment.isSetData ())
-            return;
-
-        data = segment.getData();
-        pointList = data.getPoint ();
-
-        if(pointList==null)
-            return;
-
-        if (pointList.isEmpty())
-            return;
-
-        for (Point point : pointList)
+	// Get SpectralAxis UCD from CharacterizationAxis.
+        try {
+	  spectralAxisUCD = (String)segment.getValueByUtype( FitsKeywords.SEG_CHAR_SPECTRALAXIS_UCD, false );
+	}
+        catch (Exception exp)
         {
-            if (point.isSetSpectralAxis () && point.getSpectralAxis().isSetValue())
-            {
-                Param spectralAxis = point.getSpectralAxis ().getValue ();
-                String defaultName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_VALUE);
-                String overrideName;
-
-                // replace the spectral sub components with the spectral name
-                if (spectralAxis.isSetName ())
-                {
-                	
-                    // override the names
-                    spectralAxisName = spectralAxis.getName ();
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_VALUE, spectralAxisName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR, overrideName);
-                    overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION);
-                    overrideName = overrideName.replace (defaultName, spectralAxisName);
-                    this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION, overrideName);
-                }
-            }
+	  spectralAxisUCD = "";
         }
 
-        // go through the ucds and replace variable components
-        if (spectralAxisName != null)
-        {
-            for (int ii=0; ii<FitsKeywords.getNumberOfUtypes (); ii++)
-            {
 
-                // update the spectral axis ucds with the spectral axis name
-                String ucd = FitsKeywords.overrideUcd (ii, "em", spectralAxisName);
-                if (ucd != null)
-                    this.ucdOverrides.put (ii, ucd);
+        if ( segment.isSetData() )
+        {
+	  // set some overrides for the points
+          data = segment.getData();
+          pointList = data.getPoint();
+	  
+          if ( pointList==null )
+              return;
+	  
+          if ( pointList.isEmpty() )
+              return;
+	  
+          for (Point point : pointList)
+          {
+              if (point.isSetSpectralAxis() && point.getSpectralAxis().isSetValue())
+              {
+                  Param spectralAxis = point.getSpectralAxis().getValue();
+                  String defaultName = FitsKeywords.getDefaultColumnName(FitsKeywords.SEG_DATA_SPECTRALAXIS_VALUE);
+                  String overrideName;
+
+                // Get the spectral axis ucd if needed
+		if ( (spectralAxisUCD == null ) || spectralAxisUCD.equals("") )
+	    	{
+         	  // MCD NOTE: since SpectralAxis.ucd is a required field, this should not trigger.
+                  if (spectralAxis.isSetUcd())
+                  {
+                    spectralAxisUCD = spectralAxis.getUcd();
+                    break;
+                  }
+		}
+
+                  // replace the spectral sub components with the spectral name
+                  if (spectralAxis.isSetName())
+                  {
+                  	
+                      // override the names
+                      spectralAxisName = spectralAxis.getName ();
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_VALUE, spectralAxisName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINSIZE, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINLOW, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_BINHIGH, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERR, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRLOW, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_STATERRHIGH, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_ACC_SYSERR, overrideName);
+                      overrideName = FitsKeywords.getDefaultColumnName (FitsKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION);
+                      overrideName = overrideName.replace (defaultName, spectralAxisName);
+                      this.overrides.put (FitsKeywords.SEG_DATA_SPECTRALAXIS_RESOLUTION, overrideName);
+                  }
+              }
+          }
+	}
+
+        // go through the ucds and replace variable components
+        if ( spectralAxisUCD != null && !spectralAxisUCD.equals("") )
+        {
+            for (int ii=0; ii < FitsKeywords.getNumberOfUtypes(); ii++)
+            {
+              // update the spectral axis ucds with the spectral axis name
+              String ucd = FitsKeywords.overrideUcd(ii, "em", spectralAxisUCD);
+              if (ucd != null)
+                  this.ucdOverrides.put (ii, ucd);
             }
         }
 

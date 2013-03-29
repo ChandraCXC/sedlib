@@ -12,22 +12,22 @@
         <GROUP utype="spec:Spectrum.Char.SpectralAxis">
           <PARAM datatype="double" name="ResPower" ucd="spect.resolution" utype="spec:Spectrum.Char.SpectralAxis.ResPower" value="0.0"/>
           <PARAM arraysize="*" datatype="char" name="Wavelength" ucd="em.wl" unit="Angstrom" utype="spec:Spectrum.Char.SpectralAxis.Name" value="Wavelength"/>
-          <PARAM datatype="double" name="Resolution" ucd="spect.resolution;em.*" utype="spec:Spectrum.Char.SpectralAxis.Resolution" value="0.0"/>
+          <PARAM datatype="double" name="Resolution" ucd="spect.resolution;em.wl" utype="spec:Spectrum.Char.SpectralAxis.Resolution" value="0.0"/>
           <PARAM arraysize="*" datatype="char" name="Calibration" ucd="meta.code.qual" utype="spec:Spectrum.Char.SpectralAxis.Calibration" value="TBD"/>
           <GROUP utype="spec:Spectrum.Char.SpectralAxis.Accuracy">
             <PARAM datatype="double" name="BinLow" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinLow" value="0.0"/>
             <PARAM datatype="double" name="BinHigh" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinHigh" value="0.0"/>
-            <PARAM datatype="double" name="BinSize" ucd="em.*;spect.binSize" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinSize" value="0.0"/>
-            <PARAM datatype="double" name="StatError" ucd="stat.error;em.*" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatError" value="0.0"/>
+            <PARAM datatype="double" name="BinSize" ucd="em.wl;spect.binSize" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.BinSize" value="0.0"/>
+            <PARAM datatype="double" name="StatError" ucd="stat.error;em.wl" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatError" value="0.0"/>
             <PARAM datatype="double" name="StatErrLow" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatErrLow" value="0.0"/>
             <PARAM datatype="double" name="StatErrHigh" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.StatErrHigh" value="0.0"/>
-            <PARAM datatype="double" name="SysError" ucd="stat.error;em.*" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.SysError" value="0.0"/>
+            <PARAM datatype="double" name="SysError" ucd="stat.error;em.wl" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.SysError" value="0.0"/>
             <PARAM datatype="double" name="Confidence" utype="spec:Spectrum.Char.SpectralAxis.Accuracy.Confidence" value="0.0"/>
           </GROUP>
           <GROUP utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision">
-            <PARAM datatype="double" name="SamplingExtent" ucd="em.*;spect.binSize" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingExtent" value="0.0"/>
+            <PARAM datatype="double" name="SamplingExtent" ucd="em.wl;spect.binSize" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingExtent" value="0.0"/>
             <GROUP utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal">
-              <PARAM datatype="double" name="FillFactor" ucd="stat.fill;em.*" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="0.0"/>
+              <PARAM datatype="double" name="FillFactor" ucd="stat.fill;em.wl" utype="spec:Spectrum.Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor" value="0.0"/>
             </GROUP>
           </GROUP>
         </GROUP>

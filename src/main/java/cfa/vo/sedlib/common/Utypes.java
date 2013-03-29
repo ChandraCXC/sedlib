@@ -1047,19 +1047,18 @@ public class Utypes
     // **********************************************************************
 
     /**
-     * Override wild card sections of the ucd with a valid value. Currently only
-     * "em.*" value can be overridden. For em valid override values include
-     * wave, freq, and ener.
+     * Override wild card sections of the ucd with a valid value.
+     * Currently only "em.*" value can be overridden.
+     * 
      * @param utype
      *   the enumerated utype
      * @param ucdBase
      *   the ucd section to override (em)
      * @param override
-     *   the String to override the wildcard (wave, freq, and ener)
-     *   
+     *   the String to override the wildcard
      *
      */
-    static public String overrideUcd (int utype, String ucdBase, String override)
+    static public String overrideUcd(int utype, String ucdBase, String override)
     {
         String ucdName;
 
@@ -1073,22 +1072,17 @@ public class Utypes
 
         if (ucdBase.equalsIgnoreCase ("em"))
         {
-            if (ucdName.matches ("^.*em\\.\\*.*$"))
-            {
-                if (override.equalsIgnoreCase ("wave"))
-                    ucdName = ucdName.replaceFirst ("em\\.\\*", "em.wl");
-                else if (override.equalsIgnoreCase ("freq"))
-                    ucdName = ucdName.replaceFirst ("em\\.\\*", "em.freq");
-                else if (override.equalsIgnoreCase ("ener"))
-                    ucdName = ucdName.replaceFirst ("em\\.\\*", "em.energy");
-            }
+          if (ucdName.matches("^.*em\\.\\*.*$"))
+          {
+            ucdName = ucdName.replaceFirst("em\\.\\*", override );
+          }
         }
         else
             ucdName = null;
 
         return ucdName;
-
     }
+
 
     /**
      * Gets the ucd associated with the specified utype enumeration.

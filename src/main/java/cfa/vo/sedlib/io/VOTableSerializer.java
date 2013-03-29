@@ -334,7 +334,7 @@ public class VOTableSerializer implements ISedSerializer
         ucd = this.getParamUcd (sedParam, utype);
         if (ucd != null)
             param.setAttribute (VOTableKeywords._UCD, ucd);
-        
+
 
         if (sedParam.isSetValue() )
             param.setAttribute (VOTableKeywords._VALUE, sedParam.getValue ());
@@ -562,15 +562,20 @@ public class VOTableSerializer implements ISedSerializer
             newUtype = this.mergeUtypes (utype, VOTableKeywords.SEG_CHAR_CHARAXIS_NAME, functionName);
 
            // force the name to be set to something
-           if (charAxis.isSetName ())
-              name = charAxis.getName ();
+           if (charAxis.isSetName() && !charAxis.getName().equals("") )
+           {
+              name = charAxis.getName();
+           }
            else
            {
-              name = VOTableKeywords.getName (utype);
-              name = VOTableKeywords.getLastPartOfUtype (name);
+	      // MCD NOTE: CharAxis.Name should default to that of DataAxis.Name and is an optional field.
+	      //           while the UCD and Units are required... so serializing these as a single Param
+	      //           may not be the best approach.
+              name = VOTableKeywords.getName(utype);
+              name = VOTableKeywords.getLastPartOfUtype(name);
            }
 
-           String values[] = {name, VOTableKeywords.getName (newUtype,this.namespace), charAxis.getUcd (), charAxis.getUnit (), "char", "*", charAxis.getName ()};
+           String values[] = {name, VOTableKeywords.getName(newUtype,this.namespace), charAxis.getUcd(), charAxis.getUnit(), "char", "*", name };
 
            if (!charAxis.isSetUcd ())
                values[2] = VOTableKeywords.getUcd (utype);
@@ -1750,46 +1755,59 @@ public class VOTableSerializer implements ISedSerializer
     {
         ArrayOfPoint data;
         List<Point> pointList;
-        String spectralAxisName = null;
+        String spectralAxisUCD  = null;
 
-        if (!segment.isSetData ())
-            return;
-
-        data = segment.getData();
-
-        pointList = data.getPoint ();
-
-        if ((pointList == null) || pointList.isEmpty ())
-
-            return;
-
-        for (Point point : pointList)
+	// Get SpectralAxis UCD from CharacterizationAxis.
+        try {
+	  spectralAxisUCD = (String)segment.getValueByUtype( VOTableKeywords.SEG_CHAR_SPECTRALAXIS_UCD, false );
+	}
+        catch (Exception exp)
         {
-            if (point.isSetSpectralAxis () && point.getSpectralAxis().isSetValue())
-            {
-            	Param spectralAxis = point.getSpectralAxis ().getValue ();
+	  spectralAxisUCD = "";
+        }
 
-                // get the spectral axis name
-                if (spectralAxis.isSetName ())
-                {
-                    spectralAxisName = spectralAxis.getName ();
-                    break;
-                }
+	if ( (spectralAxisUCD == null ) || spectralAxisUCD.equals("") )
+        {
+	  // If we in fact had trouble getting it from the CharacterizationAxis, try
+	  // obtaining it from the Data Axis.
+
+	  // MCD NOTE: since SpectralAxis.ucd is a required field, this should not trigger.
+
+          if (!segment.isSetData())
+              return;
+  
+          data = segment.getData();
+          pointList = data.getPoint();
+  
+          if ((pointList == null) || pointList.isEmpty())
+                return;
+  
+          for (Point point : pointList)
+          {
+            if ( point.isSetSpectralAxis() && point.getSpectralAxis().isSetValue() )
+            {
+              Param spectralAxis = point.getSpectralAxis().getValue();
+  
+              // get the spectral axis ucd
+              if (spectralAxis.isSetUcd())
+              {
+                spectralAxisUCD = spectralAxis.getUcd();
+                break;
+              }
             }
+          }
         }
 
 
-        // go through the ucds and replace variable components
-
-        if (spectralAxisName != null)
+        // Go through the ucds and replace variable components
+        if ( spectralAxisUCD != null && !spectralAxisUCD.equals("") )
         {
-            for (int ii=0; ii<VOTableKeywords.getNumberOfUtypes (); ii++)
+            for (int ii=0; ii < VOTableKeywords.getNumberOfUtypes(); ii++)
             {
-
-                // update the spectral axis ucds with the spectral axis name
-                String ucd = VOTableKeywords.overrideUcd (ii, "em", spectralAxisName);
-                if (ucd != null)
-                    this.ucdOverrides.put (ii, ucd);
+              // update the spectral axis ucds with the spectral axis name
+              String ucd = VOTableKeywords.overrideUcd(ii, "em", spectralAxisUCD);
+              if (ucd != null)
+                this.ucdOverrides.put(ii, ucd);
             }
         }
     }
