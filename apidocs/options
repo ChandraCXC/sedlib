@@ -1,0 +1,26 @@
+-classpath
+'/Users/olaurino/Documents/Projects/working/git_migration/sedlib/target/classes:/Users/olaurino/.m2/repository/stil/stil/3.0.2/stil-3.0.2.jar'
+-encoding
+'UTF-8'
+-overview
+'/Users/olaurino/Documents/Projects/working/git_migration/sedlib/src/main/javadoc/overview.html'
+-protected
+-sourcepath
+'/Users/olaurino/Documents/Projects/working/git_migration/sedlib/src/main/java:/Users/olaurino/Documents/Projects/working/git_migration/sedlib/src/main/javadoc'
+-author
+-bottom
+'Copyright &#169; 2013 <a href="http://www.usvao.org">Virtual Astronomical Observatory</a>. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/olaurino/Documents/Projects/working/git_migration/sedlib/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'VAO SED Library 1.2 API'
+-link
+'http://java.sun.com/javase/6/docs/api'
+-use
+-version
+-windowtitle
+'VAO SED Library 1.2 API'
