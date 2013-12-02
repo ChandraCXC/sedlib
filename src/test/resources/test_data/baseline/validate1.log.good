@@ -1,6 +1,0 @@
-WARNING: Invalid Sed read.
-WARNING: Missing required Char.FluxAxis.unit
-WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Extent (Missing entire bounds)
-WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Start (Missing entire bounds)
-WARNING: Missing required Char.SpectralAxis.Coverage.Bounds.Stop (Missing entire bounds)
-WARNING: Missing required Char.SpatialAxis.Coverage.Bounds.Extent (Missing entire bounds)
