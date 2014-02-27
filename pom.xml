@@ -214,7 +214,7 @@
       <configuration>
 	<server>github</server>
 	<repositoryName>sedlib</repositoryName>
-	<repositoryOwner>cxcdev</repositoryOwner>
+	<repositoryOwner>chandracxc</repositoryOwner>
         <message>Creating site for ${project.version}</message>
       </configuration>
       <executions>
